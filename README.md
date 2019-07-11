@@ -11,18 +11,6 @@ By the end of the course, students are expected to be able to:
 3. Apply the principle of “block what you can, randomize what you cannot” in designing an A/B testing experiment.
 4. Choose appropriately between fixed-effect and random-effect regression models.
 
-## Teaching Team
-
-At your service!
-
-| Position | Name  | Slack Handle | GHE Handle | 
-| :------: | :---: | :----------: | :--------: | 
-| Lecture Instructor | Paul Gustafson       | `@paulgstf`      | `@paulgstf` | 
-| Lab Instructor     | Vincenzo Coia        | `@vcoia`         | `@vcoia`    | 
-| Teaching Assistant | Kate Johnson         | `@Kate Johnson`  | `@katemj91` | 
-| Teaching Assistant | Laura Melissa Guzman | `@Melissa G`     | `@lguz14`   |
-| Teaching Assistant | Rainer Lempert       | `@rainerlempert` | `@rlempert` | 
-
 ## Assessments
 
 This is a __project-based course__ with peer review. You'll be evaluated as follows:
@@ -52,15 +40,6 @@ Projects will be completed in [assigned groups](https://github.ubc.ca/mds-2018-1
 | 6 | Observational study motivations. Association marginally, versus stratified. Logistic regression as model-based alternative to stratification. Conditions under which "causal spin" is allowed. Prediction vs. explanation. |  <ul><li>section 8.4 (pages 386 - 395)  from [OpenIntro Statistics](https://drive.google.com/file/d/0B-DHaDEbiOGkc1RycUtIcUtIelE/view)</li><li>[Confounding in Observational Studies Explained](https://benthamopen.com/contents/pdf/TOEPIJ/TOEPIJ-5-18.pdf)</li></ul> |
 | 7 | Plasmode simulation. Regular cohort versus (unmatched) case-control studies. Matched pairs. |
 | 8 | Big picture issues around confounding, take-away themes. |
-
-## Lab Schedule
-
-| Lab | Topic |
-|-----|-------|
-| 1 | Multiple Comparisons for Lab Assignment 1 |
-| 2 | Survey proposal for Milestone 1 |
-| 3 | Create and deploy survey for Milestone 2 |
-| 4 | Peer Review of Milestone 2; Survey analysis/report for Milestone 3 |
 
 
 ## General Reference Material
