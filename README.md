@@ -11,22 +11,6 @@ By the end of the course, students are expected to be able to:
 3. Apply the principle of “block what you can, randomize what you cannot” in designing an A/B testing experiment.
 4. Choose appropriately between fixed-effect and random-effect regression models.
 
-## Assessments
-
-This is a __project-based course__ with peer review. You'll be evaluated as follows:
-
-
-| Deliverable | Weight | Deadline | Submit to... |
-|-------------|--------|----------|--------------|
-| Lab Assignment 1 | 30% | Saturday, March 23, 2019 at 18:00 | github.ubc.ca | 
-| Milestone 1 | 10% | Saturday, March 30, 2019 at 18:00 | github.ubc.ca |
-| Milestone 2 | 20% | Saturday, April 06, 2019 at 18:00 | github.ubc.ca |
-| Milestone 3 | 22% | Saturday, April 13, 2019 at 18:00 | github.ubc.ca |
-| Peer Review of Milestone 2 | 8% | Saturday, April 13, 2019 at 18:00 | With your Milestone 3 submission |
-| Team work reflection | 10% | Sunday, April 14, 2019 at 15:00 | github.ubc.ca |
-
-Projects will be completed in [assigned groups](https://github.ubc.ca/mds-2018-19/DSCI_554_exper-causal-inf_students/blob/master/release/teams.csv).
-
 
 ## Lecture Schedule
 
