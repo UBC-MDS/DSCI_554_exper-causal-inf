@@ -1,0 +1,1646 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Lecture 3 - Randomization and Blocking &#8212; DSCI 554 - Experimentation and Causal Inference</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notes/lecture3_randomization_and_blocking';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lecture 4 - More Blocking and Power" href="lecture4_more_blocking_and_power.html" />
+    <link rel="prev" title="Lecture 2 - Confounding and Randomized versus Non-randomized Studies" href="lecture2_simpson_confounding.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/UBC_MDS_logo.png" class="logo__image only-light" alt="DSCI 554 - Experimentation and Causal Inference - Home"/>
+    <script>document.write(`<img src="../_static/UBC_MDS_logo.png" class="logo__image only-dark" alt="DSCI 554 - Experimentation and Causal Inference - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    Welcome to DSCI 554: Experimentation and Causal Inference
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Lectures</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lecture-learning-objectives.html">Lecture Learning Objectives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture1_multiple_comparisons.html">Lecture 1 - Multiple Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture2_simpson_confounding.html">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Lecture 3 - Randomization and Blocking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture4_more_blocking_and_power.html">Lecture 4 - More Blocking and Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture5_more_power_early_stopping.html">Lecture 5 - More Power and Early Stopping in A/B Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture6_obs_stratifying_modelling.html">Lecture 6 - Observational Data: Stratifying and Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture7_obs_sampling_schemes.html">Lecture 7 - Observational Data: Different Sampling Schemes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture8_match_constrasts_wrapup.html">Lecture 8 - Matched Case-Control Scheme, Ordinal Regressors, and Final Wrap-Up</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendices</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="appendix_blocking_and_stratification.html">Blocking and Stratification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-causality-exp-cheatsheet.html">Causality and Experimentation Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-prob-cheatsheet.html">Probability Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-reg-mindmap.html">Regression Mind Map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-reg-cheatsheet.html">Regression Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-dist-cheatsheet.html">Distribution Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-greek-alphabet.html">Greek Alphabet</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.ubc.ca/MDS-2023-24/DSCI_554_exper-causal-inf_students" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.ubc.ca/MDS-2023-24/DSCI_554_exper-causal-inf_students/issues/new?title=Issue%20on%20page%20%2Fnotes/lecture3_randomization_and_blocking.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notes/lecture3_randomization_and_blocking.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Lecture 3 - Randomization and Blocking</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-learning-objectives">Today’s Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-r-packages">Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#previously">Previously…</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#foundations-of-a-b-and-a-b-n-testings">1. Foundations of A/B and A/B/n Testings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-if-we-want-to-test-more-than-two-experimental-treatments-in-our-a-b-testing">What if we want to test more than two experimental treatments in our A/B testing?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-b-n-testing-with-a-continuous-response">2. A/B/n Testing with a Continuous Response</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-website-dataset">2.1. The Website Dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#experimental-terminology">2.2. Experimental Terminology</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main-statistical-inquiry">2.3. Main Statistical Inquiry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploratory-data-analysis">2.4. Exploratory Data Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-data-modelling">2.5. Initial Data Modelling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-modelling-with-interaction">2.6. Data Modelling with Interaction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-hoc-tests">2.7. Post-Hoc Tests</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blocking">3. Blocking</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blocking-procedure">3.1. Blocking Procedure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-setup">3.2. Simulation Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-our-synthetic-data">3.3. Building our Synthetic Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-a-without-blocking">3.4. Experiment A: Without Blocking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-b-with-blocking">3.5. Experiment B: With Blocking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-analysis">3.6. Data Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-a-raw-model">Experiment A: Raw Model</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-a-model-with-post-hoc-adjustment-for-demographics">Experiment A: Model with Post-Hoc Adjustment for Demographics</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-b-model-with-blocking">Experiment B: Model with Blocking</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#so-where-are-we-standing">So, where are we standing?</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-more-replicates">3.7. Running More Replicates</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-conclusion-by-looking-at-these-metrics-by-strategy">What is the conclusion by looking at these metrics by strategy?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-up">4. Wrapping Up</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="lecture-3-randomization-and-blocking">
+<h1>Lecture 3 - Randomization and Blocking<a class="headerlink" href="#lecture-3-randomization-and-blocking" title="Permalink to this heading">#</a></h1>
+<section id="today-s-learning-objectives">
+<h2>Today’s Learning Objectives<a class="headerlink" href="#today-s-learning-objectives" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Explain foundational concepts of statistical design and analysis of experiments in a Data Science context.</p></li>
+<li><p>Relate A/B and A/B/n testings to common statistical models via ordinary least-squares (OLS).</p></li>
+<li><p>Fit and interpret appropriate OLS models from a factorial experiment.</p></li>
+<li><p>Relate the corresponding ANOVA table to the substantive question of interest.</p></li>
+<li><p>Introduce the concept of blocking in experimental design.</p></li>
+<li><p>Contrast a blocking versus a non-blocking experimental model.</p></li>
+</ol>
+</section>
+<section id="loading-r-packages">
+<h2>Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages<a class="headerlink" href="#loading-r-packages" title="Permalink to this heading">#</a></h2>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">broom</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="previously">
+<h2>Previously…<a class="headerlink" href="#previously" title="Permalink to this heading">#</a></h2>
+<p>In <a class="reference internal" href="lecture1_multiple_comparisons.html"><span class="doc">Lecture 1 - Multiple Comparisons</span></a>, we explored key concepts such as <strong>multiple testing</strong> and its implications on the <strong>inflation of the type I error</strong> (<strong>false positives!</strong>) in hypothesis testing. This concept allowed you to draw proper inferential conclusions in the <code class="docutils literal notranslate"><span class="pre">lab1</span></code> case coming from <a class="reference external" href="https://quod.lib.umich.edu/w/weave/12535642.0001.101?view=text;rgn=main"><em>Improving Library User Experience with A/B Testing: Principles and Process</em></a> (Young, 2014).</p>
+<p>Moreover, in <a class="reference internal" href="lecture2_simpson_confounding.html"><span class="doc">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</span></a>, we discussed <strong>confounding</strong> and its role in critical issues such as the <strong>Simpson’s paradox</strong>. Then, we explored the importance of <strong>randomization</strong> to obtain <strong>accurate model estimates</strong> in an <strong>experimental study</strong>. Randomization takes care of the confounders present in our population of interest, even when we do not include them in our modelling setup!</p>
+<p>Even though we already introduced the concept of <strong>A/B testing</strong>, it is essential to keep digging into more experimental jargon (statistically speaking!). At the end of the day, <strong>A/B testing</strong> is basically a statistical experiment but with a really “self-descriptive” name.</p>
+<p>Let us start with the foundations of <strong>Design and Analysis of Experiments</strong> in a Data Science context.</p>
+</section>
+<section id="foundations-of-a-b-and-a-b-n-testings">
+<h2>1. Foundations of A/B and A/B/n Testings<a class="headerlink" href="#foundations-of-a-b-and-a-b-n-testings" title="Permalink to this heading">#</a></h2>
+<p><strong>A/B testing</strong> involves a <strong>randomized</strong> experiment between two stategies: <strong>control</strong> (baseline or status quo) and <strong>experimental</strong> (variation) treatments.</p>
+<div class="hint admonition">
+<p class="admonition-title">Example</p>
+<p>Will changing the design of the website lead to a change in customer engagement (measured by the click-through-rates, CTRs)?</p>
+</div>
+<p><strong>A/B testing</strong> is an experiment that aims to determine whether there is a statistical difference between both treatments in terms of a given <strong>outcome of interest</strong> (i.e., <span class="math notranslate nohighlight">\(Y\)</span>).</p>
+<p>More specifically, <strong>A/B testing</strong> is the Data Science-term applied to comparisons between two or more categories of a <strong>factor-type variable</strong> <span class="math notranslate nohighlight">\(X\)</span> (i.e., its levels are our treatments of interest).</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Depending on the nature of the outcome (<strong>continuous</strong> or <strong>discrete</strong>), the statistical tool to compare the experimental treatments will vary. Let us practice our data modelling skills with some <a class="reference external" href="https://student.iclicker.com/#/login"><strong>iCliker</strong></a> questions.</p>
+</div>
+<div class="exercise admonition" id="lecture3-q1">
+
+<p class="admonition-title"><span class="caption-number">Exercise 8 </span></p>
+<section id="exercise-content">
+<p>In a given online store, when compared to a current website layout, you want to assess whether a new website layout will increase the average user spending in CAD (compared to the current website layout).</p>
+<p><strong>What statistical tool is suitable for analyzing your A/B testing data?</strong></p>
+<p><strong>A.</strong> A two-sample <span class="math notranslate nohighlight">\(t\)</span>-test.</p>
+<p><strong>B.</strong> Ordinary Least-squares (OLS) regression.</p>
+<p><strong>C.</strong> Multinomial Logistic regression.</p>
+<p><strong>D.</strong> A <span class="math notranslate nohighlight">\(Z\)</span>-test for two proportions.</p>
+</section>
+</div>
+<div class="exercise admonition" id="lecture3-q2">
+
+<p class="admonition-title"><span class="caption-number">Exercise 9 </span></p>
+<section id="exercise-content">
+<p>Suppose you own a website and want to increase the visits to a specific section of interest (whose access button appears on the homepage). Thus, you randomize your experimental visitors to either one of two homepage layouts: <span class="math notranslate nohighlight">\(1\)</span> or <span class="math notranslate nohighlight">\(2\)</span>. After the experiment, you compute the corresponding CTRs (<span class="math notranslate nohighlight">\(i = 1, 2\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[\text{CTR}_i = \frac{\text{Total number of clicks on the access button in the } i\text{th layout}}{\text{Total number of visits to the homepage under the } i\text{th layout}}.\]</div>
+<p><strong>What statistical tool is suitable for analyzing your A/B testing data?</strong></p>
+<p><strong>A.</strong> A two-sample <span class="math notranslate nohighlight">\(t\)</span>-test.</p>
+<p><strong>B.</strong> Ordinary Least-squares (OLS) regression.</p>
+<p><strong>C.</strong> Multinomial Logistic regression.</p>
+<p><strong>D.</strong> A <span class="math notranslate nohighlight">\(Z\)</span>-test for two proportions.</p>
+</section>
+</div>
+<div class="exercise admonition" id="lecture3-q3">
+
+<p class="admonition-title"><span class="caption-number">Exercise 10 </span></p>
+<section id="exercise-content">
+<p>Suppose you own a streaming service and want to increase the number of members in your <strong>premium plan</strong>. Then, you will run an A/B testing with current customers under the <strong>standard plan</strong>. You will <strong>randomize</strong> these current customers to one of these promotional videos on the premium plan: <strong>current</strong> or <strong>new</strong>. Furthermore, you also have <strong>average customer-level monthly data</strong> regarding how much time these customers spend on the platform (and want to incorporate that into your analysis!).</p>
+<p>Finally, you will collect data on <strong>whether these experimental customers migrated to the premium plan or not</strong>.</p>
+<p><strong>What statistical tool is suitable for analyzing your A/B testing data?</strong></p>
+<p><strong>A.</strong> Binary Logistic regression.</p>
+<p><strong>B.</strong> Ordinal Logistic regression.</p>
+<p><strong>C.</strong> Multinomial Logistic regression.</p>
+<p><strong>D.</strong> A <span class="math notranslate nohighlight">\(Z\)</span>-test for two proportions.</p>
+</section>
+</div>
+<div class="exercise admonition" id="lecture3-q4">
+
+<p class="admonition-title"><span class="caption-number">Exercise 11 </span></p>
+<section id="exercise-content">
+<p>Suppose you want to increase customer satisfaction by improving your online store layout. Then, you will run an A/B testing. You will <strong>randomize</strong> your customers to one of these layouts: <strong>current</strong> or <strong>new</strong>.</p>
+<p>Once the customer is done with their purchase, you will record their satisfaction via a quick question:</p>
+<blockquote>
+<div><p><strong>How satisfied were you with the purchase experience? Select one:</strong></p>
+<p><strong>1.</strong> <em>Unsatisfied.</em></p>
+<p><strong>2.</strong> <em>A little bit unsatisfied.</em></p>
+<p><strong>3.</strong> <em>Neutral.</em></p>
+<p><strong>4.</strong> <em>A little bit satisfied.</em></p>
+<p><strong>5.</strong> <em>Satisfied.</em></p>
+</div></blockquote>
+<p><strong>What statistical tool is suitable for analyzing your A/B testing data?</strong></p>
+<p><strong>A.</strong> Binary Logistic regression.</p>
+<p><strong>B.</strong> Ordinal Logistic regression.</p>
+<p><strong>C.</strong> Multinomial Logistic regression.</p>
+<p><strong>D.</strong> A <span class="math notranslate nohighlight">\(Z\)</span>-test for two proportions.</p>
+</section>
+</div>
+<p>Recall the <strong>beauty of randomization</strong>: it will make the regressor <span class="math notranslate nohighlight">\(X\)</span> inherently independent of any possible confounding variables. Therefore, we will have the license to infer <strong>causality</strong>, rather than some weaker word such as <strong>association</strong>.</p>
+<section id="what-if-we-want-to-test-more-than-two-experimental-treatments-in-our-a-b-testing">
+<h3>What if we want to test more than two experimental treatments in our A/B testing?<a class="headerlink" href="#what-if-we-want-to-test-more-than-two-experimental-treatments-in-our-a-b-testing" title="Permalink to this heading">#</a></h3>
+<p>In that case, the experiment will be called <strong>A/B/n testing</strong>. Note the <strong>n</strong> is not related to the sample size <span class="math notranslate nohighlight">\(n\)</span>. They just decided to call the testing that way.</p>
+</section>
+</section>
+<section id="a-b-n-testing-with-a-continuous-response">
+<h2>2. A/B/n Testing with a Continuous Response<a class="headerlink" href="#a-b-n-testing-with-a-continuous-response" title="Permalink to this heading">#</a></h2>
+<p>In <a class="reference internal" href="lecture2_simpson_confounding.html"><span class="doc">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</span></a>, we firstly mentioned <strong>Analysis of Variance (ANOVA)</strong> as one possible <strong>A/B testing</strong> approach. This is just one specific class of OLS model (<strong>a continuous response versus a categorical regressor</strong>). <strong>ANOVA</strong> can also be used in <strong>A/B/n testing</strong>. We will explore this model via an example.</p>
+<section id="the-website-dataset">
+<h3>2.1. The Website Dataset<a class="headerlink" href="#the-website-dataset" title="Permalink to this heading">#</a></h3>
+<p>In your <strong>A/B/n testing</strong>, the next <span class="math notranslate nohighlight">\(n = 72\)</span> visitors to your website will get assigned to a random version that varies in six possible ways according to combinations of the following variables:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Font</span></code>: A <strong>factor-type</strong> variable with three levels (<code class="docutils literal notranslate"><span class="pre">small</span></code>, <code class="docutils literal notranslate"><span class="pre">medium</span></code>, and <code class="docutils literal notranslate"><span class="pre">large</span></code>).</p></li>
+<li><p>Button <code class="docutils literal notranslate"><span class="pre">Colour</span></code>: A <strong>factor-type</strong> variable with two levels (<code class="docutils literal notranslate"><span class="pre">Red</span></code> and <code class="docutils literal notranslate"><span class="pre">Blue</span></code>).</p></li>
+</ul>
+<p>Your outcome of interest <span class="math notranslate nohighlight">\(Y\)</span> is the <strong>continuous</strong> <code class="docutils literal notranslate"><span class="pre">Duration</span></code> of the visit recorded for each visitor in minutes. The experimental data is contained in <code class="docutils literal notranslate"><span class="pre">AB_data</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ABn_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read_csv</span><span class="p">(</span><span class="s">&quot;../data/ABn_data.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">show_col_types</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">ABn_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ABn_data</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">   </span><span class="nf">mutate</span><span class="p">(</span><span class="n">Colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">Colour</span><span class="p">),</span><span class="w"> </span><span class="n">Font</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">Font</span><span class="p">))</span>
+<span class="n">ABn_data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 72 × 3</caption>
+<thead>
+	<tr><th scope=col>Duration</th><th scope=col>Colour</th><th scope=col>Font</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td> 90</td><td>Red</td><td>Small </td></tr>
+	<tr><td> 95</td><td>Red</td><td>Large </td></tr>
+	<tr><td>107</td><td>Red</td><td>Medium</td></tr>
+	<tr><td> 92</td><td>Red</td><td>Small </td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>126</td><td>Blue</td><td>Medium</td></tr>
+	<tr><td>116</td><td>Blue</td><td>Small </td></tr>
+	<tr><td>136</td><td>Blue</td><td>Large </td></tr>
+	<tr><td>133</td><td>Blue</td><td>Medium</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="experimental-terminology">
+<h3>2.2. Experimental Terminology<a class="headerlink" href="#experimental-terminology" title="Permalink to this heading">#</a></h3>
+<p>The field of Design and Analysis of Experiments has some <strong>key jargon</strong> we need to learn. In the context of this problem, we will introduce some experimental design terminology.</p>
+<p>Note that each subgroup of visitors sees one version of the website (<strong>all possible six pairwise combinations</strong> of <code class="docutils literal notranslate"><span class="pre">Small</span></code>/<code class="docutils literal notranslate"><span class="pre">Medium</span></code>/<code class="docutils literal notranslate"><span class="pre">Large</span></code> fonts and <code class="docutils literal notranslate"><span class="pre">Blue</span></code>/<code class="docutils literal notranslate"><span class="pre">Red</span></code> button colours). Therefore, let us make a list of experimental characteristics:</p>
+<ul class="simple">
+<li><p>The variables <code class="docutils literal notranslate"><span class="pre">Font</span></code> and <code class="docutils literal notranslate"><span class="pre">Colour</span></code> are called <strong>experimental factors</strong>.</p></li>
+<li><p>We consider an experiment with six <strong>treatments</strong> (i.e., the six possible pairwise level combinations of <code class="docutils literal notranslate"><span class="pre">Font</span></code> and <code class="docutils literal notranslate"><span class="pre">Colour</span></code>). This characteristic makes our experiment an <strong>A/B/n testing</strong> (more than two treatments!).</p></li>
+</ul>
+<ul class="simple">
+<li><p>Each visitor is called an <strong>experimental unit</strong>.</p></li>
+<li><p>Since we have more than one <strong>experimental unit</strong> by <strong>treatment</strong>, the experiment involves <strong>replicates</strong> (<strong><span class="math notranslate nohighlight">\(72 / 6 = 12\)</span> per treatment</strong>).</p></li>
+<li><p>Because the same number of <strong>experimental units</strong> is assigned to each treatment, the experiment is <strong>balanced</strong>.</p></li>
+<li><p>The <strong>experimental units</strong> were <strong>randomized</strong> to either one of the six <strong>experimental treatments</strong>.</p></li>
+</ul>
+<ul class="simple">
+<li><p>All six possible combinations of factor levels were used, so the experimental design is called a <strong>full factorial</strong> design.</p></li>
+<li><p>We might specifically call this a <span class="math notranslate nohighlight">\(2 \times 3\)</span> <strong>full factorial</strong> design, since there are two factors (<code class="docutils literal notranslate"><span class="pre">Colour</span></code> with two levels and <code class="docutils literal notranslate"><span class="pre">Font</span></code> with three levels).</p></li>
+</ul>
+</section>
+<section id="main-statistical-inquiry">
+<h3>2.3. Main Statistical Inquiry<a class="headerlink" href="#main-statistical-inquiry" title="Permalink to this heading">#</a></h3>
+<p>Once we have defined our experimental terminology, our main statistical inquiry is:</p>
+<blockquote>
+<div><p><strong>What experimental treatment maximizes the <code class="docutils literal notranslate"><span class="pre">Duration</span></code> of the visit?</strong> Suppose the <strong>control treatment</strong> corresponds to the <strong>small font and blue colour</strong>.</p>
+</div></blockquote>
+</section>
+<section id="exploratory-data-analysis">
+<h3>2.4. Exploratory Data Analysis<a class="headerlink" href="#exploratory-data-analysis" title="Permalink to this heading">#</a></h3>
+<p>As in any other statistical analysis, we need to start with an exploratory data analysis (EDA). Since we have two <strong>experimental factors</strong> and a <strong>continuous outcome</strong>, we will use side-by-side boxplots.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">repr.plot.width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">14</span><span class="p">)</span>
+
+<span class="n">ABn_boxplots</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ggplot</span><span class="p">(</span><span class="n">ABn_data</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_boxplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">Font</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colour</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">legend.position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bottom&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">legend.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">margin</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;cm&quot;</span><span class="p">)),</span><span class="w"> </span>
+<span class="w">    </span><span class="n">legend.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">,</span><span class="w"> </span><span class="n">margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">margin</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;cm&quot;</span><span class="p">)),</span>
+<span class="w">    </span><span class="n">legend.key.size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">unit</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;cm&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Side-by-Side Boxplots of Six Experimental Treatments&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Font&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Visit Duration (min)&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ABn_boxplots</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/d80992ded543e29d9056bf5d265d09c7f3589eb3686f90cc75810c96bd3cec6c.png"><img alt="../_images/d80992ded543e29d9056bf5d265d09c7f3589eb3686f90cc75810c96bd3cec6c.png" src="../_images/d80992ded543e29d9056bf5d265d09c7f3589eb3686f90cc75810c96bd3cec6c.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>We can <strong>graphically</strong> see that the treatments corresponding to the blue colour with medium font and the blue colour with large font maximize our outcome of interest.</p>
+</section>
+<section id="initial-data-modelling">
+<h3>2.5. Initial Data Modelling<a class="headerlink" href="#initial-data-modelling" title="Permalink to this heading">#</a></h3>
+<p>We will proceed with some statistical modelling. The first model is called a <strong>two-way ANOVA with main effects only</strong>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>A <strong>main effect</strong> refers to a standalone regressor in our model.</p>
+</div>
+<p>In <strong>experimental notation</strong>, the response <span class="math notranslate nohighlight">\(Y_{i, j, k}\)</span> for the <span class="math notranslate nohighlight">\(i\)</span>th <code class="docutils literal notranslate"><span class="pre">Font</span></code> level, the <span class="math notranslate nohighlight">\(j\)</span>th <code class="docutils literal notranslate"><span class="pre">Colour</span></code> level, and the <span class="math notranslate nohighlight">\(k\)</span>th <strong>experimental unit</strong> is decomposed as:</p>
+<div class="math notranslate nohighlight">
+\[Y_{i,j,k} = \mu_{i} + \tau_{j} + \varepsilon_{i, j, k},\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu_i\)</span> is the main effect on the mean response of the <span class="math notranslate nohighlight">\(i\)</span>th <code class="docutils literal notranslate"><span class="pre">Font</span></code> level (for <span class="math notranslate nohighlight">\(i = 1, 2, 3\)</span>),</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau_{j}\)</span> is the main effect on the mean response of the <span class="math notranslate nohighlight">\(j\)</span>th <code class="docutils literal notranslate"><span class="pre">Colour</span></code> level (for <span class="math notranslate nohighlight">\(j = 1, 2\)</span>), and</p></li>
+<li><p><span class="math notranslate nohighlight">\(\varepsilon_{i, j, k}\)</span> is the error component assumed as independent, normally distributed, with mean zero and common variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> (for <span class="math notranslate nohighlight">\(k = 1, \dots, 12\)</span>).</p></li>
+</ul>
+<p>We can fit this model with the <code class="docutils literal notranslate"><span class="pre">lm()</span></code> function.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Releveling factors according to the control treatment</span>
+<span class="n">ABn_data</span><span class="o">$</span><span class="n">Colour</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">fct_relevel</span><span class="p">(</span>
+<span class="w">  </span><span class="n">ABn_data</span><span class="o">$</span><span class="n">Colour</span><span class="p">,</span>
+<span class="w">  </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Red&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">ABn_data</span><span class="o">$</span><span class="n">Font</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">fct_relevel</span><span class="p">(</span>
+<span class="w">  </span><span class="n">ABn_data</span><span class="o">$</span><span class="n">Font</span><span class="p">,</span>
+<span class="w">  </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Small&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Medium&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Large&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_ABn_main_effects</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Font</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Colour</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ABn_data</span><span class="p">)</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">OLS_ABn_main_effects</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 4 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td>103.64</td><td>3.32</td><td>31.20</td><td>0.00</td><td> 97.01</td><td>110.27</td></tr>
+	<tr><td>FontMedium </td><td> 12.75</td><td>4.07</td><td> 3.13</td><td>0.00</td><td>  4.63</td><td> 20.87</td></tr>
+	<tr><td>FontLarge  </td><td>  7.67</td><td>4.07</td><td> 1.88</td><td>0.06</td><td> -0.45</td><td> 15.78</td></tr>
+	<tr><td>ColourRed  </td><td>-21.44</td><td>3.32</td><td>-6.46</td><td>0.00</td><td>-28.07</td><td>-14.82</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>The above <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> output only sheds light on the fact that the <strong>medium</strong> <code class="docutils literal notranslate"><span class="pre">Font</span></code> and <strong>red</strong> <code class="docutils literal notranslate"><span class="pre">Colour</span></code> are statistically significant with <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span> to the baseline levels (<strong>small</strong> and <strong>blue</strong>). Nonetheless, we might better use an <strong>ANOVA table</strong>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>ANOVA tables</strong> go hand-in-hand with randomized experiments. <strong>They are helpful to organize regression fits to factorial experiment data.</strong> The table decomposes the <strong>sum of squares</strong> (i.e., variability) for each <strong>experimental factor</strong>. To obtain these tables, we can use the function <code class="docutils literal notranslate"><span class="pre">anova()</span></code>.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">anova</span><span class="p">(</span><span class="n">OLS_ABn_main_effects</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A anova: 3 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>Df</th><th scope=col>Sum Sq</th><th scope=col>Mean Sq</th><th scope=col>F value</th><th scope=col>Pr(&gt;F)</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>Font</th><td> 2</td><td> 1977.44</td><td> 988.72</td><td> 4.98</td><td>0.01</td></tr>
+	<tr><th scope=row>Colour</th><td> 1</td><td> 8277.56</td><td>8277.56</td><td>41.69</td><td>0.00</td></tr>
+	<tr><th scope=row>Residuals</th><td>68</td><td>13501.44</td><td> 198.55</td><td>   NA</td><td>  NA</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>The previous table will allow us to test the following <strong>composite hypotheses</strong> (i.e., we test more than one parameter at the same time) by <strong>experimental factor</strong>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">Font</span></code></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0\text{: } \mu_1 = \mu_2 = \mu_3 \\
+H_a\text{: at least one pair } \mu_u \neq \mu_v \text{ with } u \neq v.
+\end{gather*}\end{split}\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">Colour</span></code></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0\text{: } \tau_1 = \tau_2 \\
+H_a\text{: } \tau_1 \neq \tau_2.
+\end{gather*}\end{split}\]</div>
+<p>With <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>, we can state that at least one pair of factor levels in <code class="docutils literal notranslate"><span class="pre">Font</span></code> is statistically different in terms of their mean responses. In the case of <code class="docutils literal notranslate"><span class="pre">Colour</span></code>, its two levels are statistically different in terms of their mean responses.</p>
+</section>
+<section id="data-modelling-with-interaction">
+<h3>2.6. Data Modelling with Interaction<a class="headerlink" href="#data-modelling-with-interaction" title="Permalink to this heading">#</a></h3>
+<p>As a <strong>general experimental guideline</strong>, we should consider the potential for <strong>interactions</strong> with two or more factors. A <strong>two-factor interaction plot</strong> will give us a graphical insight into a statistically significant interaction.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>A <strong>two-factor interaction plot</strong> has the continuous outcome of interest on the <span class="math notranslate nohighlight">\(y\)</span>-axis and the <strong>first factor</strong> levels on the <span class="math notranslate nohighlight">\(x\)</span>-axis. The plot illustrates lines whose nodes correspond to mean responses by factor level. We can also plot error bars by a node. There will be as many coloured lines as levels in the <strong>second factor</strong>.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ABn_int_plots</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ABn_data</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Font</span><span class="p">,</span><span class="w"> </span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colour</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colour</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Duration</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">stat_summary</span><span class="p">(</span><span class="n">fun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">geom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;point&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">stat_summary</span><span class="p">(</span><span class="n">fun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">geom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;line&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">stat_summary</span><span class="p">(</span><span class="n">fun.data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean_se</span><span class="p">,</span><span class="w"> </span><span class="n">geom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;errorbar&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">legend.position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bottom&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">legend.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">margin</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;cm&quot;</span><span class="p">)),</span><span class="w"> </span>
+<span class="w">    </span><span class="n">legend.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">,</span><span class="w"> </span><span class="n">margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">margin</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;cm&quot;</span><span class="p">))</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Interaction Plots&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Font&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Visit Duration (min)&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The interaction plot below corresponds to our case study. A graphical interaction will occur if one factor level (<code class="docutils literal notranslate"><span class="pre">Font</span></code>) differs by the level of the other factor (<code class="docutils literal notranslate"><span class="pre">Colour</span></code>) <strong>while the lines cross</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ABn_int_plots</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/48b9b5c9df03e4cf03e6d3e2a23237dc9434864e7cec9b6777eada0400808a66.png"><img alt="../_images/48b9b5c9df03e4cf03e6d3e2a23237dc9434864e7cec9b6777eada0400808a66.png" src="../_images/48b9b5c9df03e4cf03e6d3e2a23237dc9434864e7cec9b6777eada0400808a66.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>In this case, the lines by <code class="docutils literal notranslate"><span class="pre">Colour</span></code> level do not cross while we vary <code class="docutils literal notranslate"><span class="pre">Font</span></code> sizes. Hence, <strong>we do not have graphical evidence of a two-factor interaction</strong>.</p>
+<p>Now let us confirm the previous graphical result by fitting an OLS model that includes an interaction term, as shown below. This model is called a <strong>two-way ANOVA with interaction effects</strong>. This model includes both <strong>main effects</strong> and <strong>two-factor interaction terms</strong>. In <strong>experimental notation</strong>, the response <span class="math notranslate nohighlight">\(Y_{i, j, k}\)</span> for the <span class="math notranslate nohighlight">\(i\)</span>th <code class="docutils literal notranslate"><span class="pre">Font</span></code> level, the <span class="math notranslate nohighlight">\(j\)</span>th <code class="docutils literal notranslate"><span class="pre">Colour</span></code> level, and the <span class="math notranslate nohighlight">\(k\)</span>th <strong>experimental unit</strong> is decomposed as:</p>
+<div class="math notranslate nohighlight">
+\[Y_{i,j,k} = \mu_{i} + \tau_{j} + (\mu \tau)_{i, j} + \varepsilon_{i, j, k},\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu_i\)</span> is the main effect on the mean response of the <span class="math notranslate nohighlight">\(i\)</span>th <code class="docutils literal notranslate"><span class="pre">Font</span></code> level (for <span class="math notranslate nohighlight">\(i = 1, 2, 3\)</span>),</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau_{j}\)</span> is the main effect on the mean response of the <span class="math notranslate nohighlight">\(j\)</span>th <code class="docutils literal notranslate"><span class="pre">Colour</span></code> level (for <span class="math notranslate nohighlight">\(j = 1, 2\)</span>),</p></li>
+<li><p><span class="math notranslate nohighlight">\((\mu \tau)_{i, j}\)</span> is the interaction effect of both factors on the mean response of the <span class="math notranslate nohighlight">\(i\)</span>th and <span class="math notranslate nohighlight">\(j\)</span>th levels, and</p></li>
+<li><p><span class="math notranslate nohighlight">\(\varepsilon_{i, j, k}\)</span> is the error component assumed as independent, normally distributed, with mean zero and common variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> (for <span class="math notranslate nohighlight">\(k = 1, \dots, 12\)</span>).</p></li>
+</ul>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>The term <span class="math notranslate nohighlight">\((\mu \tau)_{i, j}\)</span> <strong>DOES NOT</strong> indicate that the main effects are multiplying each other. Mathematically, it is <strong>another</strong> modelling term.</p>
+</div>
+<p>We use <code class="docutils literal notranslate"><span class="pre">Duration</span> <span class="pre">~</span> <span class="pre">Colour</span> <span class="pre">*</span> <span class="pre">Font</span></code> as a <code class="docutils literal notranslate"><span class="pre">formula</span></code> argument in <code class="docutils literal notranslate"><span class="pre">lm()</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_ABn_interaction</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Colour</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Font</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ABn_data</span><span class="p">)</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">OLS_ABn_interaction</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 5</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)         </td><td> 98.58</td><td>3.98</td><td>24.77</td><td>0.00</td></tr>
+	<tr><td>ColourRed           </td><td>-11.33</td><td>5.63</td><td>-2.01</td><td>0.05</td></tr>
+	<tr><td>FontMedium          </td><td> 21.17</td><td>5.63</td><td> 3.76</td><td>0.00</td></tr>
+	<tr><td>FontLarge           </td><td> 14.42</td><td>5.63</td><td> 2.56</td><td>0.01</td></tr>
+	<tr><td>ColourRed:FontMedium</td><td>-16.83</td><td>7.96</td><td>-2.11</td><td>0.04</td></tr>
+	<tr><td>ColourRed:FontLarge </td><td>-13.50</td><td>7.96</td><td>-1.70</td><td>0.09</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Again, the <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> output might not be entirely informative. Hence, we use the function <code class="docutils literal notranslate"><span class="pre">anova()</span></code> to obtain the <strong>ANOVA table</strong> for this interaction model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">anova</span><span class="p">(</span><span class="n">OLS_ABn_interaction</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A anova: 4 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>Df</th><th scope=col>Sum Sq</th><th scope=col>Mean Sq</th><th scope=col>F value</th><th scope=col>Pr(&gt;F)</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>Colour</th><td> 1</td><td> 8277.56</td><td>8277.56</td><td>43.54</td><td>0.00</td></tr>
+	<tr><th scope=row>Font</th><td> 2</td><td> 1977.44</td><td> 988.72</td><td> 5.20</td><td>0.01</td></tr>
+	<tr><th scope=row>Colour:Font</th><td> 2</td><td>  953.44</td><td> 476.72</td><td> 2.51</td><td>0.09</td></tr>
+	<tr><th scope=row>Residuals</th><td>66</td><td>12548.00</td><td> 190.12</td><td>   NA</td><td>  NA</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>The previous table will allow us to test the same <strong>composite hypotheses</strong> for the previous main effects plus the ones corresponding to the <strong>two-factor interaction terms</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}H_0\text{: } (\mu \tau)_{1, 1} = (\mu \tau)_{1, 2} = (\mu \tau)_{2, 1} = (\mu \tau)_{2, 2} = (\mu \tau)_{3, 1} = (\mu \tau)_{3, 2} \\
+H_a\text{: at least one pair } (\mu \tau)_{u, v} \neq (\mu \tau)_{u', v'}.\end{split}\]</div>
+<p>The null hypothesis indicates that all interaction terms are on the status quo.</p>
+<p>With <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>, we have evidence to reject the null hypotheses for the main effects <strong>but not for the interaction effects</strong>. Hence, any specific interaction (among the six possible ones) <strong>DOES NOT</strong> stand out as statistically significant.</p>
+<div class="hint admonition">
+<p class="admonition-title">Interlude: Counting parameters for main effects and two-factor interactions</p>
+<p>The column <code class="docutils literal notranslate"><span class="pre">Df</span></code> in the <strong>ANOVA table</strong> represents the degrees of freedom for each class of modelling term. In a <strong>two-way ANOVA with interaction effects</strong>, if factor 1 has <span class="math notranslate nohighlight">\(p_{1}\)</span> levels and factor 2 has <span class="math notranslate nohighlight">\(p_{2}\)</span> levels then:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(p_1 - 1\)</span> degrees of freedom are needed for the main effect of factor 1.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p_2 - 1\)</span> degrees of freedom are needed for the main effect of factor 2.</p></li>
+<li><p><span class="math notranslate nohighlight">\((p_1 - 1) \times (p_2 - 1)\)</span> degrees of freedom are needed for the interaction between factor 1 and factor 2.</p></li>
+</ul>
+</div>
+</section>
+<section id="post-hoc-tests">
+<h3>2.7. Post-Hoc Tests<a class="headerlink" href="#post-hoc-tests" title="Permalink to this heading">#</a></h3>
+<p>Recall our main statistical inquiry:</p>
+<blockquote>
+<div><p><strong>What experimental treatment maximizes the <code class="docutils literal notranslate"><span class="pre">Duration</span></code> of the visit?</strong> Suppose the <strong>control treatment</strong> corresponds to the <strong>small font and blue colour</strong>.</p>
+</div></blockquote>
+<p>We will use the <strong>two-way ANOVA with interaction effects</strong> to answer this. However, we have only been able to answer whether the main or interaction effects are statistically significant or not <strong>in general</strong>. Therefore, we need to run <strong>post-hoc tests</strong>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The term “post hoc” means “after this” in Latin. A <strong>post hoc test</strong> in this class of experimental models refers to <strong>all possible pairwise comparisons among the levels of the main and interactions effects after the model is estimated</strong>. This matter involves <strong>multiple testing corrections.</strong></p>
+</div>
+<p>As discussed in <a class="reference internal" href="lecture1_multiple_comparisons.html"><span class="doc">Lecture 1 - Multiple Comparisons</span></a>, there is more than one multiple testing correction method. The same situation applies in ANOVA models. We will use the <strong>Tukey’s honestly significant differences (HSD)</strong>.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Tukey’s HSD keeps the <strong>family-wise error rate (FWER)</strong> at <span class="math notranslate nohighlight">\(\alpha\)</span> or below. <strong>This method is only designed for ANOVA models.</strong></p>
+</div>
+<p>We will use the function <code class="docutils literal notranslate"><span class="pre">TukeyHSD()</span></code> to run this method. The function needs an <code class="docutils literal notranslate"><span class="pre">aov()</span></code> object as an input. <strong>Function <code class="docutils literal notranslate"><span class="pre">aov()</span></code> is just an <code class="docutils literal notranslate"><span class="pre">lm()</span></code> wrapper specifically programmed for ANOVA models.</strong> It also has <code class="docutils literal notranslate"><span class="pre">formula</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> arguments. The <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> output is an <strong>ANOVA table</strong>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><code class="docutils literal notranslate"><span class="pre">TukeyHSD()</span></code> function also has a <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> output. We highlight the following:</p>
+<ul class="simple">
+<li><p>The output will show all the pairwise difference estimates (column <code class="docutils literal notranslate"><span class="pre">estimate</span></code>) among all main and interaction effect levels along with their corresponding confidence intervals (CIs) and adjusted <span class="math notranslate nohighlight">\(p\)</span>-values.</p></li>
+<li><p>The column <code class="docutils literal notranslate"><span class="pre">null.value</span></code> corresponds to the hypothesized status quo difference, i.e., a difference equal to zero in <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
+<li><p>An adjusted <span class="math notranslate nohighlight">\(p\text{-value} &lt; \alpha\)</span> indicates a statistically significant difference in a given level pair (column <code class="docutils literal notranslate"><span class="pre">contrast</span></code>) with significance level <span class="math notranslate nohighlight">\(\alpha\)</span>.</p></li>
+</ul>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_aov_ABn_interaction</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">aov</span><span class="p">(</span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Colour</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Font</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ABn_data</span><span class="p">)</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">OLS_aov_ABn_interaction</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 4 × 6</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>df</th><th scope=col>sumsq</th><th scope=col>meansq</th><th scope=col>statistic</th><th scope=col>p.value</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Colour     </td><td> 1</td><td> 8277.56</td><td>8277.56</td><td>43.54</td><td>0.00</td></tr>
+	<tr><td>Font       </td><td> 2</td><td> 1977.44</td><td> 988.72</td><td> 5.20</td><td>0.01</td></tr>
+	<tr><td>Colour:Font</td><td> 2</td><td>  953.44</td><td> 476.72</td><td> 2.51</td><td>0.09</td></tr>
+	<tr><td>Residuals  </td><td>66</td><td>12548.00</td><td> 190.12</td><td>   NA</td><td>  NA</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tidy_tukey</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tidy</span><span class="p">(</span><span class="nf">TukeyHSD</span><span class="p">(</span><span class="n">OLS_aov_ABn_interaction</span><span class="p">,</span><span class="w"> </span><span class="n">conf.level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.95</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="n">tidy_tukey</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 19 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>contrast</th><th scope=col>null.value</th><th scope=col>estimate</th><th scope=col>conf.low</th><th scope=col>conf.high</th><th scope=col>adj.p.value</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Colour     </td><td>Red-Blue              </td><td>0</td><td>-21.44</td><td>-27.93</td><td>-14.96</td><td>0.00</td></tr>
+	<tr><td>Font       </td><td>Medium-Small          </td><td>0</td><td> 12.75</td><td>  3.21</td><td> 22.29</td><td>0.01</td></tr>
+	<tr><td>Font       </td><td>Large-Small           </td><td>0</td><td>  7.67</td><td> -1.88</td><td> 17.21</td><td>0.14</td></tr>
+	<tr><td>Font       </td><td>Large-Medium          </td><td>0</td><td> -5.08</td><td>-14.63</td><td>  4.46</td><td>0.41</td></tr>
+	<tr><td>Colour:Font</td><td>Red:Small-Blue:Small  </td><td>0</td><td>-11.33</td><td>-27.86</td><td>  5.19</td><td>0.35</td></tr>
+	<tr><td>Colour:Font</td><td>Blue:Medium-Blue:Small</td><td>0</td><td> 21.17</td><td>  4.64</td><td> 37.69</td><td>0.00</td></tr>
+	<tr><td>Colour:Font</td><td>Red:Medium-Blue:Small </td><td>0</td><td> -7.00</td><td>-23.52</td><td>  9.52</td><td>0.81</td></tr>
+	<tr><td>Colour:Font</td><td>Blue:Large-Blue:Small </td><td>0</td><td> 14.42</td><td> -2.11</td><td> 30.94</td><td>0.12</td></tr>
+	<tr><td>Colour:Font</td><td>Red:Large-Blue:Small  </td><td>0</td><td>-10.42</td><td>-26.94</td><td>  6.11</td><td>0.44</td></tr>
+	<tr><td>Colour:Font</td><td>Blue:Medium-Red:Small </td><td>0</td><td> 32.50</td><td> 15.98</td><td> 49.02</td><td>0.00</td></tr>
+	<tr><td>Colour:Font</td><td>Red:Medium-Red:Small  </td><td>0</td><td>  4.33</td><td>-12.19</td><td> 20.86</td><td>0.97</td></tr>
+	<tr><td>Colour:Font</td><td>Blue:Large-Red:Small  </td><td>0</td><td> 25.75</td><td>  9.23</td><td> 42.27</td><td>0.00</td></tr>
+	<tr><td>Colour:Font</td><td>Red:Large-Red:Small   </td><td>0</td><td>  0.92</td><td>-15.61</td><td> 17.44</td><td>1.00</td></tr>
+	<tr><td>Colour:Font</td><td>Red:Medium-Blue:Medium</td><td>0</td><td>-28.17</td><td>-44.69</td><td>-11.64</td><td>0.00</td></tr>
+	<tr><td>Colour:Font</td><td>Blue:Large-Blue:Medium</td><td>0</td><td> -6.75</td><td>-23.27</td><td>  9.77</td><td>0.84</td></tr>
+	<tr><td>Colour:Font</td><td>Red:Large-Blue:Medium </td><td>0</td><td>-31.58</td><td>-48.11</td><td>-15.06</td><td>0.00</td></tr>
+	<tr><td>Colour:Font</td><td>Blue:Large-Red:Medium </td><td>0</td><td> 21.42</td><td>  4.89</td><td> 37.94</td><td>0.00</td></tr>
+	<tr><td>Colour:Font</td><td>Red:Large-Red:Medium  </td><td>0</td><td> -3.42</td><td>-19.94</td><td> 13.11</td><td>0.99</td></tr>
+	<tr><td>Colour:Font</td><td>Red:Large-Blue:Large  </td><td>0</td><td>-24.83</td><td>-41.36</td><td> -8.31</td><td>0.00</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Let us focus on the <strong>significant</strong> difference corresponding to the two-factor interaction, <strong>specifically that containing the control treatment blue <code class="docutils literal notranslate"><span class="pre">Colour</span></code> and small <code class="docutils literal notranslate"><span class="pre">Font</span></code> (our CONTROL treatment)</strong>. We can see that the <strong>largest positive estimated difference</strong> corresponds to <code class="docutils literal notranslate"><span class="pre">Blue:Medium-Blue:Small</span></code> with <span class="math notranslate nohighlight">\(21.17\)</span> and a 95% CI of <span class="math notranslate nohighlight">\([4.64, 37.69]\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tidy_tukey</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">adj.p.value</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">0.05</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="nf">grepl</span><span class="p">(</span><span class="s">&quot;Blue:Small&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">contrast</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>contrast</th><th scope=col>null.value</th><th scope=col>estimate</th><th scope=col>conf.low</th><th scope=col>conf.high</th><th scope=col>adj.p.value</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Colour:Font</td><td>Blue:Medium-Blue:Small</td><td>0</td><td>21.17</td><td>4.64</td><td>37.69</td><td>0</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p><strong>Hence, given the results of the A/B/n testing, the experimental treatment that maximizes the outcome of interest compared to the control treatment is the blue <code class="docutils literal notranslate"><span class="pre">Colour</span></code> with medium <code class="docutils literal notranslate"><span class="pre">Font</span></code>.</strong> Note <code class="docutils literal notranslate"><span class="pre">Colour</span></code> did not make any difference but the <code class="docutils literal notranslate"><span class="pre">Font</span></code>. This fact is consistent with our interaction plot!</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Other <code class="docutils literal notranslate"><span class="pre">aov()</span></code> post hoc tests are available through the <code class="docutils literal notranslate"><span class="pre">PostHocTest()</span></code> function via the package <code class="docutils literal notranslate"><span class="pre">DescTools</span></code>. Bonferroni correction is one of these alternative methods.</p>
+</div>
+</section>
+</section>
+<section id="blocking">
+<h2>3. Blocking<a class="headerlink" href="#blocking" title="Permalink to this heading">#</a></h2>
+<p>The previous example involved two experimental factors (<code class="docutils literal notranslate"><span class="pre">Font</span></code> and <code class="docutils literal notranslate"><span class="pre">Colour</span></code>). Nonetheless, these two factors were our primary interest in the A/B testing. In some other cases, another class of factor could arise <strong>and it will not be necessarily of our primary interest, nor we can control it</strong>! These are the <strong>blocking factors</strong>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>A <strong>blocking factor</strong> allows us to group our <strong>experimental units</strong> by common characteristics. Note that the experimenter does not have control over the blocking factor. <strong>They just consider it as a grouping factor.</strong></p>
+<p>These are some examples of blocking:</p>
+<ul class="simple">
+<li><p>Grouping the experimental units as <strong>batches of material</strong>.</p></li>
+<li><p>Grouping the experimental units by <strong>time periods</strong> during which the A/B testing occurs.</p></li>
+<li><p>Grouping our experimental units by <strong>working shifts</strong>.</p></li>
+</ul>
+</div>
+<p>One of the greatest statisticians who made important contributions to the field of Design and Analysis of Experiments was George E. P. Box (1919-2013). He is famous for his phrase: <a class="reference external" href="https://rss.onlinelibrary.wiley.com/doi/pdf/10.1111/j.1740-9713.2010.00442.x">“<strong>Essentially all models are wrong, but some are useful.</strong>”</a> However, he also has another great phrase: “<strong>Block what you can, randomize what you cannot.</strong>”</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Essentially, this phrase implicates the following:</p>
+<ul class="simple">
+<li><p>The <strong>core idea</strong> of blocking is removing the effect of secondary measurable variables from our response of interest. Hence, our statistical model could shed light on some statistical <strong>association/causation</strong> between the levels of a secondary blocking factor and our response of interest.</p></li>
+<li><p>On the other hand, <strong>experimental treatment</strong> randomization takes care of other nuisance variables, which we cannot measure.</p></li>
+</ul>
+</div>
+<section id="blocking-procedure">
+<h3>3.1. Blocking Procedure<a class="headerlink" href="#blocking-procedure" title="Permalink to this heading">#</a></h3>
+<p>So far, we have been discussing experiments where all of our experimental units are directly randomized to some treatment. Nevertheless, blocking involves a two-step process as follows.</p>
+<ol class="arabic simple">
+<li><p>Stratify your experimental units into homogeneous blocks. For instance, this stratification might be some relevant demographic variable in the case of human beings. Each stratum will be a block.</p></li>
+<li><p>Randomize the units to the experimental treatments of interest within each block.</p></li>
+</ol>
+</section>
+<section id="simulation-setup">
+<h3>3.2. Simulation Setup<a class="headerlink" href="#simulation-setup" title="Permalink to this heading">#</a></h3>
+<p>To get a handle on what blocking does, let us do a numerical experiment.</p>
+<div class="admonition-main-statistical-inquiry admonition">
+<p class="admonition-title">Main statistical inquiry</p>
+<p>Suppose you want to run an <strong>A/B testing</strong> on a <strong>subscription website</strong> to experiment with a new layout (i.e., the <strong>experimental treatment</strong>) to increase the mean duration time (hours) on your website (i.e., the <strong>response</strong>). You will compare this new layout versus the existing one (i.e., the <strong>control treatment</strong>). Thus, you will have an <strong>experimental factor of interest</strong> with two levels: <strong>current</strong> versus <strong>new</strong> layout.</p>
+</div>
+<div class="admonition-experimental-limitations admonition">
+<p class="admonition-title">Experimental Limitations</p>
+<p>From the company’s financial perspective, <strong>A/B testing</strong> is costly. Hence, they will only restrict the experiment to a sample of <span class="math notranslate nohighlight">\(n = 200\)</span> subscribers.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">134</span><span class="p">)</span><span class="w"> </span><span class="c1"># Global reproducibility</span>
+
+<span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">200</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition-blocking-arrangement admonition">
+<p class="admonition-title">Blocking Arrangement</p>
+<p>Since this is a subscription website, assume we have access to <strong>specific demographic categories</strong> on our sampled subscribers. More particularly, there are ten demographic categories. We will take these categories as <strong>blocks</strong>. Therefore, our block-based A/B testing will be <strong>balanced</strong>, i.e., an equal number of sampled subscribers by block.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">num_block</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10</span>
+<span class="n">size_block</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">num_block</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="building-our-synthetic-data">
+<h3>3.3. Building our Synthetic Data<a class="headerlink" href="#building-our-synthetic-data" title="Permalink to this heading">#</a></h3>
+<p>As done in <a class="reference internal" href="lecture2_simpson_confounding.html"><span class="doc">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</span></a>, we will start by building our synthetic data (response and regressors). We already clarified our case will have ten demographic categories (or <strong>blocks</strong>). Each one of these categories will have <strong>a different mean duration time on your website</strong>. For the <span class="math notranslate nohighlight">\(i\)</span>th subscriber in the <span class="math notranslate nohighlight">\(j\)</span>th block, the response <span class="math notranslate nohighlight">\(Y_{i,j}\)</span> will be decomposed and simulated as</p>
+<div class="math notranslate nohighlight">
+\[Y_{i, j} = 8 + \alpha_{D_{j}} + \theta I_{\text{trt},i} + \varepsilon_{i, j},\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Y_{i,j}\)</span> is the subscriber’s duration time on the website.</p></li>
+<li><p>8 hours is the average duration time on the website for all the <strong>current subscribers</strong>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha_{D_{j}}\)</span> is the <span class="math notranslate nohighlight">\(j\)</span>th block effect <strong>difference</strong> (with respect to previous average duration time) which will take on ten values (depending on which block the subscriber belongs to, i.e., <span class="math notranslate nohighlight">\(j = 1, \dots, 10\)</span>). <strong>The between-block variance will be <span class="math notranslate nohighlight">\(\sigma_D^2 = 2.5^ 2\)</span>.</strong></p></li>
+<li><p><span class="math notranslate nohighlight">\(\theta\)</span> is our <strong>experimental treatment effect of interest</strong>, i.e., by how much the response increases/decreases with the <code class="docutils literal notranslate"><span class="pre">new</span></code> layout compared to the <code class="docutils literal notranslate"><span class="pre">current</span></code> one.</p></li>
+</ul>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\varepsilon_{i,j}\)</span> is normally distributed <strong>random noise</strong> with mean zero and variance <span class="math notranslate nohighlight">\(\sigma^2 = 0.8^ 2\)</span> (<strong>this is the within-block variance</strong>).</p></li>
+<li><p><span class="math notranslate nohighlight">\(I_{\text{trt},i}\)</span> is the indicator variable set up as</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+I_{\text{trt},i} =
+\begin{cases}
+1 \; \; \; \; \mbox{if the subscriber was assigned to the } \texttt{new} \mbox{ layout},\\
+0 \; \; \; \; 	\mbox{otherwise.}
+\end{cases}
+\end{split}\]</div>
+<p>We begin by simulating the ten values <span class="math notranslate nohighlight">\(\alpha_{D_{i, j}}\)</span>. They will be ten fixed values coming from a normal distribution with <strong>mean zero</strong> and between-block variance <span class="math notranslate nohighlight">\(\sigma_D^2 = 2.5^ 2\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rnorm</span><span class="p">(</span><span class="n">num_block</span><span class="p">,</span><span class="w"> </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2.5</span><span class="p">)</span>
+<span class="nf">round</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>-2.101</li><li>2.956</li><li>0.698</li><li>-0.877</li><li>-3.195</li><li>1.541</li><li>4.831</li><li>-0.132</li><li>0.633</li><li>3.453</li></ol>
+</div></div>
+</div>
+<p>We also assign the <strong>within-block standard deviation</strong>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sigma</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0.8</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>And our experimental treatment effect of interest (the <code class="docutils literal notranslate"><span class="pre">new</span></code> layout increases the response by 0.5 hours compared to the <code class="docutils literal notranslate"><span class="pre">current</span></code> layout):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0.5</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, we will create a <strong>discrete probability distribution</strong> to define how the subscriber population is distributed across the demographic strata.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">dmg_dist</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">seq</span><span class="p">(</span><span class="n">from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_block</span><span class="p">)</span>
+<span class="n">dmg_dist</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">dmg_dist</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">dmg_dist</span><span class="p">)</span>
+<span class="nf">round</span><span class="p">(</span><span class="n">dmg_dist</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="nf">sum</span><span class="p">(</span><span class="n">dmg_dist</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>0.17</li><li>0.15</li><li>0.14</li><li>0.12</li><li>0.11</li><li>0.09</li><li>0.08</li><li>0.06</li><li>0.05</li><li>0.03</li></ol>
+</div><div class="output text_html">1</div></div>
+</div>
+<p>Thus; 17% of the population belongs to demographic <code class="docutils literal notranslate"><span class="pre">1</span></code>, 15% to demographic <code class="docutils literal notranslate"><span class="pre">2</span></code>, 14% to demographic <code class="docutils literal notranslate"><span class="pre">3</span></code>, etc.</p>
+</section>
+<section id="experiment-a-without-blocking">
+<h3>3.4. Experiment A: Without Blocking<a class="headerlink" href="#experiment-a-without-blocking" title="Permalink to this heading">#</a></h3>
+<p>Let us assume we obtain our sample of <span class="math notranslate nohighlight">\(n = 200\)</span> subscribers, and we randomly assign them to either one of the experimental treatments of interest (<code class="docutils literal notranslate"><span class="pre">treat_exp_A</span></code>) <strong>without taking into account the demographic blocks they belong to</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">)</span>
+
+<span class="c1"># We directly sample n = 200 subscribers from the population</span>
+<span class="c1"># Balanced randomization by experimental treatment of interest (no blocking!)</span>
+<span class="n">treat_exp_A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">)))</span>
+
+<span class="c1"># We need to simulate the demographic category (1 to 10) to construct our response y using </span>
+<span class="c1"># the discrete probability distribution dmg_dist!</span>
+<span class="n">dmg_exp_A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="n">num_block</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dmg_dist</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">)</span>
+
+<span class="c1"># Building our responses for experiment A according to our previous equation</span>
+<span class="n">y_exp_A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">alpha</span><span class="p">[</span><span class="n">dmg_exp_A</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">theta</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">treat_exp_A</span><span class="p">,</span><span class="w"> </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Our simulated data for <strong>experiment A</strong> is the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">data_exp_A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tibble</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">treat_exp_A</span><span class="p">,</span><span class="w"> </span><span class="n">dmg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">dmg_exp_A</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_exp_A</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">   </span><span class="nf">mutate</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;New Layout&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Current Layout&quot;</span><span class="p">)))</span>
+<span class="n">data_exp_A</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 200 × 3</caption>
+<thead>
+	<tr><th scope=col>x</th><th scope=col>dmg</th><th scope=col>y</th></tr>
+	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>New Layout</td><td>7</td><td>13.605402</td></tr>
+	<tr><td>New Layout</td><td>7</td><td>11.835148</td></tr>
+	<tr><td>New Layout</td><td>6</td><td>10.475998</td></tr>
+	<tr><td>New Layout</td><td>5</td><td> 4.683586</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>Current Layout</td><td>1</td><td> 4.919427</td></tr>
+	<tr><td>Current Layout</td><td>3</td><td> 9.636866</td></tr>
+	<tr><td>Current Layout</td><td>2</td><td>12.277997</td></tr>
+	<tr><td>New Layout    </td><td>1</td><td> 7.338009</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="experiment-b-with-blocking">
+<h3>3.5. Experiment B: With Blocking<a class="headerlink" href="#experiment-b-with-blocking" title="Permalink to this heading">#</a></h3>
+<p>Now, let us randomize our treatments of interest within each one of the ten blocks. <strong>There is no need to simulate the demographic category in this case since we exactly need 20 sampled subscribers per block.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">treat_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NULL</span>
+<span class="n">dmg_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NULL</span>
+
+<span class="nf">for </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">num_block</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="c1"># Each block has own balanced randomization</span>
+<span class="w">  </span><span class="n">treat_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">treat_exp_B</span><span class="p">,</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span>
+<span class="w">    </span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">size_block</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">    </span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">size_block</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)))</span>
+
+<span class="w">  </span><span class="n">dmg_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">dmg_exp_B</span><span class="p">,</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">size_block</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="c1"># Building our responses for experiment B according to our previous equation</span>
+<span class="n">y_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">alpha</span><span class="p">[</span><span class="n">dmg_exp_B</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">theta</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">treat_exp_B</span><span class="p">,</span><span class="w"> </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Our simulated data for <strong>experiment B</strong> is the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">data_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tibble</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">treat_exp_B</span><span class="p">),</span><span class="w"> </span><span class="n">dmg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">dmg_exp_B</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_exp_B</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">   </span><span class="nf">mutate</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;New Layout&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Current Layout&quot;</span><span class="p">)))</span>
+<span class="n">data_exp_B</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 200 × 3</caption>
+<thead>
+	<tr><th scope=col>x</th><th scope=col>dmg</th><th scope=col>y</th></tr>
+	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Current Layout</td><td>1</td><td>6.151177</td></tr>
+	<tr><td>New Layout    </td><td>1</td><td>5.371058</td></tr>
+	<tr><td>Current Layout</td><td>1</td><td>5.009473</td></tr>
+	<tr><td>New Layout    </td><td>1</td><td>6.584605</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>Current Layout</td><td>10</td><td>10.56169</td></tr>
+	<tr><td>New Layout    </td><td>10</td><td>12.59774</td></tr>
+	<tr><td>New Layout    </td><td>10</td><td>11.96537</td></tr>
+	<tr><td>Current Layout</td><td>10</td><td>11.08343</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="data-analysis">
+<h3>3.6. Data Analysis<a class="headerlink" href="#data-analysis" title="Permalink to this heading">#</a></h3>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Labels <strong>A</strong> and <strong>B</strong> for our experimental designs <strong>ARE NOT</strong> related to the name A/B testing.</p>
+</div>
+<p>We will use our simulated datasets <code class="docutils literal notranslate"><span class="pre">data_exp_A</span></code> and <code class="docutils literal notranslate"><span class="pre">data_exp_B</span></code> to fit the corresponding regression models. We will follow three modelling strategies.</p>
+<section id="experiment-a-raw-model">
+<h4>Experiment A: Raw Model<a class="headerlink" href="#experiment-a-raw-model" title="Permalink to this heading">#</a></h4>
+<p>This model will only regress the <code class="docutils literal notranslate"><span class="pre">y</span></code> on <code class="docutils literal notranslate"><span class="pre">x</span></code> (<strong>current</strong> versus <strong>new</strong> layout). This model is <strong>STATISTICALLY TERRIBLE</strong> since the regression coefficient of interest is not even significant! The only significant estimate is the one for the baseline <code class="docutils literal notranslate"><span class="pre">(Intercept)</span></code>, which is <span class="math notranslate nohighlight">\(8.10\)</span>. <strong>This is happening because we are not capturing the right systematic component.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">exp_A_raw_model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data_exp_A</span><span class="p">)</span><span class="w"> </span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">exp_A_raw_model</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td>8.10</td><td>0.26</td><td>31.32</td><td>0.00</td><td> 7.59</td><td>8.61</td></tr>
+	<tr><td>xNew Layout</td><td>0.56</td><td>0.37</td><td> 1.54</td><td>0.12</td><td>-0.16</td><td>1.29</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="experiment-a-model-with-post-hoc-adjustment-for-demographics">
+<h4>Experiment A: Model with Post-Hoc Adjustment for Demographics<a class="headerlink" href="#experiment-a-model-with-post-hoc-adjustment-for-demographics" title="Permalink to this heading">#</a></h4>
+<p>This model still uses the sample from <strong>experiment A</strong>, but we also include the sample demographic category <code class="docutils literal notranslate"><span class="pre">dmg</span></code> as a regressor. We have an accurate and precise estimate of <span class="math notranslate nohighlight">\(\theta\)</span> of <span class="math notranslate nohighlight">\(0.42\)</span> whose 95% confidence interval (CI) is <span class="math notranslate nohighlight">\([0.20, 0.64]\)</span>. Note the <code class="docutils literal notranslate"><span class="pre">(Intercept)</span></code> estimate will include the baseline time plus the effect of the demographic category <code class="docutils literal notranslate"><span class="pre">1.</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15</span><span class="p">)</span>
+
+<span class="n">exp_A_adj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dmg</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data_exp_A</span><span class="p">)</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">exp_A_adj</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 11 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td> 5.89</td><td>0.13</td><td>43.86</td><td>0</td><td> 5.63</td><td> 6.16</td></tr>
+	<tr><td>xNew Layout</td><td> 0.42</td><td>0.11</td><td> 3.72</td><td>0</td><td> 0.20</td><td> 0.64</td></tr>
+	<tr><td>dmg2       </td><td> 5.13</td><td>0.19</td><td>26.69</td><td>0</td><td> 4.75</td><td> 5.51</td></tr>
+	<tr><td>dmg3       </td><td> 2.85</td><td>0.19</td><td>14.67</td><td>0</td><td> 2.46</td><td> 3.23</td></tr>
+	<tr><td>dmg4       </td><td> 1.21</td><td>0.19</td><td> 6.22</td><td>0</td><td> 0.82</td><td> 1.59</td></tr>
+	<tr><td>dmg5       </td><td>-1.03</td><td>0.19</td><td>-5.30</td><td>0</td><td>-1.41</td><td>-0.65</td></tr>
+	<tr><td>dmg6       </td><td> 3.71</td><td>0.24</td><td>15.27</td><td>0</td><td> 3.23</td><td> 4.19</td></tr>
+	<tr><td>dmg7       </td><td> 6.93</td><td>0.21</td><td>32.68</td><td>0</td><td> 6.51</td><td> 7.35</td></tr>
+	<tr><td>dmg8       </td><td> 1.74</td><td>0.26</td><td> 6.72</td><td>0</td><td> 1.23</td><td> 2.25</td></tr>
+	<tr><td>dmg9       </td><td> 2.93</td><td>0.26</td><td>11.28</td><td>0</td><td> 2.42</td><td> 3.45</td></tr>
+	<tr><td>dmg10      </td><td> 5.33</td><td>0.46</td><td>11.54</td><td>0</td><td> 4.42</td><td> 6.24</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="experiment-b-model-with-blocking">
+<h4>Experiment B: Model with Blocking<a class="headerlink" href="#experiment-b-model-with-blocking" title="Permalink to this heading">#</a></h4>
+<p>This model uses our data coming from the blocking design. It includes <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">dmg</span></code> as regressors. Again, we have an accurate and precise estimate of <span class="math notranslate nohighlight">\(\theta\)</span> of <span class="math notranslate nohighlight">\(0.63\)</span> whose 95% CI is <span class="math notranslate nohighlight">\([0.42, 0.84]\)</span>. Note the <code class="docutils literal notranslate"><span class="pre">(Intercept)</span></code> estimate will include the baseline time plus the effect of the demographic category <code class="docutils literal notranslate"><span class="pre">1.</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dmg</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data_exp_B</span><span class="p">)</span><span class="w"> </span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">exp_B</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 11 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td> 5.71</td><td>0.18</td><td>32.24</td><td>0</td><td> 5.36</td><td> 6.06</td></tr>
+	<tr><td>xNew Layout</td><td> 0.63</td><td>0.11</td><td> 5.90</td><td>0</td><td> 0.42</td><td> 0.84</td></tr>
+	<tr><td>dmg2       </td><td> 5.35</td><td>0.24</td><td>22.40</td><td>0</td><td> 4.88</td><td> 5.82</td></tr>
+	<tr><td>dmg3       </td><td> 2.80</td><td>0.24</td><td>11.72</td><td>0</td><td> 2.33</td><td> 3.27</td></tr>
+	<tr><td>dmg4       </td><td> 1.48</td><td>0.24</td><td> 6.21</td><td>0</td><td> 1.01</td><td> 1.95</td></tr>
+	<tr><td>dmg5       </td><td>-1.09</td><td>0.24</td><td>-4.56</td><td>0</td><td>-1.56</td><td>-0.62</td></tr>
+	<tr><td>dmg6       </td><td> 3.66</td><td>0.24</td><td>15.32</td><td>0</td><td> 3.19</td><td> 4.13</td></tr>
+	<tr><td>dmg7       </td><td> 7.45</td><td>0.24</td><td>31.18</td><td>0</td><td> 6.98</td><td> 7.92</td></tr>
+	<tr><td>dmg8       </td><td> 2.72</td><td>0.24</td><td>11.40</td><td>0</td><td> 2.25</td><td> 3.19</td></tr>
+	<tr><td>dmg9       </td><td> 2.76</td><td>0.24</td><td>11.55</td><td>0</td><td> 2.29</td><td> 3.23</td></tr>
+	<tr><td>dmg10      </td><td> 5.82</td><td>0.24</td><td>24.39</td><td>0</td><td> 5.35</td><td> 6.30</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="so-where-are-we-standing">
+<h4>So, where are we standing?<a class="headerlink" href="#so-where-are-we-standing" title="Permalink to this heading">#</a></h4>
+<p>It seems like <strong>analyzing</strong> the data in a way that acknowledges the demographic stratification is important for two strategies: <strong>Model with Post-Hoc Adjustment for Demographics</strong> and <strong>Model with Blocking</strong>. Therefore, <strong>does a model with a blocking design have any advantage?</strong></p>
+<p>Let us take a step further from our simulation in <a class="reference internal" href="lecture2_simpson_confounding.html"><span class="doc">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</span></a> and obtain many samples <strong>so we can deliver OVERALL PERFORMANCE METRICS</strong> for our Monte Carlo simulation.</p>
+</section>
+</section>
+<section id="running-more-replicates">
+<h3>3.7. Running More Replicates<a class="headerlink" href="#running-more-replicates" title="Permalink to this heading">#</a></h3>
+<p>We can think of a single simulated dataset as a <strong>demo</strong> per strategy. Nonetheless, if we repeat our previous data simulations a considerable number of times (e.g., 500 replicates), we can look at the <strong>average behaviour</strong> of each modelling strategy. This is what we call a <strong>statistical simulation study</strong>.</p>
+<p>The <strong>average behaviour</strong> will be tracked with the following metrics <strong>per modelling strategy</strong> with <span class="math notranslate nohighlight">\(\theta = 0.5\)</span>:</p>
+<ul class="simple">
+<li><p><strong>BIAS:</strong> The average, over the 500 replicates, of <span class="math notranslate nohighlight">\(\hat{\theta} - \theta\)</span>. The larger the average, the less accuracy.</p></li>
+<li><p><strong>ROOT-MEAN-SQUARED ERROR (RMSE):</strong> The square root of the average (over the 500 replicates) of <span class="math notranslate nohighlight">\((\hat{\theta}-\theta)^{2}\)</span>.  It has the following characteristics:</p>
+<ul>
+<li><p>Interpretable as the typical magnitude of estimation error.</p></li>
+<li><p>Captures bias and variance involved in the procedure.</p></li>
+</ul>
+</li>
+<li><p><strong>COVERAGE:</strong> The proportion (among the 500 replicates) of the 95% CIs that contain the true <span class="math notranslate nohighlight">\(\theta\)</span> value.</p></li>
+<li><p><strong>POWER:</strong> It is applicable when <span class="math notranslate nohighlight">\(\theta \neq 0\)</span>. The proportion of the 500 95% CIs that exclude zero.</p></li>
+</ul>
+<p>The code below executes the previous three strategies 500 times (<code class="docutils literal notranslate"><span class="pre">num_replicates</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Global reproducibility</span>
+<span class="n">res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span>
+<span class="n">num_replicates</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">500</span>
+<span class="n">res</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">res</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">res</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="n">num_replicates</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+
+<span class="nf">for </span><span class="p">(</span><span class="n">lp</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">num_replicates</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="c1"># No blocking</span>
+<span class="w">  </span><span class="n">treat_exp_A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">)))</span>
+<span class="w">  </span><span class="n">dmg_exp_A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="n">num_block</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dmg_dist</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">)</span>
+<span class="w">  </span><span class="n">y_exp_A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">alpha</span><span class="p">[</span><span class="n">dmg_exp_A</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">theta</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">treat_exp_A</span><span class="p">,</span><span class="w"> </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sigma</span><span class="p">)</span>
+<span class="w">  </span><span class="n">data_exp_A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tibble</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">treat_exp_A</span><span class="p">,</span><span class="w"> </span><span class="n">dmg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">dmg_exp_A</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_exp_A</span><span class="p">)</span>
+
+<span class="w">  </span><span class="c1"># Blocking</span>
+<span class="w">  </span><span class="n">treat_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NULL</span>
+<span class="w">  </span><span class="n">dmg_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NULL</span>
+<span class="w">  </span><span class="nf">for </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">num_block</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span>
+<span class="w">     </span><span class="n">treat_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">treat_exp_B</span><span class="p">,</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span>
+<span class="w">       </span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">size_block</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">       </span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">size_block</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="w">     </span><span class="p">)))</span>
+
+<span class="w">     </span><span class="n">dmg_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">dmg_exp_B</span><span class="p">,</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">size_block</span><span class="p">))</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">  </span><span class="n">y_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">alpha</span><span class="p">[</span><span class="n">dmg_exp_B</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">theta</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">treat_exp_B</span><span class="p">,</span><span class="w"> </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sigma</span><span class="p">)</span>
+<span class="w">  </span><span class="n">data_exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tibble</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">treat_exp_B</span><span class="p">,</span><span class="w"> </span><span class="n">dmg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">dmg_exp_B</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_exp_B</span><span class="p">)</span><span class="w"> </span>
+
+<span class="w">  </span>
+<span class="w">  </span><span class="c1"># Do the three analyses</span>
+<span class="w">  </span><span class="n">exp_A_raw_model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data_exp_A</span><span class="p">)</span><span class="w"> </span>
+<span class="w">  </span><span class="n">exp_A_adj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dmg</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data_exp_A</span><span class="p">)</span><span class="w"> </span>
+<span class="w">  </span><span class="n">exp_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dmg</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data_exp_B</span><span class="p">)</span>
+
+<span class="w">  </span><span class="c1"># And the takeaways</span>
+<span class="w">  </span><span class="n">res</span><span class="p">[[</span><span class="m">1</span><span class="p">]][</span><span class="n">lp</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">coef</span><span class="p">(</span><span class="n">exp_A_raw_model</span><span class="p">)[</span><span class="s">&quot;x&quot;</span><span class="p">],</span><span class="w"> </span><span class="nf">confint</span><span class="p">(</span><span class="n">exp_A_raw_model</span><span class="p">)[</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">])</span>
+<span class="w">  </span><span class="n">res</span><span class="p">[[</span><span class="m">2</span><span class="p">]][</span><span class="n">lp</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">coef</span><span class="p">(</span><span class="n">exp_A_adj</span><span class="p">)[</span><span class="s">&quot;x&quot;</span><span class="p">],</span><span class="w"> </span><span class="nf">confint</span><span class="p">(</span><span class="n">exp_A_adj</span><span class="p">)[</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">])</span>
+<span class="w">  </span><span class="n">res</span><span class="p">[[</span><span class="m">3</span><span class="p">]][</span><span class="n">lp</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">coef</span><span class="p">(</span><span class="n">exp_B</span><span class="p">)[</span><span class="s">&quot;x&quot;</span><span class="p">],</span><span class="w"> </span><span class="nf">confint</span><span class="p">(</span><span class="n">exp_B</span><span class="p">)[</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then, we compute each one of the above metrics.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">### Summaries</span>
+<span class="n">BIAS</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sapply</span><span class="p">(</span>
+<span class="w">  </span><span class="n">res</span><span class="p">,</span>
+<span class="w">  </span><span class="nf">function</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nf">mean</span><span class="p">(</span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">theta</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">vrnc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sapply</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">var</span><span class="p">(</span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">])</span>
+<span class="p">})</span>
+<span class="n">CVRG</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sapply</span><span class="p">(</span><span class="n">res</span><span class="p">,</span>
+<span class="w">  </span><span class="nf">function</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span><span class="w"> </span><span class="n">trg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nf">mean</span><span class="p">((</span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">trg</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">trg</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">3</span><span class="p">]))</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="n">trg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">theta</span>
+<span class="p">)</span>
+<span class="n">PWR</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sapply</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">mean</span><span class="p">(</span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
+<span class="p">})</span>
+<span class="n">RMSE</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">BIAS</span><span class="o">^</span><span class="m">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">vrnc</span><span class="p">)</span>
+
+<span class="n">opt</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">cbind</span><span class="p">(</span><span class="n">BIAS</span><span class="p">,</span><span class="w"> </span><span class="n">RMSE</span><span class="p">,</span><span class="w"> </span><span class="n">CVRG</span><span class="p">,</span><span class="w"> </span><span class="n">PWR</span><span class="p">)</span>
+<span class="nf">rownames</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Raw Model A (nothing)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adjusted Model A (dmg as a covariate)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Model B (blocking)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="what-is-the-conclusion-by-looking-at-these-metrics-by-strategy">
+<h4>What is the conclusion by looking at these metrics by strategy?<a class="headerlink" href="#what-is-the-conclusion-by-looking-at-these-metrics-by-strategy" title="Permalink to this heading">#</a></h4>
+<p>Blocking can be your friend, both in study design as in <strong>Model B (blocking)</strong> and data analysis as in <strong>Adjusted Model A (<code class="docutils literal notranslate"><span class="pre">dmg</span></code> as a covariate)</strong>. We can see that <strong>Model B (blocking)</strong> has a slightly smaller <strong>BIAS</strong> and <strong>RMSE</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 3 × 4 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>BIAS</th><th scope=col>RMSE</th><th scope=col>CVRG</th><th scope=col>PWR</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>Raw Model A (nothing)</th><td> 0.0092</td><td>0.3652</td><td>0.934</td><td>0.286</td></tr>
+	<tr><th scope=row>Adjusted Model A (dmg as a covariate)</th><td> 0.0047</td><td>0.1145</td><td>0.946</td><td>0.986</td></tr>
+	<tr><th scope=row>Model B (blocking)</th><td>-0.0011</td><td>0.1135</td><td>0.950</td><td>0.992</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+</section>
+</section>
+<section id="wrapping-up">
+<h2>4. Wrapping Up<a class="headerlink" href="#wrapping-up" title="Permalink to this heading">#</a></h2>
+<p>We have covered foundational experimental jargon and techniques, which will be helpful for A/B and A/B/n testings. Moreover, recall that these tests need to be adapted to our outcome of interest. Post hoc tests are handy to address our statistical inquiries (you actually did this in <code class="docutils literal notranslate"><span class="pre">lab1</span></code>!).</p>
+<p>An important matter to consider regarding blocking is that this strategy will work as long as the blocks are really homogeneous. This implicates stratifying the experimental units into blocks so that:</p>
+<ul class="simple">
+<li><p>As much variation in <span class="math notranslate nohighlight">\(Y\)</span> as possible is <strong>across</strong> the blocks.</p></li>
+<li><p>As little variation in <span class="math notranslate nohighlight">\(Y\)</span> as possible is <strong>within</strong> the blocks.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./notes"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="lecture2_simpson_confounding.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="lecture4_more_blocking_and_power.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Lecture 4 - More Blocking and Power</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-learning-objectives">Today’s Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-r-packages">Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#previously">Previously…</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#foundations-of-a-b-and-a-b-n-testings">1. Foundations of A/B and A/B/n Testings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-if-we-want-to-test-more-than-two-experimental-treatments-in-our-a-b-testing">What if we want to test more than two experimental treatments in our A/B testing?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-b-n-testing-with-a-continuous-response">2. A/B/n Testing with a Continuous Response</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-website-dataset">2.1. The Website Dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#experimental-terminology">2.2. Experimental Terminology</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main-statistical-inquiry">2.3. Main Statistical Inquiry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploratory-data-analysis">2.4. Exploratory Data Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-data-modelling">2.5. Initial Data Modelling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-modelling-with-interaction">2.6. Data Modelling with Interaction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-hoc-tests">2.7. Post-Hoc Tests</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blocking">3. Blocking</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blocking-procedure">3.1. Blocking Procedure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-setup">3.2. Simulation Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-our-synthetic-data">3.3. Building our Synthetic Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-a-without-blocking">3.4. Experiment A: Without Blocking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-b-with-blocking">3.5. Experiment B: With Blocking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-analysis">3.6. Data Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-a-raw-model">Experiment A: Raw Model</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-a-model-with-post-hoc-adjustment-for-demographics">Experiment A: Model with Post-Hoc Adjustment for Demographics</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-b-model-with-blocking">Experiment B: Model with Blocking</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#so-where-are-we-standing">So, where are we standing?</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-more-replicates">3.7. Running More Replicates</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-conclusion-by-looking-at-these-metrics-by-strategy">What is the conclusion by looking at these metrics by strategy?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-up">4. Wrapping Up</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By G. Alexi Rodríguez-Arelis
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

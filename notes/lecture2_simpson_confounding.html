@@ -1,0 +1,1795 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Lecture 2 - Confounding and Randomized versus Non-randomized Studies &#8212; DSCI 554 - Experimentation and Causal Inference</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notes/lecture2_simpson_confounding';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lecture 3 - Randomization and Blocking" href="lecture3_randomization_and_blocking.html" />
+    <link rel="prev" title="Lecture 1 - Multiple Comparisons" href="lecture1_multiple_comparisons.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/UBC_MDS_logo.png" class="logo__image only-light" alt="DSCI 554 - Experimentation and Causal Inference - Home"/>
+    <script>document.write(`<img src="../_static/UBC_MDS_logo.png" class="logo__image only-dark" alt="DSCI 554 - Experimentation and Causal Inference - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    Welcome to DSCI 554: Experimentation and Causal Inference
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Lectures</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lecture-learning-objectives.html">Lecture Learning Objectives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture1_multiple_comparisons.html">Lecture 1 - Multiple Comparisons</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture3_randomization_and_blocking.html">Lecture 3 - Randomization and Blocking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture4_more_blocking_and_power.html">Lecture 4 - More Blocking and Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture5_more_power_early_stopping.html">Lecture 5 - More Power and Early Stopping in A/B Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture6_obs_stratifying_modelling.html">Lecture 6 - Observational Data: Stratifying and Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture7_obs_sampling_schemes.html">Lecture 7 - Observational Data: Different Sampling Schemes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture8_match_constrasts_wrapup.html">Lecture 8 - Matched Case-Control Scheme, Ordinal Regressors, and Final Wrap-Up</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendices</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="appendix_blocking_and_stratification.html">Blocking and Stratification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-causality-exp-cheatsheet.html">Causality and Experimentation Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-prob-cheatsheet.html">Probability Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-reg-mindmap.html">Regression Mind Map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-reg-cheatsheet.html">Regression Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-dist-cheatsheet.html">Distribution Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-greek-alphabet.html">Greek Alphabet</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.ubc.ca/MDS-2023-24/DSCI_554_exper-causal-inf_students" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.ubc.ca/MDS-2023-24/DSCI_554_exper-causal-inf_students/issues/new?title=Issue%20on%20page%20%2Fnotes/lecture2_simpson_confounding.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notes/lecture2_simpson_confounding.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Lecture 2 - Confounding and Randomized versus Non-randomized Studies</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-learning-objectives">Today’s Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-r-packages">Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simpson-s-paradox">1. Simpson’s Paradox</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simulated-example">1.1.  A Simulated Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-covid-19-example">1.2.  A COVID-19 Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-avoid-misleading-conclusions">1.3.  How to Avoid Misleading Conclusions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-big-picture-strategies-for-dealing-with-confounding">2. Two Big-Picture Strategies for Dealing With Confounding</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-tiktok-simulation">2.1. The TikTok® Simulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-strategies">2.2. The Strategies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-a-synthetic-population">2.3. Building a Synthetic Population</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#study-1-observational-and-naive">2.4. Study 1: Observational and Naive</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#exploratory-data-analysis">2.4.1. Exploratory Data Analysis</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-model">2.4.2. Regression Model</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#study-2-observational-and-less-naive">2.5. Study 2: Observational and Less Naive</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#study-3-randomized-study-gold-standard">2.6. Study 3: Randomized Study (Gold Standard)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2.6.1. Exploratory Data Analysis</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.6.2. Regression Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-up">3. Wrapping Up</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="lecture-2-confounding-and-randomized-versus-non-randomized-studies">
+<h1>Lecture 2 - Confounding and Randomized versus Non-randomized Studies<a class="headerlink" href="#lecture-2-confounding-and-randomized-versus-non-randomized-studies" title="Permalink to this heading">#</a></h1>
+<section id="today-s-learning-objectives">
+<h2>Today’s Learning Objectives<a class="headerlink" href="#today-s-learning-objectives" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Define the Simpson’s paradox.</p></li>
+<li><p>Illustrate the Simpson’s paradox occurrence via simulated and real data.</p></li>
+<li><p>Provide a basic guideline to avoid the Simpson’s paradox.</p></li>
+<li><p>Provide a definition of a confounding variable.</p></li>
+<li><p>Argue why evidence from a randomized study is of a higher grade than evidence from an observational study.</p></li>
+</ol>
+</section>
+<section id="loading-r-packages">
+<h2>Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages<a class="headerlink" href="#loading-r-packages" title="Permalink to this heading">#</a></h2>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">infer</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">broom</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">cowplot</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">bayestestR</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="simpson-s-paradox">
+<h2>1. Simpson’s Paradox<a class="headerlink" href="#simpson-s-paradox" title="Permalink to this heading">#</a></h2>
+<p>We have seen the benefits of making an appropriate and thoughtful exploratory data analysis (EDA) throughout the statistical courses. EDA allows you to detect graphical trends in the data that could be confirmed at a statistical level via a suitable model. Nevertheless, what are the implications of a <strong>limited and poor EDA</strong>?</p>
+<p>Limitations in an EDA can lead to misleading graphical conclusions that have the potential to bias our data modelling, which will also lead to deceptive statistical conclusions! Simpson’s paradox basically arises <strong>when we have a poor EDA and data modelling</strong>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>Simpson’s paradox occurs when we see a trend in aggregated data (between two variables <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>), but this trend reverses when we separate the data into specific groups (i.e., we take into account another variable <span class="math notranslate nohighlight">\(Z\)</span>).</strong> It was first addressed by Edward Simpson in 1951 in his paper “<a class="reference external" href="http://math.bme.hu/~marib/bsmeur/simpson.pdf">The Interpretation of Interaction in Contingency Tables</a>.”</p>
+</div>
+<section id="a-simulated-example">
+<h3>1.1.  A Simulated Example<a class="headerlink" href="#a-simulated-example" title="Permalink to this heading">#</a></h3>
+<p>The package <code class="docutils literal notranslate"><span class="pre">bayestestR</span></code> offers a useful function to simulate data so we can graphically understand the Simpson’s paradox. The function <code class="docutils literal notranslate"><span class="pre">simulate_simpson()</span></code> simulates some data coming from four <code class="docutils literal notranslate"><span class="pre">groups</span></code> of size <code class="docutils literal notranslate"><span class="pre">200</span></code> each where the within-group <strong>positive linear correlation</strong> is <code class="docutils literal notranslate"><span class="pre">0.4</span></code>. The two <strong>continuous</strong> variables of interest are <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+
+<span class="n">simpson_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">simulate_simpson</span><span class="p">(</span>
+<span class="w">  </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">  </span><span class="n">groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">group_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Group &quot;</span>
+<span class="p">)</span>
+
+<span class="nf">colnames</span><span class="p">(</span><span class="n">simpson_data</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;X&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Y&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Group&quot;</span><span class="p">)</span>
+<span class="n">simpson_data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 800 × 3</caption>
+<thead>
+	<tr><th scope=col>X</th><th scope=col>Y</th><th scope=col>Group</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>0.301913</td><td>-1.3353848</td><td>Group 1</td></tr>
+	<tr><td>1.973782</td><td>-0.9160513</td><td>Group 1</td></tr>
+	<tr><td>1.113595</td><td>-1.7805183</td><td>Group 1</td></tr>
+	<tr><td>2.872386</td><td> 0.6106858</td><td>Group 1</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>5.569538</td><td>-2.856632</td><td>Group 4</td></tr>
+	<tr><td>3.394598</td><td>-4.470594</td><td>Group 4</td></tr>
+	<tr><td>3.751953</td><td>-4.837983</td><td>Group 4</td></tr>
+	<tr><td>3.898065</td><td>-2.540426</td><td>Group 4</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Let us start with a <strong>naive EDA</strong> where we do not use <code class="docutils literal notranslate"><span class="pre">Group</span></code> and just create a scatterplot of <span class="math notranslate nohighlight">\(X\)</span> versus <span class="math notranslate nohighlight">\(Y\)</span>. Moreover, suppose you want to statistically assess whether <span class="math notranslate nohighlight">\(X\)</span> is linearly associated with <span class="math notranslate nohighlight">\(Y\)</span> and how.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">repr.plot.width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">14</span><span class="p">)</span>
+
+<span class="n">naive_EDA</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ggplot</span><span class="p">(</span><span class="n">simpson_data</span><span class="p">,</span><span class="w"> </span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Y</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_point</span><span class="p">()</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_smooth</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;lm&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">legend.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span><span class="w"> </span>
+<span class="w">    </span><span class="n">legend.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Aggregated Scatterplot of X versus Y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">naive_EDA</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/3100e712f516bdb52104f845d2e32c2099f8765439103d64367f0c784d6baf71.png"><img alt="../_images/3100e712f516bdb52104f845d2e32c2099f8765439103d64367f0c784d6baf71.png" src="../_images/3100e712f516bdb52104f845d2e32c2099f8765439103d64367f0c784d6baf71.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>Note there is an <strong>overall negative</strong> graphical relation between <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>, which is confirmed by a linear correlation coefficient <span class="math notranslate nohighlight">\(\rho = -0.38\)</span> (see the below code). Also, the ordinary least-squares (OLS) estimated red line statistically confirms this trend.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">cor</span><span class="p">(</span><span class="n">simpson_data</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">simpson_data</span><span class="o">$</span><span class="n">Y</span><span class="p">),</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">-0.38</div></div>
+</div>
+<p>Let us be more clever in our EDA and <strong>consider <code class="docutils literal notranslate"><span class="pre">Group</span></code></strong> in another scatterplot along with <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>. This scatterplot now shows upward trends within the groups! Moreover, as previously specified, the within-group linear correlation <span class="math notranslate nohighlight">\(\rho = 0.4\)</span> (the opposite from the aggregated negative correlation).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">simpson_data</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">group_by</span><span class="p">(</span><span class="n">Group</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarise</span><span class="p">(</span><span class="n">corr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="nf">cor</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">Y</span><span class="p">),</span><span class="w"> </span><span class="m">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 4 × 2</caption>
+<thead>
+	<tr><th scope=col>Group</th><th scope=col>corr</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Group 1</td><td>0.4</td></tr>
+	<tr><td>Group 2</td><td>0.4</td></tr>
+	<tr><td>Group 3</td><td>0.4</td></tr>
+	<tr><td>Group 4</td><td>0.4</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">clever_EDA</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ggplot</span><span class="p">(</span><span class="n">simpson_data</span><span class="p">,</span><span class="w"> </span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Y</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Group</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_smooth</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;lm&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_smooth</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Group</span><span class="p">),</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;lm&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">legend.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span><span class="w"> </span>
+<span class="w">    </span><span class="n">legend.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Disaggregated Scatterplot of X versus Y by Groups&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_colour_brewer</span><span class="p">(</span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Paired&quot;</span><span class="p">)</span>
+
+<span class="n">clever_EDA</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/6302cde549ca93871ee0a81a6762733c3293e1d3f6d6156742ab7b4a400d929f.png"><img alt="../_images/6302cde549ca93871ee0a81a6762733c3293e1d3f6d6156742ab7b4a400d929f.png" src="../_images/6302cde549ca93871ee0a81a6762733c3293e1d3f6d6156742ab7b4a400d929f.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>The within-group estimated OLS lines have positive slopes, unlike the overall OLS estimated blue line. This is the Simpson’s paradox in action!</p>
+<div class="hint admonition">
+<p class="admonition-title">What is the main takeaway?</p>
+<p>This toy example shows us why taking into account the right variables in our studies is critical in any association or causal analysis. Now, let us check a real example involving one continuous variable of interest <span class="math notranslate nohighlight">\(Y\)</span>, a categorical <span class="math notranslate nohighlight">\(X\)</span>, and another categorical <span class="math notranslate nohighlight">\(Z\)</span>.</p>
+</div>
+</section>
+<section id="a-covid-19-example">
+<h3>1.2.  A COVID-19 Example<a class="headerlink" href="#a-covid-19-example" title="Permalink to this heading">#</a></h3>
+<p>This case comes from the work by <a class="reference external" href="https://www.computer.org/csdl/journal/ai/2021/01/09404149/1sNm718j25W">Kügelgen et al. (2021)</a>. The authors point out the Simpson’s paradox when comparing <strong>aggregated case fatality rates</strong> between two <strong>countries</strong>: China and Italy. But, then, the data trends reverse once they control by <strong>age groups</strong>. This is data from the earlier pandemic months (February 2020 for China and March 2020 for Italy). The original dataset has more countries.</p>
+<p>Firstly, let us define the continuous <strong>case fatality rate</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\text{Case Fatality Rate} = \frac{\text{Confirmed Fatalities}}{\text{Confirmed Cases}}.\]</div>
+<p>Then, we check the data frames by country. Note data is aggregated by <strong>nine age groups</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covid19_data_china</span><span class="w"> </span><span class="o">&lt;-</span>
+<span class="w">  </span><span class="nf">read_csv</span><span class="p">(</span><span class="s">&quot;../data/Covid-19_age-stratified_dataset_for_different_countries.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">show_col_types</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">Country</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;China&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">`Fatality rate`</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Confirmed fatalities`</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">`Confirmed cases`</span><span class="p">)</span>
+
+<span class="n">covid19_data_italy</span><span class="w"> </span><span class="o">&lt;-</span>
+<span class="w">  </span><span class="nf">read_csv</span><span class="p">(</span><span class="s">&quot;../data/Covid-19_age-stratified_dataset_for_Italy_at_different_points_in_time.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">show_col_types</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="w"> </span><span class="n">`Date of reporting`</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;9 March2020&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">`Fatality rate`</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Confirmed fatalities`</span><span class="w"> </span><span class="o">/</span><span class="w">  </span><span class="n">`Confirmed cases`</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>New names:
+<span class=" -Color -Color-Cyan">•</span> `` -&gt; `...1`
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>New names:
+<span class=" -Color -Color-Cyan">•</span> `` -&gt; `...1`
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covid19_data_china</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 9 × 7</caption>
+<thead>
+	<tr><th scope=col>...1</th><th scope=col>Country</th><th scope=col>Date of reporting</th><th scope=col>Age group</th><th scope=col>Confirmed cases</th><th scope=col>Confirmed fatalities</th><th scope=col>Fatality rate</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td> 9</td><td>China</td><td>17 February2020</td><td>0-9  </td><td> 416</td><td> 0</td><td>0.000000000</td></tr>
+	<tr><td>10</td><td>China</td><td>17 February2020</td><td>10-19</td><td> 549</td><td> 1</td><td>0.001821494</td></tr>
+	<tr><td>11</td><td>China</td><td>17 February2020</td><td>20-29</td><td>3619</td><td> 7</td><td>0.001934236</td></tr>
+	<tr><td>12</td><td>China</td><td>17 February2020</td><td>30-39</td><td>7600</td><td>18</td><td>0.002368421</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>14</td><td>China</td><td>17 February2020</td><td>50-59</td><td>10008</td><td>130</td><td>0.01298961</td></tr>
+	<tr><td>15</td><td>China</td><td>17 February2020</td><td>60-69</td><td> 8583</td><td>309</td><td>0.03600140</td></tr>
+	<tr><td>16</td><td>China</td><td>17 February2020</td><td>70-79</td><td> 3918</td><td>312</td><td>0.07963247</td></tr>
+	<tr><td>17</td><td>China</td><td>17 February2020</td><td>80+  </td><td> 1408</td><td>208</td><td>0.14772727</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covid19_data_italy</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 9 × 7</caption>
+<thead>
+	<tr><th scope=col>...1</th><th scope=col>Country</th><th scope=col>Date of reporting</th><th scope=col>Age group</th><th scope=col>Confirmed cases</th><th scope=col>Confirmed fatalities</th><th scope=col>Fatality rate</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>0</td><td>Italy</td><td>9 March2020</td><td>0-9  </td><td> 43</td><td>0</td><td>0</td></tr>
+	<tr><td>1</td><td>Italy</td><td>9 March2020</td><td>10-19</td><td> 85</td><td>0</td><td>0</td></tr>
+	<tr><td>2</td><td>Italy</td><td>9 March2020</td><td>20-29</td><td>296</td><td>0</td><td>0</td></tr>
+	<tr><td>3</td><td>Italy</td><td>9 March2020</td><td>30-39</td><td>470</td><td>0</td><td>0</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>5</td><td>Italy</td><td>9 March2020</td><td>50-59</td><td>1453</td><td>  3</td><td>0.002064694</td></tr>
+	<tr><td>6</td><td>Italy</td><td>9 March2020</td><td>60-69</td><td>1471</td><td> 37</td><td>0.025152957</td></tr>
+	<tr><td>7</td><td>Italy</td><td>9 March2020</td><td>70-79</td><td>1785</td><td>114</td><td>0.063865546</td></tr>
+	<tr><td>8</td><td>Italy</td><td>9 March2020</td><td>80+  </td><td>1532</td><td>202</td><td>0.131853786</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Then, let us combine both data frames.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covid19_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">bind_rows</span><span class="p">(</span><span class="n">covid19_data_china</span><span class="p">,</span><span class="w"> </span><span class="n">covid19_data_italy</span><span class="p">)</span>
+<span class="n">covid19_data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 18 × 7</caption>
+<thead>
+	<tr><th scope=col>...1</th><th scope=col>Country</th><th scope=col>Date of reporting</th><th scope=col>Age group</th><th scope=col>Confirmed cases</th><th scope=col>Confirmed fatalities</th><th scope=col>Fatality rate</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td> 9</td><td>China</td><td>17 February2020</td><td>0-9  </td><td> 416</td><td> 0</td><td>0.000000000</td></tr>
+	<tr><td>10</td><td>China</td><td>17 February2020</td><td>10-19</td><td> 549</td><td> 1</td><td>0.001821494</td></tr>
+	<tr><td>11</td><td>China</td><td>17 February2020</td><td>20-29</td><td>3619</td><td> 7</td><td>0.001934236</td></tr>
+	<tr><td>12</td><td>China</td><td>17 February2020</td><td>30-39</td><td>7600</td><td>18</td><td>0.002368421</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>5</td><td>Italy</td><td>9 March2020</td><td>50-59</td><td>1453</td><td>  3</td><td>0.002064694</td></tr>
+	<tr><td>6</td><td>Italy</td><td>9 March2020</td><td>60-69</td><td>1471</td><td> 37</td><td>0.025152957</td></tr>
+	<tr><td>7</td><td>Italy</td><td>9 March2020</td><td>70-79</td><td>1785</td><td>114</td><td>0.063865546</td></tr>
+	<tr><td>8</td><td>Italy</td><td>9 March2020</td><td>80+  </td><td>1532</td><td>202</td><td>0.131853786</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>The data does not have the aggregated case fatality rates by country. So let us compute them and bind them to <code class="docutils literal notranslate"><span class="pre">covid19_data</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covid19_data_agg_by_country</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">covid19_data</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">`Country`</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarise</span><span class="p">(</span>
+<span class="w">    </span><span class="n">`Confirmed fatalities`</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">`Confirmed fatalities`</span><span class="p">),</span>
+<span class="w">    </span><span class="n">`Confirmed cases`</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">`Confirmed cases`</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">`Fatality rate`</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Confirmed fatalities`</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">`Confirmed cases`</span><span class="p">,</span>
+<span class="w">    </span><span class="n">`Age group`</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Total&quot;</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="n">covid19_data_agg_by_country</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 5</caption>
+<thead>
+	<tr><th scope=col>Country</th><th scope=col>Confirmed fatalities</th><th scope=col>Confirmed cases</th><th scope=col>Fatality rate</th><th scope=col>Age group</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>China</td><td>1023</td><td>44672</td><td>0.02290025</td><td>Total</td></tr>
+	<tr><td>Italy</td><td> 357</td><td> 8026</td><td>0.04448044</td><td>Total</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covid19_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">bind_rows</span><span class="p">(</span><span class="n">covid19_data</span><span class="p">,</span><span class="w"> </span><span class="n">covid19_data_agg_by_country</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">`Age group`</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">`Age group`</span><span class="p">))</span>
+<span class="n">covid19_data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 20 × 7</caption>
+<thead>
+	<tr><th scope=col>...1</th><th scope=col>Country</th><th scope=col>Date of reporting</th><th scope=col>Age group</th><th scope=col>Confirmed cases</th><th scope=col>Confirmed fatalities</th><th scope=col>Fatality rate</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td> 9</td><td>China</td><td>17 February2020</td><td>0-9  </td><td> 416</td><td> 0</td><td>0.000000000</td></tr>
+	<tr><td>10</td><td>China</td><td>17 February2020</td><td>10-19</td><td> 549</td><td> 1</td><td>0.001821494</td></tr>
+	<tr><td>11</td><td>China</td><td>17 February2020</td><td>20-29</td><td>3619</td><td> 7</td><td>0.001934236</td></tr>
+	<tr><td>12</td><td>China</td><td>17 February2020</td><td>30-39</td><td>7600</td><td>18</td><td>0.002368421</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td> 7</td><td>Italy</td><td>9 March2020</td><td>70-79</td><td> 1785</td><td> 114</td><td>0.06386555</td></tr>
+	<tr><td> 8</td><td>Italy</td><td>9 March2020</td><td>80+  </td><td> 1532</td><td> 202</td><td>0.13185379</td></tr>
+	<tr><td>NA</td><td>China</td><td>NA         </td><td>Total</td><td>44672</td><td>1023</td><td>0.02290025</td></tr>
+	<tr><td>NA</td><td>Italy</td><td>NA         </td><td>Total</td><td> 8026</td><td> 357</td><td>0.04448044</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Then, we plot this case fatality rates by country in a histogram. The <strong>overall</strong> case fatality rate was considerably lower in China than in Italy. This, of course, ignores the many challenging questions about estimating (and reporting!) the true number of COVID-19 cases.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">hist_covid19_fatality_by_country</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span><span class="n">covid19_data</span><span class="p">,</span><span class="w"> </span><span class="n">`Age group`</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Total&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Age group`</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Fatality rate`</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Country`</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_bar</span><span class="p">(</span><span class="n">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dodge&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;identity&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title.x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_blank</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">legend.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span><span class="w"> </span>
+<span class="w">    </span><span class="n">legend.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Overall Case Fatality Rates by Country&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Case Fatality Rate&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_fill_brewer</span><span class="p">(</span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Paired&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">hist_covid19_fatality_by_country</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/d728c110f2fdb72e55af10bb22132b3c9e31eeb22f687a64d14aa166d3d5a775.png"><img alt="../_images/d728c110f2fdb72e55af10bb22132b3c9e31eeb22f687a64d14aa166d3d5a775.png" src="../_images/d728c110f2fdb72e55af10bb22132b3c9e31eeb22f687a64d14aa166d3d5a775.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>Let us dig into this a little bit by age group. At <strong>each age group</strong>, the case fatality rate in Italy was lower than in China. <strong>The trend flips compared to the overall case fatality rates!</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">hist_covid19_fatality_by_country_and_age</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span><span class="n">covid19_data</span><span class="p">,</span><span class="w"> </span><span class="n">`Age group`</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;Total&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Age group`</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Fatality rate`</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Country`</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_bar</span><span class="p">(</span><span class="n">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dodge&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;identity&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title.x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_blank</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">legend.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span><span class="w"> </span>
+<span class="w">    </span><span class="n">legend.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Case Fatality Rates by Country and Age&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Case Fatality Rate&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Age Group&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_fill_brewer</span><span class="p">(</span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Paired&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">hist_covid19_fatality_by_country_and_age</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/9ec4b913ba2c2253d7452972871e81aa1459a7fb446bbcaaf9ec3e75a122abdb.png"><img alt="../_images/9ec4b913ba2c2253d7452972871e81aa1459a7fb446bbcaaf9ec3e75a122abdb.png" src="../_images/9ec4b913ba2c2253d7452972871e81aa1459a7fb446bbcaaf9ec3e75a122abdb.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p><strong>This is contradictory! What is happening here?</strong> We will obtain the proportion of cases by age group to the total sum by country to answer this.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covid19_data_perc_by_country_and_age</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span><span class="n">covid19_data</span><span class="p">,</span><span class="w"> </span><span class="n">`Age group`</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;Total&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">`Country`</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">`Proportion of cases`</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Confirmed cases`</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">`Confirmed cases`</span><span class="p">))</span>
+<span class="n">covid19_data_perc_by_country_and_age</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A grouped_df: 18 × 8</caption>
+<thead>
+	<tr><th scope=col>...1</th><th scope=col>Country</th><th scope=col>Date of reporting</th><th scope=col>Age group</th><th scope=col>Confirmed cases</th><th scope=col>Confirmed fatalities</th><th scope=col>Fatality rate</th><th scope=col>Proportion of cases</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td> 9</td><td>China</td><td>17 February2020</td><td>0-9  </td><td> 416</td><td> 0</td><td>0.000000000</td><td>0.009312321</td></tr>
+	<tr><td>10</td><td>China</td><td>17 February2020</td><td>10-19</td><td> 549</td><td> 1</td><td>0.001821494</td><td>0.012289577</td></tr>
+	<tr><td>11</td><td>China</td><td>17 February2020</td><td>20-29</td><td>3619</td><td> 7</td><td>0.001934236</td><td>0.081012715</td></tr>
+	<tr><td>12</td><td>China</td><td>17 February2020</td><td>30-39</td><td>7600</td><td>18</td><td>0.002368421</td><td>0.170128940</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>5</td><td>Italy</td><td>9 March2020</td><td>50-59</td><td>1453</td><td>  3</td><td>0.002064694</td><td>0.1810366</td></tr>
+	<tr><td>6</td><td>Italy</td><td>9 March2020</td><td>60-69</td><td>1471</td><td> 37</td><td>0.025152957</td><td>0.1832793</td></tr>
+	<tr><td>7</td><td>Italy</td><td>9 March2020</td><td>70-79</td><td>1785</td><td>114</td><td>0.063865546</td><td>0.2224022</td></tr>
+	<tr><td>8</td><td>Italy</td><td>9 March2020</td><td>80+  </td><td>1532</td><td>202</td><td>0.131853786</td><td>0.1908796</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Once we plot the percentage of confirmed cases by age group and country (<strong>bars of the same color add up to 1</strong>), we can see that the cases in Italy are more skewed to older age groups, unlike the cases in China, which are more centred around the 50s.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">hist_covid19_perc_by_country_and_age</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span><span class="n">covid19_data_perc_by_country_and_age</span><span class="p">,</span><span class="w"> </span><span class="n">`Age group`</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;Total&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Age group`</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Proportion of cases`</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">`Country`</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_bar</span><span class="p">(</span><span class="n">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dodge&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;identity&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title.x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_blank</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">legend.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span><span class="w"> </span>
+<span class="w">    </span><span class="n">legend.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Proportion of Cases by Country and Age&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Proportion of Cases&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Age Group&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_fill_brewer</span><span class="p">(</span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Paired&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">hist_covid19_perc_by_country_and_age</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/22efb61a3d6b834649dfb4fb85c520e15e063670c302a318cb2d138f25327228.png"><img alt="../_images/22efb61a3d6b834649dfb4fb85c520e15e063670c302a318cb2d138f25327228.png" src="../_images/22efb61a3d6b834649dfb4fb85c520e15e063670c302a318cb2d138f25327228.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>Moreover, the literature has addressed another fact: <strong>higher age is correlated with higher fatality rates for COVID-19 cases</strong>. There is strong scientific evidence that this correlation is <strong>causal</strong>. We might say that age is a <strong>confounder</strong> of the country-COVID fatality rate relationship.</p>
+<p>The correlation coefficients below come from the age groups by country between case fatality rate and proportion of cases. China’s cases are mostly younger than Italy’s cases, hence its negative coefficient.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covid19_data_perc_by_country_and_age</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">Country</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">summarise</span><span class="p">(</span><span class="n">corr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="nf">cor</span><span class="p">(</span><span class="n">`Fatality rate`</span><span class="p">,</span><span class="w"> </span><span class="n">`Proportion of cases`</span><span class="p">),</span><span class="w"> </span><span class="m">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 2</caption>
+<thead>
+	<tr><th scope=col>Country</th><th scope=col>corr</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>China</td><td>-0.26</td></tr>
+	<tr><td>Italy</td><td> 0.63</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="how-to-avoid-misleading-conclusions">
+<h3>1.3.  How to Avoid Misleading Conclusions<a class="headerlink" href="#how-to-avoid-misleading-conclusions" title="Permalink to this heading">#</a></h3>
+<p>Let us focus on the COVID-19 data. Suppose you are doing your analysis with the <strong>overall case fatality rates</strong> between China and Italy. One might be tempted to say that <strong>“Italy did a bad job treating its COVID-19 compared to China.”</strong> Nevertheless, you would miss another important variable which is <strong>age</strong>.</p>
+<p>If Italy has a larger proportion of cases in older age groups, compared to China, and other literature has already addressed that older people are more prone to COVID-19 fatalities, then the previous statement is misleading! <strong>You would be falling into the Simpson’s paradox trap!</strong></p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>To avoid misleading conclusions, it is <strong>extremely important</strong> to know how our data was collected. Moreover, even before collecting any data, we need to define what variables are relevant to our study. For example, if we want to infer causality, we must determine the possible causes for our outcome of interest.</p>
+<p><strong>We cannot start collecting data if we do not carefully design our sampling plan!</strong></p>
+</div>
+</section>
+</section>
+<section id="two-big-picture-strategies-for-dealing-with-confounding">
+<h2>2. Two Big-Picture Strategies for Dealing With Confounding<a class="headerlink" href="#two-big-picture-strategies-for-dealing-with-confounding" title="Permalink to this heading">#</a></h2>
+<p>We will introduce the concept of confounders and their role in causal inference when performing <strong>observational AND experimental studies</strong> such as <strong>randomized clinical trials (RCTs)</strong> or <strong>A/B testings</strong>.</p>
+<p>We will do this exercise via different simulations with OLS.</p>
+<p>But first, let us start by formally explaining what a <em>confounder</em> is. <a class="reference external" href="https://benthamopen.com/contents/pdf/TOEPIJ/TOEPIJ-5-18.pdf">Mann and Wood (2012)</a> provide the following definition in a medical context:</p>
+<blockquote>
+<div><p><em>In general, for a variable to be a confounder in a particular study, the formal definition requires that it must meet two criteria: the first is that it must be related to the outcome of interest in terms of prognosis or
+susceptibility. The second criteria, which explains why it is more commonly seen outside the setting of RCTs, is that the distribution of the confounding factor is different in the groups being compared. More broadly, confounding can be defined as a mixing of effects between the <strong>exposure of interest</strong>, the <strong>disease</strong>, and a third factor (i.e., the <strong>confounder</strong>) that is associated with the <strong>exposure</strong> that independently affects the risk of developing the <strong>disease</strong>.</em></p>
+</div></blockquote>
+<p>The previous definition might sound too wordy. Thus, by using our aforementioned Simpson paradox’s example, let us untangle the elements of confounding:</p>
+<ul class="simple">
+<li><p><strong>Exposure of interest.</strong> A specific country (China or Italy) that could involve environmental conditions, health infrastructure, etc.</p></li>
+<li><p><strong>Disease.</strong> COVID-19  via its case fatality rate.</p></li>
+<li><p><strong>Confounder.</strong> Age group.</p></li>
+</ul>
+<p>Roughly speaking, in a regresssion framework where <span class="math notranslate nohighlight">\(X\)</span> is the regressor and <span class="math notranslate nohighlight">\(Y\)</span> is the response, another regressor <span class="math notranslate nohighlight">\(C\)</span> confounds the <span class="math notranslate nohighlight">\(X\)</span>-<span class="math notranslate nohighlight">\(Y\)</span> relationship if <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(X\)</span> are associated, and <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are associated as shown in <a class="reference internal" href="#confounding"><span class="std std-numref">Fig. 2</span></a>.</p>
+<figure class="align-default" id="confounding">
+<a class="reference internal image-reference" href="../_images/confounding.png"><img alt="../_images/confounding.png" src="../_images/confounding.png" style="height: 300px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Diagram of Confounding.</span><a class="headerlink" href="#confounding" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="the-tiktok-simulation">
+<h3>2.1. The TikTok® Simulation<a class="headerlink" href="#the-tiktok-simulation" title="Permalink to this heading">#</a></h3>
+<blockquote>
+<div><p><em>Copyright © 2025 TikTok</em></p>
+</div></blockquote>
+<p>You are part of a team of data scientists working for a given company. The team is in charge of an A/B testing involving a TikTok® ad. The case study’s framework is the following:</p>
+<div class="admonition-main-statistical-inquiry admonition">
+<p class="admonition-title">Main statistical inquiry</p>
+<p>Suppose the company’s marketing team has developed a new ad for TikTok®. They want to know if this <strong>NEW AD</strong> will <strong>INCREASE</strong> the ad engagement (which they will measure via the <strong>ad dwell time</strong> in seconds) compared to the <strong>CURRENT AD</strong> they are running in a given customer population.</p>
+<p>Furthermore, let us make the framework more complex. Suppose your customer population is located in two cities: <strong>Vancouver</strong> and <strong>Victoria</strong>. Moreover, <strong>customers from Victoria have larger dwell times</strong>. The dwell times also increase in <strong>older</strong> customers <strong>regardless of their city</strong>.</p>
+</div>
+<div class="exercise admonition" id="lecture2-q1">
+
+<p class="admonition-title"><span class="caption-number">Exercise 4 </span></p>
+<section id="exercise-content">
+<p>Under this framework, what is the response <span class="math notranslate nohighlight">\(Y\)</span>?</p>
+<p><strong>A.</strong> Customer’s age.</p>
+<p><strong>B.</strong> City.</p>
+<p><strong>C.</strong> Ad dwell time.</p>
+<p><strong>D.</strong> Type of TikTok® ad.</p>
+</section>
+</div>
+<div class="exercise admonition" id="lecture2-q2">
+
+<p class="admonition-title"><span class="caption-number">Exercise 5 </span></p>
+<section id="exercise-content">
+<p>Under this framework, what is the main regressor of interest <span class="math notranslate nohighlight">\(X\)</span>?</p>
+<p><strong>A.</strong> Customer’s age.</p>
+<p><strong>B.</strong> City.</p>
+<p><strong>C.</strong> Ad dwell time.</p>
+<p><strong>D.</strong> Type of TikTok® ad.</p>
+</section>
+</div>
+<div class="exercise admonition" id="lecture2-q3">
+
+<p class="admonition-title"><span class="caption-number">Exercise 6 </span></p>
+<section id="exercise-content">
+<p>Under this framework, what regressors are the confounders <span class="math notranslate nohighlight">\(C_1\)</span> and <span class="math notranslate nohighlight">\(C_2\)</span>?</p>
+<p><strong>A.</strong> Customer’s age.</p>
+<p><strong>B.</strong> City.</p>
+<p><strong>C.</strong> Customer’s age and city.</p>
+</section>
+</div>
+</section>
+<section id="the-strategies">
+<h3>2.2. The Strategies<a class="headerlink" href="#the-strategies" title="Permalink to this heading">#</a></h3>
+<p>There is more than one way to deal with confounding if we want to detect a causal relationship between <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>. Depending on the nature of the study, one could do the following:</p>
+<ol class="arabic simple">
+<li><p>In the case of observational studies, <strong>stratification</strong> is a good strategy. It implies checking the association between <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> within subgroups of observations that share common values for the confounders. In a linear regression context with <span class="math notranslate nohighlight">\(m\)</span> confounders <span class="math notranslate nohighlight">\(C_j\)</span>, we would regress <span class="math notranslate nohighlight">\(Y\)</span> on <span class="math notranslate nohighlight">\(X\)</span> <strong>and</strong> <span class="math notranslate nohighlight">\(C_1, C_2, \dots, C_m\)</span>.</p></li>
+</ol>
+<ol class="arabic simple" start="2">
+<li><p>In an experimental study, such as A/B testing, we would randomize each subject to a particular level of factor <span class="math notranslate nohighlight">\(X\)</span>. Then, we compare <span class="math notranslate nohighlight">\(Y\)</span> across the different levels of <span class="math notranslate nohighlight">\(X\)</span>. For instance, one could use an <strong>Analysis of Variance (ANOVA)</strong>, which is just one specific class of OLS model (<strong>a continuous response versus a categorical and nominal regressor</strong>).</p></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The second strategy is the golden standard in causal inference and design and analysis of experiments. Nonetheless, it might implicate different statistical, practical, and <em><strong>ETHICAL</strong></em> matters.</p>
+</div>
+<div class="hint admonition">
+<p class="admonition-title">What is the beauty of a randomized experiment?</p>
+<p>The regressor <span class="math notranslate nohighlight">\(X\)</span> is <strong>guaranteed</strong> to be independent of all possible confounders! Whether or not you can measure these confounders, or even know the identity of each <span class="math notranslate nohighlight">\(C_j\)</span>.</p>
+<p>Thus, we no longer need to be concerned with confounding, and <strong>we can interpret the association between <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> in a causal manner</strong>.</p>
+</div>
+</section>
+<section id="building-a-synthetic-population">
+<h3>2.3. Building a Synthetic Population<a class="headerlink" href="#building-a-synthetic-population" title="Permalink to this heading">#</a></h3>
+<p>Before approaching the previous two strategies, let us build our synthetic population for the TikTok® ad case.</p>
+<p>Suppose this population has <code class="docutils literal notranslate"><span class="pre">1000000</span></code> customers (<code class="docutils literal notranslate"><span class="pre">pop.size</span></code>), where 50% are from <code class="docutils literal notranslate"><span class="pre">Victoria</span></code> and the other 50% are from <code class="docutils literal notranslate"><span class="pre">Vancouver</span></code> (i.e., a regressor called <code class="docutils literal notranslate"><span class="pre">city</span></code>). Moreover, let us assume that the regressor <code class="docutils literal notranslate"><span class="pre">age</span></code> is <strong>uniformly distributed</strong> across the whole customer population <strong>between 16 and 24 years old</strong>.</p>
+<p>The code below builds a tibble containing all the customers in the population called <code class="docutils literal notranslate"><span class="pre">pop.pool</span></code> with two columns: one for <code class="docutils literal notranslate"><span class="pre">city</span></code> and another for <code class="docutils literal notranslate"><span class="pre">age</span></code>. As explained above, the values in these two columns need to be simulated.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+
+<span class="n">pop.size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1000000</span>
+
+<span class="n">pop.pool</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tibble</span><span class="p">(</span>
+<span class="w">  </span><span class="n">city</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="s">&quot;Vancouver&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pop.size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="s">&quot;Victoria&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pop.size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">))),</span>
+<span class="w">  </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">runif</span><span class="p">(</span><span class="n">pop.size</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="m">24</span><span class="p">)</span><span class="w"> </span><span class="c1"># Random number generator from uniform distribution</span>
+<span class="p">)</span>
+<span class="n">pop.pool</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1000000 × 2</caption>
+<thead>
+	<tr><th scope=col>city</th><th scope=col>age</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Victoria </td><td>20.30095</td></tr>
+	<tr><td>Victoria </td><td>23.53586</td></tr>
+	<tr><td>Victoria </td><td>19.09438</td></tr>
+	<tr><td>Vancouver</td><td>19.51355</td></tr>
+	<tr><td>⋮</td><td>⋮</td></tr>
+	<tr><td>Vancouver</td><td>23.98407</td></tr>
+	<tr><td>Vancouver</td><td>18.06687</td></tr>
+	<tr><td>Vancouver</td><td>22.71233</td></tr>
+	<tr><td>Victoria </td><td>16.74671</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Once we have our synthetic population pool of customers, we need to simulate their corresponding <strong>dwell times</strong> <span class="math notranslate nohighlight">\(Y\)</span> if they see the <strong>current</strong> or the <strong>new ad</strong>. Hence, each customer in the population will have their pair of <strong>potential responses</strong>: one for the <strong>current ad</strong> and one for the <strong>new ad</strong> in seconds.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Everyone has a potential response that will manifest if they watch the current <strong>OR</strong> new ad.</p>
+</div>
+<p>Within the population, both responses will have their own means <strong>per customer</strong> as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mean_current_ad</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">15</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">pop.pool</span><span class="o">$</span><span class="n">city</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Victoria&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">0.2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pop.pool</span><span class="o">$</span><span class="n">age</span>
+<span class="nf">round</span><span class="p">(</span><span class="nf">head</span><span class="p">(</span><span class="n">mean_current_ad</span><span class="p">),</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+
+<span class="n">mean_new_ad</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mean_current_ad</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">8</span>
+<span class="nf">round</span><span class="p">(</span><span class="nf">head</span><span class="p">(</span><span class="n">mean_new_ad</span><span class="p">),</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>24.0602</li><li>24.7072</li><li>23.8189</li><li>18.9027</li><li>19.0822</li><li>23.9516</li></ol>
+</div><div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>32.0602</li><li>32.7072</li><li>31.8189</li><li>26.9027</li><li>27.0822</li><li>31.9516</li></ol>
+</div></div>
+</div>
+<p>The previous code is computing response means in seconds for each customer within <code class="docutils literal notranslate"><span class="pre">pop.pool</span></code>, according to their specific values in <code class="docutils literal notranslate"><span class="pre">city</span></code> and <code class="docutils literal notranslate"><span class="pre">age</span></code>, and storing them in two vectors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mean_current_ad</span></code>: This is the vector of <code class="docutils literal notranslate"><span class="pre">1000000</span></code> response means corresponding to the <strong>current</strong> video. It has a baseline of <code class="docutils literal notranslate"><span class="pre">15</span></code> seconds for each customer, plus <code class="docutils literal notranslate"><span class="pre">5</span></code> additional seconds if the customer is from <code class="docutils literal notranslate"><span class="pre">Victoria</span></code>, and <code class="docutils literal notranslate"><span class="pre">0.2</span></code> seconds per year in <code class="docutils literal notranslate"><span class="pre">age</span></code> regardless of where the customer is located.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mean_new_ad</span></code>: This is the vector of <code class="docutils literal notranslate"><span class="pre">1000000</span></code> response means corresponding to the <strong>new</strong> video. It is just the vector <code class="docutils literal notranslate"><span class="pre">mean_current_ad</span></code> plus <code class="docutils literal notranslate"><span class="pre">8</span></code> seconds for <strong>ALL</strong> the customers.</p></li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Note that the value of <code class="docutils literal notranslate"><span class="pre">8</span></code> in <code class="docutils literal notranslate"><span class="pre">mean_new_ad</span></code> is the one we aim to estimate via an <strong>observational</strong> or <strong>experimental</strong> study, which denotes that the <strong>new</strong> ad increases the dwell time by 8 seconds for the customer population <strong>in general</strong>. The effect <strong><code class="docutils literal notranslate"><span class="pre">8</span></code> seconds</strong> refers to our <strong>main statistical inquiry</strong>!</p>
+</div>
+<p>Once we have these vectors of means, we can simulate the corresponding responses <code class="docutils literal notranslate"><span class="pre">y_current_ad</span></code> and <code class="docutils literal notranslate"><span class="pre">y_new_ad</span></code> and incorporate them in <code class="docutils literal notranslate"><span class="pre">pop.pool</span></code> as two new columns. These responses will be <strong>normally distributed</strong> (i.e., <code class="docutils literal notranslate"><span class="pre">rnorm()</span></code>) with means <code class="docutils literal notranslate"><span class="pre">mean_current_ad</span></code> and <code class="docutils literal notranslate"><span class="pre">mean_new_ad</span></code> and fixed standard deviations of 1 second.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+
+<span class="n">pop.pool</span><span class="o">$</span><span class="n">y_current_ad</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rnorm</span><span class="p">(</span><span class="n">pop.size</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean_current_ad</span><span class="p">,</span><span class="w"> </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="n">pop.pool</span><span class="o">$</span><span class="n">y_new_ad</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rnorm</span><span class="p">(</span><span class="n">pop.size</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean_new_ad</span><span class="p">,</span><span class="w"> </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+
+<span class="n">pop.pool</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1000000 × 4</caption>
+<thead>
+	<tr><th scope=col>city</th><th scope=col>age</th><th scope=col>y_current_ad</th><th scope=col>y_new_ad</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Victoria </td><td>20.30095</td><td>24.87506</td><td>29.23864</td></tr>
+	<tr><td>Victoria </td><td>23.53586</td><td>23.84210</td><td>32.29992</td></tr>
+	<tr><td>Victoria </td><td>19.09438</td><td>23.78396</td><td>33.55232</td></tr>
+	<tr><td>Vancouver</td><td>19.51355</td><td>17.20327</td><td>27.84733</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>Vancouver</td><td>23.98407</td><td>18.85700</td><td>28.33902</td></tr>
+	<tr><td>Vancouver</td><td>18.06687</td><td>18.83784</td><td>26.85744</td></tr>
+	<tr><td>Vancouver</td><td>22.71233</td><td>19.44461</td><td>27.68320</td></tr>
+	<tr><td>Victoria </td><td>16.74671</td><td>22.46434</td><td>31.84106</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="study-1-observational-and-naive">
+<h3>2.4. Study 1: Observational and Naive<a class="headerlink" href="#study-1-observational-and-naive" title="Permalink to this heading">#</a></h3>
+<p>Let us suppose we run a naive observational study. In this case, we will obtain a sample of customers. They will be able to choose the ad they want to see (i.e., we just conduct an <strong>observational study</strong>).</p>
+<p>The upcoming code will create a factor-type column called <code class="docutils literal notranslate"><span class="pre">x_self_choice</span></code> with:</p>
+<ul class="simple">
+<li><p>the value of <code class="docutils literal notranslate"><span class="pre">1</span></code> (relabeled to level <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Ad</span></code>), denoting that the customer in <code class="docutils literal notranslate"><span class="pre">pop.pool</span></code> (<strong>if observed</strong>) would choose to watch the <strong>new</strong> ad, and</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> (relabeled to level <code class="docutils literal notranslate"><span class="pre">Current</span> <span class="pre">Ad</span></code>) for the <strong>current</strong> ad.</p></li>
+</ul>
+<p>These values are random numbers coming from a <strong>Bernoulli distribution</strong> (<code class="docutils literal notranslate"><span class="pre">rbinom()</span></code> with <code class="docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">1</span></code>) whose probability of success (i.e., choosing the <strong>new</strong> ad) increases when the customer is from <code class="docutils literal notranslate"><span class="pre">Victoria</span></code> while slightly decreasing for older customers <strong>in general</strong> (check argument <code class="docutils literal notranslate"><span class="pre">prob</span></code> in <code class="docutils literal notranslate"><span class="pre">rbinon()</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+
+<span class="n">pop.pool</span><span class="o">$</span><span class="n">x_self_choice</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="nf">rbinom</span><span class="p">(</span><span class="n">pop.size</span><span class="p">,</span>
+<span class="w">  </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="w">  </span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">0.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">pop.pool</span><span class="o">$</span><span class="n">city</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Victoria&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">0.005</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pop.pool</span><span class="o">$</span><span class="n">age</span>
+<span class="p">))</span>
+<span class="n">pop.pool</span><span class="o">$</span><span class="n">x_self_choice</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">fct_recode</span><span class="p">(</span><span class="n">pop.pool</span><span class="o">$</span><span class="n">x_self_choice</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Current Ad&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;New Ad&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+<span class="n">pop.pool</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1000000 × 5</caption>
+<thead>
+	<tr><th scope=col>city</th><th scope=col>age</th><th scope=col>y_current_ad</th><th scope=col>y_new_ad</th><th scope=col>x_self_choice</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Victoria </td><td>20.30095</td><td>24.87506</td><td>29.23864</td><td>New Ad    </td></tr>
+	<tr><td>Victoria </td><td>23.53586</td><td>23.84210</td><td>32.29992</td><td>New Ad    </td></tr>
+	<tr><td>Victoria </td><td>19.09438</td><td>23.78396</td><td>33.55232</td><td>New Ad    </td></tr>
+	<tr><td>Vancouver</td><td>19.51355</td><td>17.20327</td><td>27.84733</td><td>Current Ad</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>Vancouver</td><td>23.98407</td><td>18.85700</td><td>28.33902</td><td>Current Ad</td></tr>
+	<tr><td>Vancouver</td><td>18.06687</td><td>18.83784</td><td>26.85744</td><td>New Ad    </td></tr>
+	<tr><td>Vancouver</td><td>22.71233</td><td>19.44461</td><td>27.68320</td><td>New Ad    </td></tr>
+	<tr><td>Victoria </td><td>16.74671</td><td>22.46434</td><td>31.84106</td><td>New Ad    </td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Next, we will create another column in <code class="docutils literal notranslate"><span class="pre">pop.pool</span></code> called <code class="docutils literal notranslate"><span class="pre">y_obs</span></code>, which will contain the observed response by customer based on <code class="docutils literal notranslate"><span class="pre">x_self_choice</span></code>; i.e., <strong>IF</strong> the customer is more likely to choose the <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Ad</span></code> then the column <code class="docutils literal notranslate"><span class="pre">y_obs</span></code> will contain the value indicated in <code class="docutils literal notranslate"><span class="pre">y_new_ad</span></code>, <strong>ELSE</strong> otherwise. Then, from <code class="docutils literal notranslate"><span class="pre">pop.pool</span></code>, we will collect one sample of size <code class="docutils literal notranslate"><span class="pre">1000</span></code> and call it <code class="docutils literal notranslate"><span class="pre">sample_TikTok</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+
+<span class="n">pop.pool</span><span class="o">$</span><span class="n">y_obs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">pop.pool</span><span class="o">$</span><span class="n">x_self_choice</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Current Ad&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">pop.pool</span><span class="o">$</span><span class="n">y_current_ad</span><span class="p">,</span><span class="w"> </span><span class="n">pop.pool</span><span class="o">$</span><span class="n">y_new_ad</span>
+<span class="p">)</span>
+
+<span class="n">sample_TikTok</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rep_sample_n</span><span class="p">(</span><span class="n">pop.pool</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1000</span><span class="p">)</span>
+<span class="n">sample_TikTok</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A grouped_df: 1000 × 7</caption>
+<thead>
+	<tr><th scope=col>replicate</th><th scope=col>city</th><th scope=col>age</th><th scope=col>y_current_ad</th><th scope=col>y_new_ad</th><th scope=col>x_self_choice</th><th scope=col>y_obs</th></tr>
+	<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>1</td><td>Victoria </td><td>22.39433</td><td>23.08302</td><td>31.46239</td><td>New Ad</td><td>31.46239</td></tr>
+	<tr><td>1</td><td>Vancouver</td><td>22.37157</td><td>20.96466</td><td>26.64890</td><td>New Ad</td><td>26.64890</td></tr>
+	<tr><td>1</td><td>Vancouver</td><td>20.36378</td><td>19.25500</td><td>27.85650</td><td>New Ad</td><td>27.85650</td></tr>
+	<tr><td>1</td><td>Vancouver</td><td>16.82234</td><td>17.78648</td><td>26.91782</td><td>New Ad</td><td>26.91782</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>1</td><td>Victoria </td><td>19.70080</td><td>24.77803</td><td>32.58291</td><td>New Ad</td><td>32.58291</td></tr>
+	<tr><td>1</td><td>Victoria </td><td>20.65071</td><td>25.03055</td><td>31.85587</td><td>New Ad</td><td>31.85587</td></tr>
+	<tr><td>1</td><td>Vancouver</td><td>19.75119</td><td>19.86671</td><td>26.47666</td><td>New Ad</td><td>26.47666</td></tr>
+	<tr><td>1</td><td>Victoria </td><td>23.58678</td><td>24.31605</td><td>31.36179</td><td>New Ad</td><td>31.36179</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">sample_TikTok</span><span class="o">$</span><span class="n">x_self_choice</span><span class="p">)</span><span class="w"> </span><span class="c1"># Choices in observed sample (n = 1000)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Current Ad     New Ad 
+       343        657 
+</pre></div>
+</div>
+</div>
+</div>
+<section id="exploratory-data-analysis">
+<h4>2.4.1. Exploratory Data Analysis<a class="headerlink" href="#exploratory-data-analysis" title="Permalink to this heading">#</a></h4>
+<p>We must graphically compare the observed distributions and spread in both ads within <code class="docutils literal notranslate"><span class="pre">sample_TikTok</span></code> via side-by-side boxplots. We also include the sample average by <strong>type of ad</strong> (as a yellow point): <code class="docutils literal notranslate"><span class="pre">Current</span> <span class="pre">Ad</span></code> and <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Ad</span></code>. The EDA shows larger dwell times for the <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Ad</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">obs_dwell_time_boxplots</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sample_TikTok</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x_self_choice</span><span class="p">,</span><span class="w"> </span><span class="n">y_obs</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_violin</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_self_choice</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">geom_boxplot</span><span class="p">(</span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.15</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">legend.position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Dwell Times (Naive Observational)&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Type&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Dwell Time (seconds)&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">guides</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">stat_summary</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x_self_choice</span><span class="p">,</span><span class="w"> </span><span class="n">y_obs</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_self_choice</span><span class="p">),</span>
+<span class="w">    </span><span class="n">fun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;orange&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">geom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;point&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">18</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_fill_brewer</span><span class="p">(</span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Paired&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">obs_dwell_time_boxplots</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/34e90445a55b8494e71ecac256921a957f9234a75efc16c8f1feb71720fc0103.png"><img alt="../_images/34e90445a55b8494e71ecac256921a957f9234a75efc16c8f1feb71720fc0103.png" src="../_images/34e90445a55b8494e71ecac256921a957f9234a75efc16c8f1feb71720fc0103.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+</section>
+<section id="regression-model">
+<h4>2.4.2. Regression Model<a class="headerlink" href="#regression-model" title="Permalink to this heading">#</a></h4>
+<p>Imagine that we only collect the dwell times and the type of chosen ad (as shown below) in <code class="docutils literal notranslate"><span class="pre">sample_TikTok</span></code>. Suppose you want to estimate the <strong>real population effect</strong> in the dwell time of the new ad compared to the current ad. <strong>Recall we set up our synthetic data so this effect is an increase of 8 seconds IN GENERAL.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_TikTok</span><span class="p">[,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;x_self_choice&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y_obs&quot;</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1000 × 2</caption>
+<thead>
+	<tr><th scope=col>x_self_choice</th><th scope=col>y_obs</th></tr>
+	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>New Ad</td><td>31.46239</td></tr>
+	<tr><td>New Ad</td><td>26.64890</td></tr>
+	<tr><td>New Ad</td><td>27.85650</td></tr>
+	<tr><td>New Ad</td><td>26.91782</td></tr>
+	<tr><td>⋮</td><td>⋮</td></tr>
+	<tr><td>New Ad</td><td>32.58291</td></tr>
+	<tr><td>New Ad</td><td>31.85587</td></tr>
+	<tr><td>New Ad</td><td>26.47666</td></tr>
+	<tr><td>New Ad</td><td>31.36179</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Using <code class="docutils literal notranslate"><span class="pre">sample_TikTok</span></code>, we estimate an OLS model called <code class="docutils literal notranslate"><span class="pre">OLS_naive_obs_study_TikTok</span></code> of the dwell time (<code class="docutils literal notranslate"><span class="pre">y_obs</span></code>) versus the chosen type of ad (<code class="docutils literal notranslate"><span class="pre">x_self_choice</span></code>). We include the corresponding asymptotic 95% confidence intervals (CIs) in our model’s summary. <strong>This is an ANOVA model.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_naive_obs_study_TikTok</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y_obs</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x_self_choice</span><span class="p">,</span>
+<span class="w">  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample_TikTok</span>
+<span class="p">)</span>
+
+<span class="n">OLS_naive_obs_study_TikTok_results</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tidy</span><span class="p">(</span><span class="n">OLS_naive_obs_study_TikTok</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="n">OLS_naive_obs_study_TikTok_results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)        </td><td>19.91</td><td>0.13</td><td>151.68</td><td>0</td><td>19.66</td><td>20.17</td></tr>
+	<tr><td>x_self_choiceNew Ad</td><td>10.68</td><td>0.16</td><td> 65.92</td><td>0</td><td>10.36</td><td>10.99</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Note the estimated effect in dwell time, when switching from the current to the new ad, <strong>increases by 10.68 seconds</strong> and is statistically significant. <strong>The effect is clearly overestimated in this analysis, even when computing the 95% CI!</strong></p>
+<div class="exercise admonition" id="lecture2-q4">
+
+<p class="admonition-title"><span class="caption-number">Exercise 7 </span></p>
+<section id="exercise-content">
+<p>Why are we overestimating the effect of the new ad in this naive observational study?</p>
+</section>
+</div>
+</section>
+</section>
+<section id="study-2-observational-and-less-naive">
+<h3>2.5. Study 2: Observational and Less Naive<a class="headerlink" href="#study-2-observational-and-less-naive" title="Permalink to this heading">#</a></h3>
+<p>Now, let us suppose we ran a less naive study when collecting <code class="docutils literal notranslate"><span class="pre">sample_TikTok</span></code>. Hence, we also record the values of the confounders <code class="docutils literal notranslate"><span class="pre">city</span></code> and <code class="docutils literal notranslate"><span class="pre">age</span></code> when running our study.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_TikTok</span><span class="p">[,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;x_self_choice&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y_obs&quot;</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1000 × 4</caption>
+<thead>
+	<tr><th scope=col>city</th><th scope=col>age</th><th scope=col>x_self_choice</th><th scope=col>y_obs</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Victoria </td><td>22.39433</td><td>New Ad</td><td>31.46239</td></tr>
+	<tr><td>Vancouver</td><td>22.37157</td><td>New Ad</td><td>26.64890</td></tr>
+	<tr><td>Vancouver</td><td>20.36378</td><td>New Ad</td><td>27.85650</td></tr>
+	<tr><td>Vancouver</td><td>16.82234</td><td>New Ad</td><td>26.91782</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>Victoria </td><td>19.70080</td><td>New Ad</td><td>32.58291</td></tr>
+	<tr><td>Victoria </td><td>20.65071</td><td>New Ad</td><td>31.85587</td></tr>
+	<tr><td>Vancouver</td><td>19.75119</td><td>New Ad</td><td>26.47666</td></tr>
+	<tr><td>Victoria </td><td>23.58678</td><td>New Ad</td><td>31.36179</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We estimate another OLS model called <code class="docutils literal notranslate"><span class="pre">OLS_obs_study_TikTok</span></code> of the dwell time (<code class="docutils literal notranslate"><span class="pre">y_obs</span></code>) versus the type of ad and the respective confounders.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_obs_study_TikTok</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y_obs</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x_self_choice</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">city</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">age</span><span class="p">,</span>
+<span class="w">  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample_TikTok</span>
+<span class="p">)</span>
+
+<span class="n">OLS_obs_study_TikTok</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tidy</span><span class="p">(</span><span class="n">OLS_obs_study_TikTok</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="n">OLS_obs_study_TikTok</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 4 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)        </td><td>15.34</td><td>0.28</td><td> 54.53</td><td>0</td><td>14.79</td><td>15.89</td></tr>
+	<tr><td>x_self_choiceNew Ad</td><td> 8.03</td><td>0.08</td><td>103.48</td><td>0</td><td> 7.87</td><td> 8.18</td></tr>
+	<tr><td>cityVictoria       </td><td> 5.02</td><td>0.07</td><td> 68.12</td><td>0</td><td> 4.88</td><td> 5.17</td></tr>
+	<tr><td>age                </td><td> 0.18</td><td>0.01</td><td> 13.21</td><td>0</td><td> 0.15</td><td> 0.21</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Note the estimated effect in dwell time, when switching from the current to the new ad, <strong>increases by 8.03 seconds</strong> and is statistically significant. Controlling for these causal covariates (confounders!), we get an accurate estimate for the effect of the new ad! We also have accurate estimates for <code class="docutils literal notranslate"><span class="pre">city</span></code> and <code class="docutils literal notranslate"><span class="pre">age</span></code> given how we created our artificial population.</p>
+</section>
+<section id="study-3-randomized-study-gold-standard">
+<h3>2.6. Study 3: Randomized Study (Gold Standard)<a class="headerlink" href="#study-3-randomized-study-gold-standard" title="Permalink to this heading">#</a></h3>
+<p>Finally, suppose we can run an experimental study (i.e., <strong>a TikTok A/B testing</strong>) with the customers in <code class="docutils literal notranslate"><span class="pre">sample_TikTok</span></code> <strong>under a balanced design</strong> (i.e., we allocate equal numbers of subjects by <strong>experimental treatment</strong>).</p>
+<p>Therefore, we create a two-level factor-type column called <code class="docutils literal notranslate"><span class="pre">x_randomized</span></code> by randomly assign each customer to view either the <code class="docutils literal notranslate"><span class="pre">Current</span> <span class="pre">Ad</span></code> or the <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Ad</span></code>. Then, we create another column in <code class="docutils literal notranslate"><span class="pre">sample_TikTok</span></code> called <code class="docutils literal notranslate"><span class="pre">y_exp</span></code>, which will contain the obtained experimental response by customer based on <code class="docutils literal notranslate"><span class="pre">x_randomized</span></code>; i.e., if the customer is assigned to <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Ad</span></code> then the column <code class="docutils literal notranslate"><span class="pre">y_exp</span></code> will contain the value indicated in the <strong>potential</strong> <code class="docutils literal notranslate"><span class="pre">y_new_ad</span></code>, else otherwise.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">1234</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+
+<span class="n">sample_TikTok</span><span class="o">$</span><span class="n">x_randomized</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span>
+<span class="w">  </span><span class="nf">rep</span><span class="p">(</span><span class="s">&quot;Current Ad&quot;</span><span class="p">,</span><span class="w"> </span><span class="nf">nrow</span><span class="p">(</span><span class="n">sample_TikTok</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">  </span><span class="nf">rep</span><span class="p">(</span><span class="s">&quot;New Ad&quot;</span><span class="p">,</span><span class="w"> </span><span class="nf">nrow</span><span class="p">(</span><span class="n">sample_TikTok</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="p">))</span>
+<span class="n">sample_TikTok</span><span class="o">$</span><span class="n">y_exp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">sample_TikTok</span><span class="o">$</span><span class="n">x_randomized</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Current Ad&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">sample_TikTok</span><span class="o">$</span><span class="n">y_current_ad</span><span class="p">,</span><span class="w"> </span><span class="n">sample_TikTok</span><span class="o">$</span><span class="n">y_new_ad</span>
+<span class="p">)</span>
+<span class="n">sample_TikTok</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A grouped_df: 1000 × 9</caption>
+<thead>
+	<tr><th scope=col>replicate</th><th scope=col>city</th><th scope=col>age</th><th scope=col>y_current_ad</th><th scope=col>y_new_ad</th><th scope=col>x_self_choice</th><th scope=col>y_obs</th><th scope=col>x_randomized</th><th scope=col>y_exp</th></tr>
+	<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>1</td><td>Victoria </td><td>22.39433</td><td>23.08302</td><td>31.46239</td><td>New Ad</td><td>31.46239</td><td>Current Ad</td><td>23.08302</td></tr>
+	<tr><td>1</td><td>Vancouver</td><td>22.37157</td><td>20.96466</td><td>26.64890</td><td>New Ad</td><td>26.64890</td><td>New Ad    </td><td>26.64890</td></tr>
+	<tr><td>1</td><td>Vancouver</td><td>20.36378</td><td>19.25500</td><td>27.85650</td><td>New Ad</td><td>27.85650</td><td>New Ad    </td><td>27.85650</td></tr>
+	<tr><td>1</td><td>Vancouver</td><td>16.82234</td><td>17.78648</td><td>26.91782</td><td>New Ad</td><td>26.91782</td><td>Current Ad</td><td>17.78648</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>1</td><td>Victoria </td><td>19.70080</td><td>24.77803</td><td>32.58291</td><td>New Ad</td><td>32.58291</td><td>Current Ad</td><td>24.77803</td></tr>
+	<tr><td>1</td><td>Victoria </td><td>20.65071</td><td>25.03055</td><td>31.85587</td><td>New Ad</td><td>31.85587</td><td>New Ad    </td><td>31.85587</td></tr>
+	<tr><td>1</td><td>Vancouver</td><td>19.75119</td><td>19.86671</td><td>26.47666</td><td>New Ad</td><td>26.47666</td><td>Current Ad</td><td>19.86671</td></tr>
+	<tr><td>1</td><td>Victoria </td><td>23.58678</td><td>24.31605</td><td>31.36179</td><td>New Ad</td><td>31.36179</td><td>Current Ad</td><td>24.31605</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<section id="id1">
+<h4>2.6.1. Exploratory Data Analysis<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h4>
+<p>Before fitting the corresponding regression, let us compare the side-by-side boxplots of the naive observational study versus the experimental study. The treatment means are closer in the experimental study, and treatment data spread is graphically quite similar.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">exp_dwell_time_boxplots</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sample_TikTok</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x_randomized</span><span class="p">,</span><span class="w"> </span><span class="n">y_exp</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_violin</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_randomized</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">geom_boxplot</span><span class="p">(</span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.15</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">legend.position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Dwell Times (Experimental)&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Type&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Dwell Time (seconds)&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">guides</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">stat_summary</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x_randomized</span><span class="p">,</span><span class="w"> </span><span class="n">y_exp</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_randomized</span><span class="p">),</span>
+<span class="w">    </span><span class="n">fun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;orange&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">geom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;point&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">18</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_fill_brewer</span><span class="p">(</span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Paired&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot_grid</span><span class="p">(</span><span class="n">obs_dwell_time_boxplots</span><span class="p">,</span><span class="w"> </span><span class="n">exp_dwell_time_boxplots</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/b4c1d7cdee00abecd9f1ee2f0f58f546d3bebfc725e9b590815f7ff369630f7d.png"><img alt="../_images/b4c1d7cdee00abecd9f1ee2f0f58f546d3bebfc725e9b590815f7ff369630f7d.png" src="../_images/b4c1d7cdee00abecd9f1ee2f0f58f546d3bebfc725e9b590815f7ff369630f7d.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+</section>
+<section id="id2">
+<h4>2.6.2. Regression Model<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h4>
+<p>Finally, we estimate another OLS model called <code class="docutils literal notranslate"><span class="pre">OLS_exp_study_TikTok</span></code> of the experimental dwell time (<code class="docutils literal notranslate"><span class="pre">y_exp</span></code>) versus the assigned type of ad (<code class="docutils literal notranslate"><span class="pre">x_randomized</span></code>). <strong>This is an ANOVA model.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_exp_study_TikTok</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y_exp</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x_randomized</span><span class="p">,</span>
+<span class="w">  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample_TikTok</span>
+<span class="p">)</span>
+
+<span class="n">OLS_exp_study_TikTok_results</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tidy</span><span class="p">(</span><span class="n">OLS_exp_study_TikTok</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="n">OLS_exp_study_TikTok_results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)       </td><td>21.60</td><td>0.12</td><td>174.77</td><td>0</td><td>21.36</td><td>21.85</td></tr>
+	<tr><td>x_randomizedNew Ad</td><td> 8.22</td><td>0.17</td><td> 47.05</td><td>0</td><td> 7.88</td><td> 8.57</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_naive_obs_study_TikTok_results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)        </td><td>19.91</td><td>0.13</td><td>151.68</td><td>0</td><td>19.66</td><td>20.17</td></tr>
+	<tr><td>x_self_choiceNew Ad</td><td>10.68</td><td>0.16</td><td> 65.92</td><td>0</td><td>10.36</td><td>10.99</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Note the <strong>estimated experimental effect</strong> in dwell time, when switching from the current to the new ad, <strong>increases by 8.22 seconds</strong> and is statistically significant. Right on! According to the output above, we obtain more accurate estimations with a randomized study than a naive observational one.</p>
+<p>Nevertheless, compared to the less naive observational study, <strong>the 95% CI of the effect estimate is less precise!</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_obs_study_TikTok</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 4 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)        </td><td>15.34</td><td>0.28</td><td> 54.53</td><td>0</td><td>14.79</td><td>15.89</td></tr>
+	<tr><td>x_self_choiceNew Ad</td><td> 8.03</td><td>0.08</td><td>103.48</td><td>0</td><td> 7.87</td><td> 8.18</td></tr>
+	<tr><td>cityVictoria       </td><td> 5.02</td><td>0.07</td><td> 68.12</td><td>0</td><td> 4.88</td><td> 5.17</td></tr>
+	<tr><td>age                </td><td> 0.18</td><td>0.01</td><td> 13.21</td><td>0</td><td> 0.15</td><td> 0.21</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_exp_study_TikTok_results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)       </td><td>21.60</td><td>0.12</td><td>174.77</td><td>0</td><td>21.36</td><td>21.85</td></tr>
+	<tr><td>x_randomizedNew Ad</td><td> 8.22</td><td>0.17</td><td> 47.05</td><td>0</td><td> 7.88</td><td> 8.57</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We can have a more precise effect estimate if we include <code class="docutils literal notranslate"><span class="pre">city</span></code> and <code class="docutils literal notranslate"><span class="pre">age</span></code> as in the experimental OLS model below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_full_exp_study_TikTok</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y_exp</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x_randomized</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">city</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">age</span><span class="p">,</span>
+<span class="w">  </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample_TikTok</span>
+<span class="p">)</span>
+
+<span class="n">OLS_full_exp_study_TikTok_results</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tidy</span><span class="p">(</span><span class="n">OLS_full_exp_study_TikTok</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="n">OLS_full_exp_study_TikTok_results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 4 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)       </td><td>15.20</td><td>0.27</td><td> 55.31</td><td>0</td><td>14.66</td><td>15.74</td></tr>
+	<tr><td>x_randomizedNew Ad</td><td> 8.04</td><td>0.06</td><td>128.36</td><td>0</td><td> 7.91</td><td> 8.16</td></tr>
+	<tr><td>cityVictoria      </td><td> 5.08</td><td>0.06</td><td> 80.97</td><td>0</td><td> 4.96</td><td> 5.20</td></tr>
+	<tr><td>age               </td><td> 0.19</td><td>0.01</td><td> 13.91</td><td>0</td><td> 0.16</td><td> 0.21</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Note the estimated effect in dwell time, when switching from the current to the new ad, <strong>increases by 8.04 seconds</strong> and is statistically significant. The model above is as precise as the less naive observational model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_obs_study_TikTok</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 4 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)        </td><td>15.34</td><td>0.28</td><td> 54.53</td><td>0</td><td>14.79</td><td>15.89</td></tr>
+	<tr><td>x_self_choiceNew Ad</td><td> 8.03</td><td>0.08</td><td>103.48</td><td>0</td><td> 7.87</td><td> 8.18</td></tr>
+	<tr><td>cityVictoria       </td><td> 5.02</td><td>0.07</td><td> 68.12</td><td>0</td><td> 4.88</td><td> 5.17</td></tr>
+	<tr><td>age                </td><td> 0.18</td><td>0.01</td><td> 13.21</td><td>0</td><td> 0.15</td><td> 0.21</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>From the previous results, we get similar estimates. Hence, we might wonder: <strong>why are we running an experiment when we can only execute a less naive observational study?</strong></p>
+<p>In this example, we know exactly how the synthetic population is structured. Therefore, we know what confounders to use in our observational OLS model. Nonetheless, in real life, different populations would get extremely complex with a whole set of counfounders. <strong>Identifying and measuring the right confounders is another complex sampling task.</strong></p>
+<p>Again, the beauty of randomized experiments (such as A/B testing) allows the <strong>accurate estimation</strong> of our experimental effect of interest without including confounders. But, of course, we can include some confounders in our experimental OLS, making our estimations <strong>more precise</strong>.</p>
+<p>In this specific example, our second experimental OLS (<code class="docutils literal notranslate"><span class="pre">OLS_full_exp_study_TikTok</span></code>) has the following experimental components:</p>
+<ul class="simple">
+<li><p>The <strong>continuous response</strong> <code class="docutils literal notranslate"><span class="pre">y_exp</span></code>.</p></li>
+<li><p>The <strong>experimental factor of interest</strong> <code class="docutils literal notranslate"><span class="pre">x_randomized</span></code> with two <strong>treatments</strong>: <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Ad</span></code> and <code class="docutils literal notranslate"><span class="pre">Current</span> <span class="pre">Ad</span></code>.</p></li>
+<li><p>A categorical <strong>variable</strong> <code class="docutils literal notranslate"><span class="pre">city</span></code> with two levels: <code class="docutils literal notranslate"><span class="pre">Victoria</span></code> and <code class="docutils literal notranslate"><span class="pre">Vancouver</span></code>.</p></li>
+<li><p>A continuous <strong>covariate</strong> <code class="docutils literal notranslate"><span class="pre">age</span></code>.</p></li>
+</ul>
+<p>These elements make our OLS model an <strong>Analysis of Covariance (ANCOVA)</strong>.</p>
+</section>
+</section>
+</section>
+<section id="wrapping-up">
+<h2>3. Wrapping Up<a class="headerlink" href="#wrapping-up" title="Permalink to this heading">#</a></h2>
+<p>We have covered a lot of ground:</p>
+<ul class="simple">
+<li><p>The Simpson’s paradox and its relation with confounding (how to avoid this paradox).</p></li>
+<li><p>Randomized experiments versus observational studies:</p>
+<ul>
+<li><p>Accuracy of inference via proper regression modelling.</p></li>
+<li><p>Proper validity of causal claims with the right variables.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./notes"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="lecture1_multiple_comparisons.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Lecture 1 - Multiple Comparisons</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="lecture3_randomization_and_blocking.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Lecture 3 - Randomization and Blocking</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-learning-objectives">Today’s Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-r-packages">Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simpson-s-paradox">1. Simpson’s Paradox</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simulated-example">1.1.  A Simulated Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-covid-19-example">1.2.  A COVID-19 Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-avoid-misleading-conclusions">1.3.  How to Avoid Misleading Conclusions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-big-picture-strategies-for-dealing-with-confounding">2. Two Big-Picture Strategies for Dealing With Confounding</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-tiktok-simulation">2.1. The TikTok® Simulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-strategies">2.2. The Strategies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-a-synthetic-population">2.3. Building a Synthetic Population</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#study-1-observational-and-naive">2.4. Study 1: Observational and Naive</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#exploratory-data-analysis">2.4.1. Exploratory Data Analysis</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-model">2.4.2. Regression Model</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#study-2-observational-and-less-naive">2.5. Study 2: Observational and Less Naive</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#study-3-randomized-study-gold-standard">2.6. Study 3: Randomized Study (Gold Standard)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2.6.1. Exploratory Data Analysis</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.6.2. Regression Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-up">3. Wrapping Up</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By G. Alexi Rodríguez-Arelis
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
