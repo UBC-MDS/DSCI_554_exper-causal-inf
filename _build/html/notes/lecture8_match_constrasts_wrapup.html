@@ -1,0 +1,1656 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Lecture 8 - Matched Case-Control Scheme, Ordinal Regressors, and Final Wrap-Up &#8212; DSCI 554 - Experimentation and Causal Inference</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notes/lecture8_match_constrasts_wrapup';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Blocking and Stratification" href="appendix_blocking_and_stratification.html" />
+    <link rel="prev" title="Lecture 7 - Observational Data: Different Sampling Schemes" href="lecture7_obs_sampling_schemes.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/UBC_MDS_logo.png" class="logo__image only-light" alt="DSCI 554 - Experimentation and Causal Inference - Home"/>
+    <script>document.write(`<img src="../_static/UBC_MDS_logo.png" class="logo__image only-dark" alt="DSCI 554 - Experimentation and Causal Inference - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    Welcome to DSCI 554: Experimentation and Causal Inference
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Lectures</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lecture-learning-objectives.html">Lecture Learning Objectives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture1_multiple_comparisons.html">Lecture 1 - Multiple Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture2_simpson_confounding.html">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture3_randomization_and_blocking.html">Lecture 3 - Randomization and Blocking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture4_more_blocking_and_power.html">Lecture 4 - More Blocking and Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture5_more_power_early_stopping.html">Lecture 5 - More Power and Early Stopping in A/B Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture6_obs_stratifying_modelling.html">Lecture 6 - Observational Data: Stratifying and Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture7_obs_sampling_schemes.html">Lecture 7 - Observational Data: Different Sampling Schemes</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Lecture 8 - Matched Case-Control Scheme, Ordinal Regressors, and Final Wrap-Up</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendices</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="appendix_blocking_and_stratification.html">Blocking and Stratification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-causality-exp-cheatsheet.html">Causality and Experimentation Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-prob-cheatsheet.html">Probability Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-reg-mindmap.html">Regression Mind Map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-reg-cheatsheet.html">Regression Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-dist-cheatsheet.html">Distribution Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-greek-alphabet.html">Greek Alphabet</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.ubc.ca/MDS-2023-24/DSCI_554_exper-causal-inf_students" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.ubc.ca/MDS-2023-24/DSCI_554_exper-causal-inf_students/issues/new?title=Issue%20on%20page%20%2Fnotes/lecture8_match_constrasts_wrapup.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notes/lecture8_match_constrasts_wrapup.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Lecture 8 - Matched Case-Control Scheme, Ordinal Regressors, and Final Wrap-Up</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-learning-objectives">Today’s Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-r-packages">Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#previously">Previously…</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matched-case-control-studies">1. Matched Case-Control Studies</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-alternative-data-collection">1.1. An Alternative Data Collection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-different-data-analysis">1.2. A Different Data Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-simulation-studies-using-the-two-case-control-sampling-schemes">1.3. Running Simulation Studies Using the Two Case-Control Sampling Schemes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordinal-regressors">2. Ordinal Regressors</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-online-store-dataset">2.1. The Online Store Dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main-statistical-inquiry">2.2. Main Statistical Inquiry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploratory-data-analysis">2.3. Exploratory Data Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-model-and-polynomial-contrasts">2.4. Regression Model and Polynomial Contrasts</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-model-and-succesive-differences-contrasts">2.5. Regression Model and Succesive Differences Contrasts</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-wrap-up">3. Final Wrap-Up</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#experimental-versus-observational-studies">3.1. Experimental Versus Observational Studies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#causal-interpretations-it-is-all-about-making-proper-comparisons">3.2. Causal Interpretations: It is all about making “proper” comparisons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#strength-of-story">3.3. Strength of Story</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-thinking-in-design-of-studies">3.4. Statistical Thinking in Design of Studies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-final-statistical-reflection">3.5. A Final Statistical Reflection</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="lecture-8-matched-case-control-scheme-ordinal-regressors-and-final-wrap-up">
+<h1>Lecture 8 - Matched Case-Control Scheme, Ordinal Regressors, and Final Wrap-Up<a class="headerlink" href="#lecture-8-matched-case-control-scheme-ordinal-regressors-and-final-wrap-up" title="Permalink to this heading">#</a></h1>
+<section id="today-s-learning-objectives">
+<h2>Today’s Learning Objectives<a class="headerlink" href="#today-s-learning-objectives" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Describe how case-control sampling and matching can simultaneously be used to design a study.</p></li>
+<li><p>Demonstrate the use of contrasts in ordinal regressors.</p></li>
+<li><p>Relate how data are analyzed to how they are collected.</p></li>
+</ol>
+</section>
+<section id="loading-r-packages">
+<h2>Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages<a class="headerlink" href="#loading-r-packages" title="Permalink to this heading">#</a></h2>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">repr.matrix.max.cols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">warn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-1</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">foreign</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">broom</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">MASS</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="previously">
+<h2>Previously…<a class="headerlink" href="#previously" title="Permalink to this heading">#</a></h2>
+<p>We have explored in <strong>observational studies</strong> how to obtain <strong>accurate and precise</strong> statistical models to infer causality between an exposure factor <span class="math notranslate nohighlight">\(X\)</span> and a given outcome of interest <span class="math notranslate nohighlight">\(Y\)</span>. Furthermore, in <a class="reference internal" href="lecture7_obs_sampling_schemes.html"><span class="doc">Lecture 7 - Observational Data: Different Sampling Schemes</span></a>, we introduce three different sampling schemes to assess them using a <strong>proxy ground truth</strong>.</p>
+<p>Via different simulation studies, we ended up concluding that a case-control (CC) scheme (with a smaller sample size <span class="math notranslate nohighlight">\(n\)</span>) has a better performance when compared to cross-sectional (CS) and cohort (CO) schemes <strong>when <span class="math notranslate nohighlight">\(Y = 1\)</span> is rare in the population</strong>.</p>
+<p>However, note that all sampling schemes used a <strong>Binary Logistic regression model</strong> to infer causality between <span class="math notranslate nohighlight">\(Y\)</span> and <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>Now, we might wonder: <strong>can we improve our CC causal analysis even more by incorporating a more clever statistical tool?</strong> Let us explore this.</p>
+</section>
+<section id="matched-case-control-studies">
+<h2>1. Matched Case-Control Studies<a class="headerlink" href="#matched-case-control-studies" title="Permalink to this heading">#</a></h2>
+<p>Let us review the definition we provided for CC schemes:</p>
+<blockquote>
+<div><p>Case-control (CC) is a <strong>retrospective scheme</strong>. It will sample a group of subjects with the study’s response success (<span class="math notranslate nohighlight">\(Y = 1\)</span>) and a group without (<span class="math notranslate nohighlight">\(Y = 0\)</span>). Half of the overall sample will correspond to subjects with <span class="math notranslate nohighlight">\(Y = 1\)</span> and the other half to <span class="math notranslate nohighlight">\(Y = 0\)</span>. The researcher will ask each subject: <em>have you ever been exposed to the condition <span class="math notranslate nohighlight">\(X\)</span> <strong>in the past</strong> (<span class="math notranslate nohighlight">\(X = 0\)</span> never and <span class="math notranslate nohighlight">\(X = 1\)</span> ever)</em>.</p>
+</div></blockquote>
+<p>Those subjects with <span class="math notranslate nohighlight">\(Y = 1\)</span> are the <strong>cases</strong> and those with <span class="math notranslate nohighlight">\(Y = 0\)</span> are <strong>controls</strong>.</p>
+<p>Furthermore, via the <strong>proxy ground truth</strong>, we concluded that a CC sampling scheme is the best among the three we checked in terms of <strong>power</strong> with a smaller sample size <span class="math notranslate nohighlight">\(n\)</span> when <span class="math notranslate nohighlight">\(Y = 1\)</span> is rare in the population. Our simulation studies included fitting a regression model involving <span class="math notranslate nohighlight">\(Y\)</span>, <span class="math notranslate nohighlight">\(X\)</span>, and <span class="math notranslate nohighlight">\(p\)</span> confounders <span class="math notranslate nohighlight">\(C_j\)</span> (<span class="math notranslate nohighlight">\(j = 1, \dots, p\)</span>).</p>
+<section id="an-alternative-data-collection">
+<h3>1.1. An Alternative Data Collection<a class="headerlink" href="#an-alternative-data-collection" title="Permalink to this heading">#</a></h3>
+<p>Regarding CC sampling schemes, <strong>is it entirely acceptable to collect the data this way?</strong> Yes, it is acceptable according to the following reasons:</p>
+<ul class="simple">
+<li><p>Let us think about the variables  <span class="math notranslate nohighlight">\((Y, X , C_1, \dots, C_p)\)</span> in the actual population of interest. Moreover, we presume the conditioned response <span class="math notranslate nohighlight">\((Y | X, C_1, \dots, C_p)\)</span> in our population of interest is governed by a regression equation.</p></li>
+<li><p>We create an artificial population by “cloning subjects.”</p></li>
+</ul>
+<ul class="simple">
+<li><p>We build our artificial clone responses based on regression coefficients from an estimated model using a <strong>previous representative sample</strong> as training data. These responses include <strong>induced random noise</strong>. This is our  <strong>proxy ground truth</strong>.</p></li>
+<li><p>Then, we <strong>directly</strong> collect a CC sample with half of the subjects as controls and the other half as cases from the <strong>proxy ground truth</strong>.</p></li>
+</ul>
+<p>Therefore, when sampling is costly (recall, we aim for sample sizes as small as possible!) and <span class="math notranslate nohighlight">\(Y = 1\)</span> is rare, <strong>a CC sampling is feasible and helpful</strong>.</p>
+<p>However, the statistical practice offers an alternative way to collect our CC data instead of <strong>directly</strong> collecting a CC sample with half of the subjects as controls and the other half as cases from our population of interest. It is called <strong>CC-matching</strong>.</p>
+<p>Before we dig into this alternative CC data collection, let us build our <strong>proxy ground truth</strong> via the Western Collaborative Group Study (WCGS) data. Recall this study recruited <strong>middle-aged men between the ages of 39 and 59 who were employees of ten Californian companies</strong>. The data was collected on 3154 subjects between 1960 and 1961.</p>
+<p>Moreover, the main statistical inquiry was:</p>
+<blockquote>
+<div><p><strong>Does a <code class="docutils literal notranslate"><span class="pre">Type</span> <span class="pre">A</span></code> behaviour pattern (<code class="docutils literal notranslate"><span class="pre">dibpat</span></code>) LEAD to a coronary heart disease (CHD) event (<code class="docutils literal notranslate"><span class="pre">chd69</span></code>)?</strong></p>
+</div></blockquote>
+<p>From <a class="reference external" href="https://www.ahajournals.org/doi/pdf/10.1161/01.CIR.53.2.348">Brand et al. (1976)</a>, the levels of <code class="docutils literal notranslate"><span class="pre">dibpat</span></code> are defined as follows:</p>
+<blockquote>
+<div><p><em>Methods for the assessment of the dichotomous behavior pattern by a structured psychological interview in the
+WCGS have been described elsewhere. <strong>Type A</strong> behavior is characterized by enhanced aggressiveness and competitive drive, preoccupation with deadlines, and chronic impatience and sense of time urgency, in contrast with the more relaxed and less hurried <strong>Type B</strong> behavior pattern.</em></p>
+</div></blockquote>
+<p>We load the data and get rid of rows with missing data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">wcgs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as_tibble</span><span class="p">(</span><span class="nf">read.dta</span><span class="p">(</span><span class="s">&quot;../data/wcgs.dta&quot;</span><span class="p">))</span>
+<span class="n">wcgs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">na.omit</span><span class="p">(</span><span class="n">wcgs</span><span class="p">)</span><span class="w"> </span>
+<span class="n">wcgs</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 3101 × 22</caption>
+<thead>
+	<tr><th scope=col>age</th><th scope=col>arcus</th><th scope=col>behpat</th><th scope=col>bmi</th><th scope=col>chd69</th><th scope=col>⋯</th><th scope=col>typchd69</th><th scope=col>uni</th><th scope=col>weight</th><th scope=col>wghtcat</th><th scope=col>agec</th></tr>
+	<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>⋯</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>50</td><td>1</td><td>A1</td><td>31.32101</td><td>No</td><td>⋯</td><td>0</td><td>0.4860738</td><td>200</td><td>170-200</td><td>46-50</td></tr>
+	<tr><td>51</td><td>0</td><td>A1</td><td>25.32858</td><td>No</td><td>⋯</td><td>0</td><td>0.1859543</td><td>192</td><td>170-200</td><td>51-55</td></tr>
+	<tr><td>59</td><td>1</td><td>A1</td><td>28.69388</td><td>No</td><td>⋯</td><td>0</td><td>0.7277991</td><td>200</td><td>170-200</td><td>56-60</td></tr>
+	<tr><td>51</td><td>1</td><td>A1</td><td>22.14871</td><td>No</td><td>⋯</td><td>0</td><td>0.6244636</td><td>150</td><td>140-170</td><td>51-55</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋱</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>41</td><td>0</td><td>B4</td><td>25.03378</td><td>No</td><td>⋯</td><td>0</td><td>0.27816987</td><td>195</td><td>170-200</td><td>41-45</td></tr>
+	<tr><td>53</td><td>0</td><td>B4</td><td>25.79944</td><td>No</td><td>⋯</td><td>0</td><td>0.95139700</td><td>185</td><td>170-200</td><td>51-55</td></tr>
+	<tr><td>54</td><td>0</td><td>B4</td><td>23.49076</td><td>No</td><td>⋯</td><td>0</td><td>0.57082593</td><td>150</td><td>140-170</td><td>51-55</td></tr>
+	<tr><td>48</td><td>0</td><td>B4</td><td>30.26990</td><td>No</td><td>⋯</td><td>0</td><td>0.08677829</td><td>205</td><td><span style=white-space:pre-wrap>&gt; 200  </span></td><td>46-50</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Then, we select our variables of interest:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dibpat</span></code>: Dichotomous behaviour pattern, a factor-type variable with two levels (<code class="docutils literal notranslate"><span class="pre">Type</span> <span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">Type</span> <span class="pre">B</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">age</span></code>: Subject’s age in years (a count-type variable).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bmi</span></code>: Subject’s body mass index (BMI) in <span class="math notranslate nohighlight">\(\text{kg}/\text{m}^2\)</span> (a continuous-type variable).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chol</span></code>: Subject’s cholesterol levels in <span class="math notranslate nohighlight">\(\text{mg}/100 \text{ ml}\)</span> (a continuous-type variable).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">smoke</span></code>: Whether the subject smokes or not, a factor-type variable with two levels (<code class="docutils literal notranslate"><span class="pre">Yes</span></code> and <code class="docutils literal notranslate"><span class="pre">No</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chd69</span></code>: Whether the subject experienced a coronary heart disease (CHD) event, a factor-type variable with two levels (<code class="docutils literal notranslate"><span class="pre">Yes</span></code> and <code class="docutils literal notranslate"><span class="pre">No</span></code>).</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">wcgs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">wcgs</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">dibpat</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">bmi</span><span class="p">,</span><span class="w"> </span><span class="n">chol</span><span class="p">,</span><span class="w"> </span><span class="n">smoke</span><span class="p">,</span><span class="w"> </span><span class="n">chd69</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Therefore <span class="math notranslate nohighlight">\(Y\)</span> will be <code class="docutils literal notranslate"><span class="pre">chd69</span></code> and <span class="math notranslate nohighlight">\(X\)</span> will be <code class="docutils literal notranslate"><span class="pre">dibpat</span></code>, whereas <code class="docutils literal notranslate"><span class="pre">age</span></code>, <code class="docutils literal notranslate"><span class="pre">bmi</span></code>, <code class="docutils literal notranslate"><span class="pre">chol</span></code> and <code class="docutils literal notranslate"><span class="pre">smoke</span></code> will be confounders.</p>
+<p>Given the form of the model governing our <strong>proxy ground truth</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glm</span><span class="p">(</span><span class="n">chd69</span> <span class="o">~</span> <span class="n">dibpat</span> <span class="o">+</span> <span class="n">age_bins</span> <span class="o">+</span> <span class="n">smoke</span> <span class="o">+</span> <span class="n">bmi_bins</span> <span class="o">+</span> <span class="n">chol_bins</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="s2">&quot;binomial&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">wcgs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>we need to create strata by confounder (<strong>except for <code class="docutils literal notranslate"><span class="pre">smoke</span></code> which is already categorical</strong>). These strata will be formed on a quartile basis.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">wcgs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">wcgs</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">age_bins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">cut</span><span class="p">(</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">age</span><span class="p">),</span><span class="w"> </span><span class="nf">quantile</span><span class="p">(</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">age</span><span class="p">)),</span><span class="w"> </span><span class="n">include.lowest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">),</span>
+<span class="w">    </span><span class="n">bmi_bins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">cut</span><span class="p">(</span><span class="n">bmi</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">bmi</span><span class="p">),</span><span class="w"> </span><span class="nf">quantile</span><span class="p">(</span><span class="n">bmi</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">bmi</span><span class="p">)),</span><span class="w"> </span><span class="n">include.lowest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">),</span>
+<span class="w">    </span><span class="n">chol_bins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">cut</span><span class="p">(</span><span class="n">chol</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">chol</span><span class="p">),</span><span class="w"> </span><span class="nf">quantile</span><span class="p">(</span><span class="n">chol</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">chol</span><span class="p">)),</span><span class="w"> </span><span class="n">include.lowest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then, we fit the governing model:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">wcgs_bin_log_model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">chd69</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">dibpat</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">age_bins</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">smoke</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bmi_bins</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">chol_bins</span><span class="p">,</span>
+<span class="w">  </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;binomial&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wcgs</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We record the corresponding estimated regression coefficients:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">wcgs_coef_pop</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coef</span><span class="p">(</span><span class="n">wcgs_bin_log_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We proceed with creating the clones in our <strong>proxy ground truth</strong> <code class="docutils literal notranslate"><span class="pre">sim_pop</span></code> and shuffling its rows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+<span class="n">sim_pop</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span>
+<span class="w">  </span><span class="n">dibpat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="n">wcgs</span><span class="o">$</span><span class="n">dibpat</span><span class="p">,</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">  </span><span class="n">age_bins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="n">wcgs</span><span class="o">$</span><span class="n">age_bins</span><span class="p">,</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">  </span><span class="n">smoke</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="n">wcgs</span><span class="o">$</span><span class="n">smoke</span><span class="p">,</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">  </span><span class="n">bmi_bins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="n">wcgs</span><span class="o">$</span><span class="n">bmi_bins</span><span class="p">,</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">  </span><span class="n">chol_bins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="n">wcgs</span><span class="o">$</span><span class="n">chol_bins</span><span class="p">,</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># Shuffling rows</span>
+<span class="n">rows</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="nf">nrow</span><span class="p">(</span><span class="n">sim_pop</span><span class="p">))</span>
+<span class="n">sim_pop</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sim_pop</span><span class="p">[</span><span class="n">rows</span><span class="p">,</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then, we build the response <span class="math notranslate nohighlight">\(Y\)</span> (<code class="docutils literal notranslate"><span class="pre">chd69</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_prob</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">logit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="nf">exp</span><span class="p">(</span><span class="n">logit</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">exp</span><span class="p">(</span><span class="n">logit</span><span class="p">))}</span><span class="w"> </span><span class="c1"># pi hat formula</span>
+
+<span class="c1"># Creating model matrix</span>
+<span class="n">model_matrix_sim_pop</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">model.matrix</span><span class="p">(</span><span class="o">~</span><span class="w"> </span><span class="n">dibpat</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">age_bins</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">smoke</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bmi_bins</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">chol_bins</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sim_pop</span><span class="p">)</span>
+
+<span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+<span class="n">sim_pop</span><span class="o">$</span><span class="n">chd69</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rbinom</span><span class="p">(</span>
+<span class="w">  </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">nrow</span><span class="p">(</span><span class="n">sim_pop</span><span class="p">),</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">pred_prob</span><span class="p">(</span><span class="n">logit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model_matrix_sim_pop</span><span class="w"> </span><span class="o">%*%</span><span class="w"> </span><span class="n">wcgs_coef_pop</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">sim_pop</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sim_pop</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">chd69</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">chd69</span><span class="p">))</span>
+<span class="n">sim_pop</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 62020 × 6</caption>
+<thead>
+	<tr><th></th><th scope=col>dibpat</th><th scope=col>age_bins</th><th scope=col>smoke</th><th scope=col>bmi_bins</th><th scope=col>chol_bins</th><th scope=col>chd69</th></tr>
+	<tr><th></th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>46844</th><td>Type B</td><td>[39,42]</td><td>No</td><td>(24.4,25.8]</td><td>(197,223]</td><td>0</td></tr>
+	<tr><th scope=row>36954</th><td>Type B</td><td>(50,59]</td><td>No</td><td>(25.8,38.9]</td><td>[103,197]</td><td>0</td></tr>
+	<tr><th scope=row>47173</th><td>Type B</td><td>(42,45]</td><td>No</td><td>(23,24.4]  </td><td>[103,197]</td><td>0</td></tr>
+	<tr><th scope=row>44779</th><td>Type B</td><td>(50,59]</td><td>No</td><td>(23,24.4]  </td><td>(197,223]</td><td>0</td></tr>
+	<tr><th scope=row>⋮</th><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><th scope=row>13998</th><td>Type A</td><td>(42,45]</td><td>No </td><td>(25.8,38.9]</td><td>[103,197]</td><td>0</td></tr>
+	<tr><th scope=row>43487</th><td>Type B</td><td>[39,42]</td><td>No </td><td>[11.2,23]  </td><td>[103,197]</td><td>0</td></tr>
+	<tr><th scope=row>14393</th><td>Type A</td><td>(42,45]</td><td>Yes</td><td>(25.8,38.9]</td><td>[103,197]</td><td>0</td></tr>
+	<tr><th scope=row>45693</th><td>Type B</td><td>(50,59]</td><td>Yes</td><td>(25.8,38.9]</td><td>[103,197]</td><td>0</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We ended up with an artificial population of <span class="math notranslate nohighlight">\(N = 62,020\)</span> subjects where <span class="math notranslate nohighlight">\(1,537 + 3,480 = 5,017\)</span> subjects <strong>experience (or will experience!)</strong> a CHD event (<code class="docutils literal notranslate"><span class="pre">0</span></code> for <code class="docutils literal notranslate"><span class="pre">No</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> for <code class="docutils literal notranslate"><span class="pre">Yes</span></code>):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">sim_pop</span><span class="o">$</span><span class="n">dibpat</span><span class="p">,</span><span class="w"> </span><span class="n">sim_pop</span><span class="o">$</span><span class="n">chd69</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>        
+             0     1
+  Type B 29203  1537
+  Type A 27800  3480
+</pre></div>
+</div>
+</div>
+</div>
+<p>Once we have our artificial population <code class="docutils literal notranslate"><span class="pre">sim_pop</span></code>, let us explain what <strong>CC-matching</strong> is. This particular form of CC sampling occurs when we are collecting our data. It has the following characteristics:</p>
+<ul class="simple">
+<li><p>Our <strong>overall sample size</strong> will be <span class="math notranslate nohighlight">\(n\)</span>.</p></li>
+<li><p>We sample <span class="math notranslate nohighlight">\(n / 2\)</span> cases (<span class="math notranslate nohighlight">\(Y = 1\)</span>) from our population of interest. We already discussed the impact of oversampling cases and undersampling controls when the case <span class="math notranslate nohighlight">\(Y = 1\)</span> is rare. Here we will keep a</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\text{Case:Control ratio} = 1.\]</div>
+<ul class="simple">
+<li><p>When recording the binary variables <span class="math notranslate nohighlight">\(Y\)</span> and <span class="math notranslate nohighlight">\(X\)</span>, we also record the confounders of interest <span class="math notranslate nohighlight">\(C_j\)</span> <strong>as strata</strong>.</p></li>
+</ul>
+<div class="exercise admonition" id="lecture8-q1">
+
+<p class="admonition-title"><span class="caption-number">Exercise 25 </span></p>
+<section id="exercise-content">
+<p><strong>Answer TRUE or FALSE:</strong></p>
+<p>If we are part of the team designing the observational study, we must determine the set of confounding variables before running the study.</p>
+<p><strong>A.</strong> TRUE</p>
+<p><strong>B.</strong> FALSE</p>
+</section>
+</div>
+<ul class="simple">
+<li><p>Once we have the sampled <span class="math notranslate nohighlight">\(n / 2\)</span> cases, we will start sampling our <span class="math notranslate nohighlight">\(n / 2\)</span> controls (<span class="math notranslate nohighlight">\(Y = 0\)</span>).</p></li>
+<li><p>When sampling the <span class="math notranslate nohighlight">\(n / 2\)</span> controls, each subject <strong>will exactly match each confounding strata to their SINGLE case counterpart</strong>. The variable <span class="math notranslate nohighlight">\(X\)</span> will be allowed to vary.</p></li>
+</ul>
+<div class="hint admonition">
+<p class="admonition-title">What is the objective of this matched case-control sampling?</p>
+<p>This alternative matching sampling also considers confounding variables, so we can allow our causal claims on the binary <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> to be <strong>STRONGER</strong>. Note this particular scheme will be decided from the very beginning of the observational study.</p>
+</div>
+<p><strong>To illustrate this CC sampling scheme</strong>, we will build the simulation function <code class="docutils literal notranslate"><span class="pre">sim_matched_CC</span></code>. The function will need the following arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pop_data</span></code>: The population data from which we will draw the sample.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n</span></code>: The overall sample size <span class="math notranslate nohighlight">\(n\)</span>.</p></li>
+</ul>
+<p>The function will return the <strong>CC-matched sample</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sim_matched_CC</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">pop_data</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">subsample_size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span>
+<span class="w">  </span><span class="n">sample_cases</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample</span><span class="p">((</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">pop_data</span><span class="p">))[</span><span class="n">pop_data</span><span class="o">$</span><span class="n">chd69</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">],</span>
+<span class="w">    </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subsample_size</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">F</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="w">  </span><span class="c1"># Keep the same n / 2 cases, but start fresh with picking controls!</span>
+<span class="w">  </span><span class="n">sample_controls</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">sample_cases</span><span class="p">))</span>
+<span class="w">  </span><span class="c1"># Start out with T/F indicator for the pool of all controls</span>
+<span class="w">  </span><span class="n">available_control</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pop_data</span><span class="o">$</span><span class="n">chd69</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span>
+<span class="w">  </span><span class="c1"># Going through cases one at a time</span>
+<span class="w">  </span><span class="nf">for </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">sample_cases</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="c1"># What control is eligble to match to the ith case?</span>
+<span class="w">    </span><span class="c1"># Any available control with matching confounder values!</span>
+<span class="w">    </span><span class="n">elegible_control</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">available_control</span><span class="w"> </span><span class="o">&amp;</span>
+<span class="w">      </span><span class="p">(</span><span class="n">pop_data</span><span class="p">[,</span><span class="w"> </span><span class="s">&quot;age_bins&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pop_data</span><span class="p">[</span><span class="n">sample_cases</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="s">&quot;age_bins&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">&amp;</span>
+<span class="w">      </span><span class="p">(</span><span class="n">pop_data</span><span class="p">[,</span><span class="w"> </span><span class="s">&quot;smoke&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pop_data</span><span class="p">[</span><span class="n">sample_cases</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="s">&quot;smoke&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">&amp;</span>
+<span class="w">      </span><span class="p">(</span><span class="n">pop_data</span><span class="p">[,</span><span class="w"> </span><span class="s">&quot;bmi_bins&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pop_data</span><span class="p">[</span><span class="n">sample_cases</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="s">&quot;bmi_bins&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">&amp;</span>
+<span class="w">      </span><span class="p">(</span><span class="n">pop_data</span><span class="p">[,</span><span class="w"> </span><span class="s">&quot;chol_bins&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pop_data</span><span class="p">[</span><span class="n">sample_cases</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="s">&quot;chol_bins&quot;</span><span class="p">])</span>
+
+<span class="w">    </span><span class="c1"># The index of the randomly selected control</span>
+<span class="w">    </span><span class="n">sample_controls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample</span><span class="p">((</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">pop_data</span><span class="p">))[</span><span class="n">elegible_control</span><span class="p">],</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1"># And that control will be no longer available</span>
+<span class="w">    </span><span class="n">available_control</span><span class="p">[</span><span class="n">sample_controls</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">FALSE</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1"># Wrangling matched sample</span>
+<span class="w">  </span><span class="n">sample_by_pairs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span>
+<span class="w">    </span><span class="n">dibpat_case</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sim_pop</span><span class="o">$</span><span class="n">dibpat</span><span class="p">[</span><span class="n">sample_cases</span><span class="p">],</span>
+<span class="w">    </span><span class="n">dibpat_control</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sim_pop</span><span class="o">$</span><span class="n">dibpat</span><span class="p">[</span><span class="n">sample_controls</span><span class="p">],</span>
+<span class="w">    </span><span class="n">sim_pop</span><span class="p">[</span><span class="n">sample_cases</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;age_bins&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;smoke&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bmi_bins&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;chol_bins&quot;</span><span class="p">)]</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="w">  </span><span class="nf">rownames</span><span class="p">(</span><span class="n">sample_by_pairs</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">sample_by_pairs</span><span class="p">)</span>
+
+<span class="w">  </span><span class="nf">return</span><span class="p">(</span><span class="n">sample_by_pairs</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We draw a <strong>CC-matched sample</strong> using the previous function from <code class="docutils literal notranslate"><span class="pre">sim_pop</span></code>. The overall sample size is <span class="math notranslate nohighlight">\(n = 500\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">321</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+<span class="n">CC_matched_sample</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sim_matched_CC</span><span class="p">(</span><span class="n">pop_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sim_pop</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">500</span><span class="p">)</span>
+<span class="n">CC_matched_sample</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 250 × 6</caption>
+<thead>
+	<tr><th></th><th scope=col>dibpat_case</th><th scope=col>dibpat_control</th><th scope=col>age_bins</th><th scope=col>smoke</th><th scope=col>bmi_bins</th><th scope=col>chol_bins</th></tr>
+	<tr><th></th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>Type B</td><td>Type A</td><td>(50,59]</td><td>Yes</td><td>[11.2,23]  </td><td>(223,253]</td></tr>
+	<tr><th scope=row>2</th><td>Type B</td><td>Type A</td><td>(50,59]</td><td>No </td><td>(25.8,38.9]</td><td>(223,253]</td></tr>
+	<tr><th scope=row>3</th><td>Type B</td><td>Type A</td><td>(50,59]</td><td>Yes</td><td>(23,24.4]  </td><td>[103,197]</td></tr>
+	<tr><th scope=row>4</th><td>Type A</td><td>Type A</td><td>(42,45]</td><td>No </td><td>[11.2,23]  </td><td>(223,253]</td></tr>
+	<tr><th scope=row>⋮</th><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><th scope=row>247</th><td>Type A</td><td>Type B</td><td>(50,59]</td><td>Yes</td><td>(25.8,38.9]</td><td>(253,645]</td></tr>
+	<tr><th scope=row>248</th><td>Type A</td><td>Type A</td><td>(50,59]</td><td>No </td><td>(25.8,38.9]</td><td>(253,645]</td></tr>
+	<tr><th scope=row>249</th><td>Type A</td><td>Type A</td><td>(50,59]</td><td>Yes</td><td>[11.2,23]  </td><td>(253,645]</td></tr>
+	<tr><th scope=row>250</th><td>Type B</td><td>Type A</td><td>[39,42]</td><td>Yes</td><td>(23,24.4]  </td><td>(253,645]</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>This sample has 250 rows. In the context of the WCGS data, each row shows the matched confounding strata in their corresponding columns (<code class="docutils literal notranslate"><span class="pre">age_bins</span></code>, <code class="docutils literal notranslate"><span class="pre">smoke</span></code>, <code class="docutils literal notranslate"><span class="pre">bmi_bins</span></code>, and <code class="docutils literal notranslate"><span class="pre">chol_bins</span></code>). In addition, the columns <code class="docutils literal notranslate"><span class="pre">dibpat_case</span></code> and <code class="docutils literal notranslate"><span class="pre">dibpat_control</span></code> contain the <span class="math notranslate nohighlight">\(X\)</span> values for the matched case and control.</p>
+</section>
+<section id="a-different-data-analysis">
+<h3>1.2. A Different Data Analysis<a class="headerlink" href="#a-different-data-analysis" title="Permalink to this heading">#</a></h3>
+<p>In general, if we form a <strong>CC-matched sample</strong> using confounders <span class="math notranslate nohighlight">\(C_1, \ldots, C_p\)</span>; then, there is a bespoke procedure for estimating the logarithm of the odds ratio (<span class="math notranslate nohighlight">\(\text{log-OR}\)</span>) of <span class="math notranslate nohighlight">\((Y , X| C_1, \ldots, C_p)\)</span>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>We do not have a free pass to fit a Binary Logistic regression model like a regular CC sample since we have matched pairs</strong>. If we want to use the ordinary model from <code class="docutils literal notranslate"><span class="pre">glm()</span></code> with a <strong>CC-matched sample</strong>, <strong>the sparse data problem</strong> could arise (i.e., the number of strata is large relative to the amount of training data given that we also use the binned confounders to sample).</p>
+<p>So instead, we will use what is called the McNemar test.</p>
+</div>
+<p>Each <strong>matched pair</strong> contributes to one of the four cells in the following contingency table in terms of <span class="math notranslate nohighlight">\(X\)</span>:</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+<th class="head"><p><strong>Control</strong></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p></p></td>
+<td><p></p></td>
+<td><p><span class="math notranslate nohighlight">\(X = 0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(X = 1\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Case</strong></p></td>
+<td><p><span class="math notranslate nohighlight">\(X = 0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(n_{0, 0}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(n_{0, 1}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><span class="math notranslate nohighlight">\(X = 1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(n_{1, 0}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(n_{1, 1}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These pairs <span class="math notranslate nohighlight">\(n_{0, 0}\)</span> and <span class="math notranslate nohighlight">\(n_{1, 1}\)</span> are called <strong>concordant pairs</strong>. On the other hand, the pairs <span class="math notranslate nohighlight">\(n_{0, 1}\)</span> and <span class="math notranslate nohighlight">\(n_{1, 0}\)</span> are called <strong>discordant pairs</strong>. The estimator of the OR is based on the <strong>discordant pairs</strong></p>
+<div class="math notranslate nohighlight">
+\[\text{OR} = \frac{n_{1, 0}}{n_{0, 1}}.\]</div>
+<p>Recall the OR can be interpreted as follows:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\text{OR} = 1\)</span> indicates the binary exposure <span class="math notranslate nohighlight">\(X\)</span> <strong>DOES NOT AFFECT</strong> the odds of the binary outcome <span class="math notranslate nohighlight">\(Y\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{OR} &gt; 1\)</span> indicates the binary exposure <span class="math notranslate nohighlight">\(X\)</span> <strong>IS ASSOCIATED WITH</strong> (<strong>OR CAUSES!</strong>) <strong>higher odds</strong> of the binary outcome <span class="math notranslate nohighlight">\(Y\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{OR} &lt; 1\)</span> indicates the binary exposure <span class="math notranslate nohighlight">\(X\)</span> <strong>IS ASSOCIATED WITH</strong> (<strong>OR CAUSES!</strong>) <strong>lower odds</strong> of the binary outcome <span class="math notranslate nohighlight">\(Y\)</span>.</p></li>
+</ul>
+<p>Under the McNemar test, the hypotheses are the same as in <a class="reference internal" href="lecture6_obs_stratifying_modelling.html"><span class="doc">Lecture 6 - Observational Data: Stratifying and Modelling</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[H_0\text{: log-OR} = 0\]</div>
+<div class="math notranslate nohighlight">
+\[H_a\text{: log-OR} \neq 0.\]</div>
+<p>Failing to reject <span class="math notranslate nohighlight">\(H_0\)</span> gives statistical evidence that the binary exposure <span class="math notranslate nohighlight">\(X\)</span> <strong>DOES NOT AFFECT</strong> the odds of the binary outcome <span class="math notranslate nohighlight">\(Y\)</span> with a significance level <span class="math notranslate nohighlight">\(\alpha\)</span>.</p>
+<p>The estimator of the <span class="math notranslate nohighlight">\(\text{log-OR}\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[\hat{\text{log-OR}} = \log \bigg( \frac{n_{1, 0}}{n_{0, 1}} \bigg) = \log(n_{1, 0}) - \log(n_{0, 1}).\]</div>
+<p>The <span class="math notranslate nohighlight">\(\text{log-OR}\)</span> is <strong>approximately Normal</strong> with the following standard error (SE):</p>
+<div class="math notranslate nohighlight">
+\[\text{SE} = \sqrt{\frac{1}{n_{1, 0}} + \frac{1}{n_{0, 1}}},\]</div>
+<p>and the test statistic is</p>
+<div class="math notranslate nohighlight">
+\[z_{\text{log-OR}} = \frac{\log(n_{1, 0}) - \log(n_{0, 1})}{\sqrt{\frac{1}{n_{1, 0}} + \frac{1}{n_{0, 1}}}}\]</div>
+<p>In terms of our <code class="docutils literal notranslate"><span class="pre">CC_matched_sample</span></code>, we need to obtain the corresponding contingency table:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">CC_matched_cont_table</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="n">CC_matched_sample</span><span class="o">$</span><span class="n">dibpat_case</span><span class="p">,</span><span class="w"> </span><span class="n">CC_matched_sample</span><span class="o">$</span><span class="n">dibpat_control</span><span class="p">)</span>
+<span class="n">CC_matched_cont_table</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>        
+         Type B Type A
+  Type B     43     39
+  Type A     73     95
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then, we obtain the estimate of the <span class="math notranslate nohighlight">\(\text{log-OR}\)</span> and its SE:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">logOR_est</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">CC_matched_cont_table</span><span class="p">[</span><span class="m">2</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">CC_matched_cont_table</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">])</span>
+<span class="nf">round</span><span class="p">(</span><span class="n">logOR_est</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.627</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">logOR_se</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">CC_matched_cont_table</span><span class="p">[</span><span class="m">2</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">CC_matched_cont_table</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">])</span>
+<span class="nf">round</span><span class="p">(</span><span class="n">logOR_se</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.198</div></div>
+</div>
+<p>We can obtain the OR by exponentiating this estimate. Note it is larger than 1, so the exposure to <span class="math notranslate nohighlight">\(X = 1\)</span> causes <strong>higher odds</strong> of the binary outcome <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">exp</span><span class="p">(</span><span class="n">logOR_est</span><span class="p">),</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">1.872</div></div>
+</div>
+<p>Then, the test statistic is the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">test_stat_logOR</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">logOR_est</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">logOR_se</span>
+<span class="nf">round</span><span class="p">(</span><span class="n">test_stat_logOR</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">3.161</div></div>
+</div>
+<p>With <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>, we reject <span class="math notranslate nohighlight">\(H_0\)</span> since</p>
+<div class="math notranslate nohighlight">
+\[z_{\text{log-OR}} = 3.161 &gt; 1.96 = z_{1 - \alpha /2}\]</div>
+<p>Therefore, we have statistical evidence to state that the population <span class="math notranslate nohighlight">\(\text{log-OR} \neq 0\)</span>. Analogously, we can build a 95% confidence interval (CI) as follows:</p>
+<div class="math notranslate nohighlight">
+\[\hat{\text{log-OR}} \pm 1.96 \times \text{SE}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">CI_logOR</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">logOR_est</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nf">qnorm</span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">0.05</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">logOR_se</span><span class="p">,</span><span class="w"> </span><span class="n">logOR_est</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">qnorm</span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">0.05</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">logOR_se</span><span class="p">),</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+<span class="n">CI_logOR</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>0.238</li><li>1.016</li></ol>
+</div></div>
+</div>
+<p>Let us compare the results of the <strong>CC-matched sample</strong> versus another <strong>CC-unmatched sample</strong>. To obtain an estimate of the <span class="math notranslate nohighlight">\(\text{log-OR}\)</span>, we will fit a Binary Logistic regression model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+<span class="n">CC_sampled_subjects</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="w"> </span><span class="nf">sample</span><span class="p">((</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">sim_pop</span><span class="p">))[</span><span class="n">sim_pop</span><span class="o">$</span><span class="n">chd69</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">],</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">500</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">F</span><span class="p">),</span><span class="w"> </span><span class="c1"># Sampling subjects without replacement</span>
+<span class="w">  </span><span class="nf">sample</span><span class="p">((</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">sim_pop</span><span class="p">))[</span><span class="n">sim_pop</span><span class="o">$</span><span class="n">chd69</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">],</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">500</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">F</span><span class="p">)</span>
+<span class="p">)</span><span class="w"> </span>
+<span class="n">CC_sample</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sim_pop</span><span class="p">[</span><span class="n">CC_sampled_subjects</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="c1"># Collecting data from artificial population</span>
+
+<span class="c1">#Fitting Binary Logistic regression with non-matched CC sample</span>
+<span class="n">CC_bin_log_model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">chd69</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">dibpat</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">age_bins</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">smoke</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bmi_bins</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">chol_bins</span><span class="p">,</span>
+<span class="w">                       </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;binomial&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CC_sample</span>
+<span class="p">)</span>
+<span class="n">summary_CC</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">tidy</span><span class="p">(</span><span class="n">CC_bin_log_model</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+<span class="n">summary_CC</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>dibpatType A</td><td>0.754</td><td>0.209</td><td>3.6</td><td>0</td><td>0.345</td><td>1.167</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p><strong>How do both case-control sampling schemes compare?</strong></p>
+<p>Since the <strong>proxy ground truth</strong> in <code class="docutils literal notranslate"><span class="pre">sim_pop</span></code> has an underlying effect of <code class="docutils literal notranslate"><span class="pre">dibpat</span></code> as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="n">wcgs_coef_pop</span><span class="p">[</span><span class="s">&quot;dibpatType A&quot;</span><span class="p">],</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><strong>dibpatType A:</strong> 0.72</div></div>
+</div>
+<p>Then, both CC sampling schemes seem to be equally accurate and precise. Nevertheless, <strong>they are just single replicates</strong>. Hence, <strong>we need to run their corresponding simulation studies</strong>.</p>
+</section>
+<section id="running-simulation-studies-using-the-two-case-control-sampling-schemes">
+<h3>1.3. Running Simulation Studies Using the Two Case-Control Sampling Schemes<a class="headerlink" href="#running-simulation-studies-using-the-two-case-control-sampling-schemes" title="Permalink to this heading">#</a></h3>
+<p>The function <code class="docutils literal notranslate"><span class="pre">sim_study()</span></code> draws the corresponding samples by CC scheme. Then, it runs their corresponding statistical analysis. It needs the following arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pop_data</span></code>: The population data from which we will draw the sample.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n</span></code>: The overall sample size by scheme.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code>: Significance level <span class="math notranslate nohighlight">\(\alpha\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log_OR</span></code>: The “true” log-OR each scheme is willing to estimate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_replicates</span></code>: The number of replicates by scheme.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sim_study</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">pop_data</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="p">,</span><span class="w"> </span><span class="n">log_OR</span><span class="p">,</span><span class="w"> </span><span class="n">num_replicates</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span><span class="w"> </span><span class="c1"># Setting up matrix with metrics</span>
+<span class="w">  </span><span class="n">res</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">res</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="n">num_replicates</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+
+<span class="w">  </span><span class="nf">suppressMessages</span><span class="p">(</span>
+<span class="w">    </span><span class="nf">for </span><span class="p">(</span><span class="n">lp</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">num_replicates</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1"># Otherwise, we get &quot;Waiting for profiling to be done...&quot;</span>
+<span class="w">      </span><span class="c1"># Obtaining samples</span>
+<span class="w">      </span><span class="c1"># CC</span>
+<span class="w">      </span><span class="n">CC_sampled_subjects</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span>
+<span class="w">        </span><span class="nf">sample</span><span class="p">((</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">pop_data</span><span class="p">))[</span><span class="n">pop_data</span><span class="o">$</span><span class="n">chd69</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">],</span>
+<span class="w">          </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">F</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">        </span><span class="nf">sample</span><span class="p">((</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">pop_data</span><span class="p">))[</span><span class="n">pop_data</span><span class="o">$</span><span class="n">chd69</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">],</span>
+<span class="w">          </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">F</span>
+<span class="w">        </span><span class="p">)</span>
+<span class="w">      </span><span class="p">)</span>
+<span class="w">      </span><span class="n">CC_sample</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pop_data</span><span class="p">[</span><span class="n">CC_sampled_subjects</span><span class="p">,</span><span class="w"> </span><span class="p">]</span>
+
+<span class="w">      </span><span class="c1"># CC-matched</span>
+<span class="w">      </span><span class="n">CC_matched_sample</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sim_matched_CC</span><span class="p">(</span><span class="n">pop_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sim_pop</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">      </span><span class="n">CC_matched_cont_table</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span>
+<span class="w">        </span><span class="n">CC_matched_sample</span><span class="o">$</span><span class="n">dibpat_case</span><span class="p">,</span>
+<span class="w">        </span><span class="n">CC_matched_sample</span><span class="o">$</span><span class="n">dibpat_control</span>
+<span class="w">      </span><span class="p">)</span>
+
+<span class="w">      </span><span class="c1"># Do the three analyses</span>
+<span class="w">      </span><span class="c1"># CC</span>
+<span class="w">      </span><span class="n">CC_bin_log_model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">chd69</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">dibpat</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">age_bins</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">smoke</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bmi_bins</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">chol_bins</span><span class="p">,</span>
+<span class="w">        </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;binomial&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CC_sample</span>
+<span class="w">      </span><span class="p">)</span>
+<span class="w">      </span><span class="c1"># CC-matched</span>
+<span class="w">      </span><span class="n">logOR_est</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">CC_matched_cont_table</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">CC_matched_cont_table</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">])</span>
+<span class="w">      </span><span class="n">logOR_se</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">CC_matched_cont_table</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">CC_matched_cont_table</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">])</span>
+
+<span class="w">      </span><span class="c1"># and the takeaways</span>
+<span class="w">      </span><span class="n">res</span><span class="p">[[</span><span class="m">1</span><span class="p">]][</span><span class="n">lp</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">coef</span><span class="p">(</span><span class="n">CC_bin_log_model</span><span class="p">)[</span><span class="s">&quot;dibpatType A&quot;</span><span class="p">],</span><span class="w"> </span><span class="nf">confint</span><span class="p">(</span><span class="n">CC_bin_log_model</span><span class="p">)[</span><span class="s">&quot;dibpatType A&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">])</span>
+<span class="w">      </span><span class="n">res</span><span class="p">[[</span><span class="m">2</span><span class="p">]][</span><span class="n">lp</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span>
+<span class="w">        </span><span class="n">logOR_est</span><span class="p">,</span><span class="w"> </span><span class="n">logOR_est</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nf">qnorm</span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">logOR_se</span><span class="p">,</span>
+<span class="w">        </span><span class="n">logOR_est</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">qnorm</span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">logOR_se</span>
+<span class="w">      </span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">)</span>
+
+<span class="w">  </span><span class="c1"># Summaries</span>
+<span class="w">  </span><span class="n">BIAS</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sapply</span><span class="p">(</span>
+<span class="w">    </span><span class="n">res</span><span class="p">,</span>
+<span class="w">    </span><span class="nf">function</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nf">mean</span><span class="p">(</span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">log_OR</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="w">  </span><span class="n">vrnc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sapply</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nf">var</span><span class="p">(</span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">])</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="w">  </span><span class="n">CVRG</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sapply</span><span class="p">(</span><span class="n">res</span><span class="p">,</span>
+<span class="w">    </span><span class="nf">function</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span><span class="w"> </span><span class="n">trg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nf">mean</span><span class="p">((</span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">trg</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">trg</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">3</span><span class="p">]))</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="n">trg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">log_OR</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="w">  </span><span class="n">PWR</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sapply</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nf">mean</span><span class="p">(</span><span class="n">mat</span><span class="p">[,</span><span class="w"> </span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="w">  </span><span class="n">RMSE</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">BIAS</span><span class="o">^</span><span class="m">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">vrnc</span><span class="p">)</span>
+
+<span class="w">  </span><span class="n">opt</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">cbind</span><span class="p">(</span><span class="n">BIAS</span><span class="p">,</span><span class="w"> </span><span class="n">RMSE</span><span class="p">,</span><span class="w"> </span><span class="n">CVRG</span><span class="p">,</span><span class="w"> </span><span class="n">PWR</span><span class="p">)</span>
+<span class="w">  </span><span class="nf">rownames</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Case-Control (CC)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Case-Control Matched (CC-Matched)&quot;</span><span class="p">)</span>
+
+<span class="w">  </span><span class="nf">return</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The function returns the following metrics:</p>
+<ul class="simple">
+<li><p><strong>BIAS:</strong> The average, over the <code class="docutils literal notranslate"><span class="pre">num_replicates</span></code>, of <span class="math notranslate nohighlight">\(\hat{\text{log-OR}} - \text{log-OR}\)</span>. The larger the average, the less accuracy.</p></li>
+<li><p><strong>ROOT-MEAN-SQUARED ERROR (RMSE):</strong> The square root of the average (over the <code class="docutils literal notranslate"><span class="pre">num_replicates</span></code>) of <span class="math notranslate nohighlight">\((\hat{\text{log-OR}} - \text{log-OR})^{2}\)</span>.  It has the following characteristics:</p>
+<ul>
+<li><p>Interpretable as the typical magnitude of estimation error.</p></li>
+<li><p>Captures bias and variance involved in the procedure.</p></li>
+</ul>
+</li>
+<li><p><strong>COVERAGE (CVRG):</strong> The proportion (among the <code class="docutils literal notranslate"><span class="pre">num_replicates</span></code>) of the 95% CIs that contain the “true” <span class="math notranslate nohighlight">\(\log\text{-OR}\)</span>.</p></li>
+<li><p><strong>POWER (PWR):</strong> It is applicable when <span class="math notranslate nohighlight">\(\text{log-OR} \neq 0\)</span>. The proportion of the <code class="docutils literal notranslate"><span class="pre">num_replicates</span></code> CIs that exclude zero.</p></li>
+</ul>
+<p>We run the simulation studies with an <strong>overall</strong> <span class="math notranslate nohighlight">\(n = 100, 250, 500\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+<span class="n">sim_study_n_100</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sim_study</span><span class="p">(</span>
+<span class="w">  </span><span class="n">pop_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sim_pop</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.05</span><span class="p">,</span>
+<span class="w">  </span><span class="n">log_OR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wcgs_coef_pop</span><span class="p">[</span><span class="s">&quot;dibpatType A&quot;</span><span class="p">],</span><span class="w"> </span><span class="n">num_replicates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">500</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+<span class="n">sim_study_n_250</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sim_study</span><span class="p">(</span>
+<span class="w">  </span><span class="n">pop_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sim_pop</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">250</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.05</span><span class="p">,</span>
+<span class="w">  </span><span class="n">log_OR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wcgs_coef_pop</span><span class="p">[</span><span class="s">&quot;dibpatType A&quot;</span><span class="p">],</span><span class="w"> </span><span class="n">num_replicates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">500</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span><span class="w"> </span><span class="c1"># Reproducibility</span>
+<span class="n">sim_study_n_500</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sim_study</span><span class="p">(</span>
+<span class="w">  </span><span class="n">pop_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sim_pop</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.05</span><span class="p">,</span>
+<span class="w">  </span><span class="n">log_OR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wcgs_coef_pop</span><span class="p">[</span><span class="s">&quot;dibpatType A&quot;</span><span class="p">],</span><span class="w"> </span><span class="n">num_replicates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">500</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, we obtain the corresponding performance metrics.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="n">sim_study_n_100</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 2 × 4 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>BIAS</th><th scope=col>RMSE</th><th scope=col>CVRG</th><th scope=col>PWR</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>Case-Control (CC)</th><td>0.1621</td><td>0.5850</td><td>0.93</td><td>0.446</td></tr>
+	<tr><th scope=row>Case-Control Matched (CC-Matched)</th><td>0.0283</td><td>0.4507</td><td>0.97</td><td>0.388</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="n">sim_study_n_250</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 2 × 4 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>BIAS</th><th scope=col>RMSE</th><th scope=col>CVRG</th><th scope=col>PWR</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>Case-Control (CC)</th><td>0.0384</td><td>0.3226</td><td>0.926</td><td>0.710</td></tr>
+	<tr><th scope=row>Case-Control Matched (CC-Matched)</th><td>0.0369</td><td>0.2787</td><td>0.958</td><td>0.794</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="n">sim_study_n_500</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 2 × 4 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>BIAS</th><th scope=col>RMSE</th><th scope=col>CVRG</th><th scope=col>PWR</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>Case-Control (CC)</th><td>0.0377</td><td>0.2111</td><td>0.946</td><td>0.972</td></tr>
+	<tr><th scope=row>Case-Control Matched (CC-Matched)</th><td>0.0245</td><td>0.1893</td><td>0.968</td><td>0.972</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="hint admonition">
+<p class="admonition-title">What is the conclusion by looking at these metrics by CC sampling scheme?</p>
+<p>The <strong>CC-matched</strong> scheme shows a smaller average bias with <span class="math notranslate nohighlight">\(n = 100\)</span>; thus, it is more accurate than the <strong>CC-non matched</strong> scheme using this sample size. The same situation applies to the RMSE. Nonetheless, the trade-off is a smaller power for <strong>CC-matched</strong>. The power is practically equal once we increase the sample size, but the <strong>CC-matched</strong> shows a smaller average bias and RMSE.</p>
+</div>
+</section>
+</section>
+<section id="ordinal-regressors">
+<h2>2. Ordinal Regressors<a class="headerlink" href="#ordinal-regressors" title="Permalink to this heading">#</a></h2>
+<p>You might have noticed that throughout the regression courses, until this block, we did not <strong>explicitly</strong> work with <strong>ordinal regressors</strong> (i.e., categorical factors with ordered categories). Furthermore, you might have noticed that the numerical confounding strata (such as those in the WCGS observational models) are actually ordinal regressors!</p>
+<p>Coding these ordinal regressors in the usual <strong>dummy variable way</strong> (<code class="docutils literal notranslate"><span class="pre">0</span></code>s and <code class="docutils literal notranslate"><span class="pre">1</span></code>s along with a baseline factor level) is not a substantial statistical inconsistency <strong>compared to using Multinomial regression for an ordinal response</strong>. However, you can gain additional insight by coding these ordinal regressors using <strong>contrasts</strong>.</p>
+<p>In Statistics, a <strong>contrast</strong> is <strong>a vector whose elements add up to zero</strong>. This <strong>contrast</strong> will allow us to compare the levels of a given factor. Before we get into concrete <strong>contrast</strong> methods, let us check the data we will use in this section.</p>
+<section id="the-online-store-dataset">
+<h3>2.1. The Online Store Dataset<a class="headerlink" href="#the-online-store-dataset" title="Permalink to this heading">#</a></h3>
+<p>Suppose your work for a company that runs a high-end website store. You know your customers are susceptible to discounts, i.e., they tend to buy <strong>more and more</strong> as you increase the discount percentages. Hence, you decide to run an <strong>A/B/n testing</strong> using a <strong>randomized balanced design</strong> of 20 customers per treatment. Your sample has <span class="math notranslate nohighlight">\(n = 80\)</span> subjects. The <code class="docutils literal notranslate"><span class="pre">ABn_purchase_data</span></code> has the following variables:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">discount</span></code>: Your treatment variable with <strong>four increasing EQUALLY SPACED discounts</strong> (<code class="docutils literal notranslate"><span class="pre">2.5</span></code>, <code class="docutils literal notranslate"><span class="pre">5</span></code>, <code class="docutils literal notranslate"><span class="pre">7.5</span></code>, and <code class="docutils literal notranslate"><span class="pre">10</span></code>% off).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">purchase</span></code>: Your continuous response of interest in CAD, the amount of money each subject spent given their respective <strong>overall discount percentage</strong>.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ABn_purchase_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read_csv</span><span class="p">(</span><span class="s">&quot;../data/ABn_purchase_data.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">show_col_types</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">ABn_purchase_data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A spec_tbl_df: 80 × 2</caption>
+<thead>
+	<tr><th scope=col>discount</th><th scope=col>purchase</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>2.5</td><td>520.4311</td></tr>
+	<tr><td>2.5</td><td>436.4336</td></tr>
+	<tr><td>2.5</td><td>477.9415</td></tr>
+	<tr><td>2.5</td><td>394.7154</td></tr>
+	<tr><td>⋮</td><td>⋮</td></tr>
+	<tr><td>10</td><td>4605.868</td></tr>
+	<tr><td>10</td><td>4305.460</td></tr>
+	<tr><td>10</td><td>4099.567</td></tr>
+	<tr><td>10</td><td>4281.010</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">discount</span></code> should be taken as an ordinal factor in this <strong>A/B/n testing</strong>. Let us convert it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ABn_purchase_data</span><span class="o">$</span><span class="n">discount</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ordered</span><span class="p">(</span><span class="n">ABn_purchase_data</span><span class="o">$</span><span class="n">discount</span><span class="p">)</span>
+<span class="nf">str</span><span class="p">(</span><span class="n">ABn_purchase_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>spc_tbl_ [80 × 2] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ discount: Ord.factor w/ 4 levels &quot;2.5&quot;&lt;&quot;5&quot;&lt;&quot;7.5&quot;&lt;..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ purchase: num [1:80] 520 436 478 395 458 ...
+ - attr(*, &quot;spec&quot;)=
+  .. cols(
+  ..   discount = <span class=" -Color -Color-Green">col_double()</span>,
+  ..   purchase = <span class=" -Color -Color-Green">col_double()</span>
+  .. )
+ - attr(*, &quot;problems&quot;)=&lt;externalptr&gt; 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="main-statistical-inquiry">
+<h3>2.2. Main Statistical Inquiry<a class="headerlink" href="#main-statistical-inquiry" title="Permalink to this heading">#</a></h3>
+<p>Our main statistical inquiry is:</p>
+<blockquote>
+<div><p><strong>By how much the mean customer spending increases from one discount percentage to another?</strong></p>
+</div></blockquote>
+<p>This inquiry appeals to the ordered factor <code class="docutils literal notranslate"><span class="pre">discount</span></code>. Therefore, we will use ordinary least-squares (OLS) and contrasts to answer it.</p>
+</section>
+<section id="exploratory-data-analysis">
+<h3>2.3. Exploratory Data Analysis<a class="headerlink" href="#exploratory-data-analysis" title="Permalink to this heading">#</a></h3>
+<p>We proceed with an exploratory data analysis (EDA). The plot shows the 20 randomized customers as points with treatments on the <span class="math notranslate nohighlight">\(x\)</span>-axis and their purchases on the <span class="math notranslate nohighlight">\(y\)</span>-axis. Note that customer spending graphically increases along with the discount percentage.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">repr.plot.width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">14</span><span class="p">)</span>
+
+<span class="n">ABn_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ggplot</span><span class="p">(</span><span class="n">ABn_purchase_data</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discount</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">purchase</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_point</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;gold3&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">legend.position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;right&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">legend.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">margin</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;cm&quot;</span><span class="p">)),</span>
+<span class="w">    </span><span class="n">legend.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">,</span><span class="w"> </span><span class="n">margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">margin</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;cm&quot;</span><span class="p">)),</span>
+<span class="w">    </span><span class="n">legend.key.size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">unit</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cm&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Discount (% Off)&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Customer Spending (CAD)&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Customer Spending by Discount Scheme&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ABn_plot</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/dfbd6df11e513d8d7a95ee43d563b380b190d0077f00f9d921732cbfe4ec6b77.png"><img alt="../_images/dfbd6df11e513d8d7a95ee43d563b380b190d0077f00f9d921732cbfe4ec6b77.png" src="../_images/dfbd6df11e513d8d7a95ee43d563b380b190d0077f00f9d921732cbfe4ec6b77.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+</section>
+<section id="regression-model-and-polynomial-contrasts">
+<h3>2.4. Regression Model and Polynomial Contrasts<a class="headerlink" href="#regression-model-and-polynomial-contrasts" title="Permalink to this heading">#</a></h3>
+<p>We will fit a <strong>balanced one-way analysis of variance (ANOVA)</strong> via <code class="docutils literal notranslate"><span class="pre">lm()</span></code>, i.e., OLS with an ordered factor. But before fitting this model, we need to proceed with contrasts.</p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">R</span></code> uses <strong>polynomial contrasts</strong> in ordered-type factors. Roughly speaking, if we use <strong>polynomial contrasts</strong> in an ordered factor of <span class="math notranslate nohighlight">\(k\)</span> levels, we would fit <span class="math notranslate nohighlight">\(k − 1\)</span> polynomials. We will be decomposing the data into these polynomial trends. <strong>Therefore, the primary inferential purpose of these polynomial contrasts is to TEST polynomial trends in the ordered data</strong>.</p>
+<p>In this case, we have <span class="math notranslate nohighlight">\(k = 4\)</span> levels in <code class="docutils literal notranslate"><span class="pre">discount</span></code>. Hence, we will have <strong>linear (<code class="docutils literal notranslate"><span class="pre">L</span></code>)</strong>, <strong>quadratic (<code class="docutils literal notranslate"><span class="pre">Q</span></code>)</strong>, and <strong>cubic (<code class="docutils literal notranslate"><span class="pre">C</span></code>) contrasts</strong>. These contrasts are shown below as vectors by column.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">contr.poly</span><span class="p">(</span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 4 × 3 of type dbl</caption>
+<thead>
+	<tr><th scope=col>.L</th><th scope=col>.Q</th><th scope=col>.C</th></tr>
+</thead>
+<tbody>
+	<tr><td>-0.67</td><td> 0.5</td><td>-0.22</td></tr>
+	<tr><td>-0.22</td><td>-0.5</td><td> 0.67</td></tr>
+	<tr><td> 0.22</td><td>-0.5</td><td>-0.67</td></tr>
+	<tr><td> 0.67</td><td> 0.5</td><td> 0.22</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>These contrasts have the following characteristics:</p>
+<ul class="simple">
+<li><p>As previously stated, <strong>the elements by vector add up to zero</strong>.</p></li>
+<li><p>The three vectors are orthogonal, i.e., <strong>the pairwise dot products are equal to zero</strong>. <strong>This characteristic will statistically allow decomposing the polynomial trends in the ordered data.</strong></p></li>
+</ul>
+<p>Now, we can fit our regression model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_poly_cont_ABn</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">purchase</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">discount</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ABn_purchase_data</span><span class="p">)</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">OLS_poly_cont_ABn</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 4 × 5</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td>1924.805</td><td>15.653</td><td>122.964</td><td>0.000</td></tr>
+	<tr><td>discount.L </td><td>2740.092</td><td>31.307</td><td> 87.524</td><td>0.000</td></tr>
+	<tr><td>discount.Q </td><td> 801.705</td><td>31.307</td><td> 25.608</td><td>0.000</td></tr>
+	<tr><td>discount.C </td><td>  57.179</td><td>31.307</td><td>  1.826</td><td>0.072</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> output shows the corresponding estimate for the <code class="docutils literal notranslate"><span class="pre">(Intercept)</span></code> and the polynomial contrasts. The hypotheses to test these polynomial contrasts are different from the regular hypotheses to test regression terms.</p>
+<div class="math notranslate nohighlight">
+\[H_0\text{: there is no GIVEN trend in the ordered data}\]</div>
+<div class="math notranslate nohighlight">
+\[H_a\text{: there is a GIVEN trend in the ordered data.}\]</div>
+<p>The word <strong>GIVEN</strong> will be replaced accordingly: <strong>LINEAR</strong> (<code class="docutils literal notranslate"><span class="pre">discount.L</span></code>), <strong>QUADRATIC</strong> (<code class="docutils literal notranslate"><span class="pre">discount.Q</span></code>), and <strong>CUBIC</strong> (<code class="docutils literal notranslate"><span class="pre">discount.C</span></code>). With <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>, we can conclude that our ordered <code class="docutils literal notranslate"><span class="pre">discount</span></code> data has <strong>LINEAR</strong> and <strong>QUADRATIC</strong> trends.</p>
+<blockquote>
+<div><p><strong>Heads-up:</strong> Note the equal SEs by contrast. This is a modelling assumption in a balanced ANOVA <strong>FOR ALL TYPES OF CONTRASTS IN GENERAL</strong> (i.e., equal variability among the contrasts).</p>
+</div></blockquote>
+<p>Using <strong>polynomial contrasts</strong> in a regression model is analogous to fitting polynomial regression models. We can see below the graphical representation of our estimations using this example. Note how the <strong>quadratic</strong> and <strong>cubic</strong> in-sample predictions are practically overlapped.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ABn_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ABn_plot</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_smooth</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">unclass</span><span class="p">(</span><span class="n">discount</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
+<span class="w">    </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lm</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.8</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_smooth</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">unclass</span><span class="p">(</span><span class="n">discount</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">    </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lm</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.8</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_smooth</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">unclass</span><span class="p">(</span><span class="n">discount</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">),</span>
+<span class="w">    </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lm</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.8</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_color_discrete</span><span class="p">(</span><span class="s">&quot;Trend&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Linear&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Quadratic&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Cubic&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Purchases versus Discounts by Polynomial Contrasts&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_x_discrete</span><span class="p">(</span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;2.5% Off&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;5% Off&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;5% Off&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;10% Off&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">scale_color_brewer</span><span class="p">(</span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Dark2&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_color_discrete</span><span class="p">(</span><span class="s">&quot;Trend&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Linear&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Quadratic&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Cubic&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Scale for <span class=" -Color -Color-Green">colour</span> is already present.
+Adding another scale for <span class=" -Color -Color-Green">colour</span>, which will replace the existing scale.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Scale for <span class=" -Color -Color-Green">colour</span> is already present.
+Adding another scale for <span class=" -Color -Color-Green">colour</span>, which will replace the existing scale.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ABn_plot</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/153b1a5470c4b1096a65d703c0178e0e55ef842a4673b8715a361b5bdae2aa64.png"><img alt="../_images/153b1a5470c4b1096a65d703c0178e0e55ef842a4673b8715a361b5bdae2aa64.png" src="../_images/153b1a5470c4b1096a65d703c0178e0e55ef842a4673b8715a361b5bdae2aa64.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>For inferential purposes, these <strong>polynomial contrasts</strong> are suitable to test trends in our ordered data. Moreover, <strong>they have the potential to be helpful in predictive inquiries</strong>. However, they are hard to interpret in terms of our <strong>main statistical inquiry</strong>. The corresponding <strong>design matrix</strong> used in <code class="docutils literal notranslate"><span class="pre">OLS_poly_cont_ABn</span></code> is shown below. This matrix results from multiplicating a raw dummy variable <strong>design matrix</strong> times the previously shown three orthogonal vectors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_poly_cont_ABn</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">model.matrix</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 80 × 4 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>(Intercept)</th><th scope=col>discount.L</th><th scope=col>discount.Q</th><th scope=col>discount.C</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>1</td><td>-0.6708204</td><td>0.5</td><td>-0.2236068</td></tr>
+	<tr><th scope=row>2</th><td>1</td><td>-0.6708204</td><td>0.5</td><td>-0.2236068</td></tr>
+	<tr><th scope=row>3</th><td>1</td><td>-0.6708204</td><td>0.5</td><td>-0.2236068</td></tr>
+	<tr><th scope=row>4</th><td>1</td><td>-0.6708204</td><td>0.5</td><td>-0.2236068</td></tr>
+	<tr><th scope=row>⋮</th><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><th scope=row>77</th><td>1</td><td>0.6708204</td><td>0.5</td><td>0.2236068</td></tr>
+	<tr><th scope=row>78</th><td>1</td><td>0.6708204</td><td>0.5</td><td>0.2236068</td></tr>
+	<tr><th scope=row>79</th><td>1</td><td>0.6708204</td><td>0.5</td><td>0.2236068</td></tr>
+	<tr><th scope=row>80</th><td>1</td><td>0.6708204</td><td>0.5</td><td>0.2236068</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Alternatively to polynomial contrasts, let us explore <strong>successive differences contrasts</strong>.</p>
+</section>
+<section id="regression-model-and-succesive-differences-contrasts">
+<h3>2.5. Regression Model and Succesive Differences Contrasts<a class="headerlink" href="#regression-model-and-succesive-differences-contrasts" title="Permalink to this heading">#</a></h3>
+<p>There is an alternative contrast modelling to address our main statistical inquiry and make inferential interpretations more straightforward. They are the <strong>successive differences contrasts</strong>. If we want to answer whether differences exist between the ordered levels, we will check these <strong>successive differences contrasts</strong>.</p>
+<p>The model estimates in these contrasts are the differences between the means of the second and first levels, the third and second levels, etc. We have to set up the <code class="docutils literal notranslate"><span class="pre">R</span></code> contrasts setting as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">contrasts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;contr.treatment&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;contr.sdif&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then, we fit the OLS model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">OLS_succesive_ABn</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">purchase</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">discount</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ABn_purchase_data</span><span class="p">)</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">OLS_succesive_ABn</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 4 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)   </td><td>1924.80</td><td>15.65</td><td>122.96</td><td>0</td><td>1893.63</td><td>1955.98</td></tr>
+	<tr><td>discount5-2.5 </td><td> 474.84</td><td>44.27</td><td> 10.72</td><td>0</td><td> 386.66</td><td> 563.02</td></tr>
+	<tr><td>discount7.5-5 </td><td>1148.69</td><td>44.27</td><td> 25.94</td><td>0</td><td>1060.51</td><td>1236.87</td></tr>
+	<tr><td>discount10-7.5</td><td>2078.25</td><td>44.27</td><td> 46.94</td><td>0</td><td>1990.07</td><td>2166.43</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> output, we intepret the <span class="math notranslate nohighlight">\(p\)</span>-values of these contrasts as in a regular regression term. All these terms are statistically significant with <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>. We can also obtain the corresponding 95% CIs. Our statistical inquiry can be answered as follows:</p>
+<ul class="simple">
+<li><p>The mean customer spending increases by $474.84 when the discount increases from 2.5 to 5%.</p></li>
+<li><p>The mean customer spending increases by $1148.69 when the discount increases from 5 to 7.5%.</p></li>
+<li><p>The mean customer spending increases by $2078.25 when the discount increases from 7.5 to 10%.</p></li>
+</ul>
+</section>
+</section>
+<section id="final-wrap-up">
+<h2>3. Final Wrap-Up<a class="headerlink" href="#final-wrap-up" title="Permalink to this heading">#</a></h2>
+<p>This course covered two fundamental classes of studies: <strong>experimental</strong> and <strong>observational</strong>. Additionally, we explored different ways to perform <strong>Power Analysis</strong> (i.e., adequate sample size computations).</p>
+<section id="experimental-versus-observational-studies">
+<h3>3.1. Experimental Versus Observational Studies<a class="headerlink" href="#experimental-versus-observational-studies" title="Permalink to this heading">#</a></h3>
+<p>In <strong>experimental studies</strong> (e.g., A/B or A/B/n testings), we fully control our <strong>treatments</strong> of interest. We can <strong>randomize</strong> our <strong>experimental units</strong> to either one of these treatments before running our experiment. Treatment <strong>randomization</strong> will get rid of any potential confounders that might damage the <strong>accuracy</strong> of our <strong>effect</strong> estimations (when compared to analyses where we do not take them into account).</p>
+<p>Thus, experimental <strong>randomization</strong> is a powerful tool that will allow you to infer causality between your <span class="math notranslate nohighlight">\(Y\)</span> and a given set of <span class="math notranslate nohighlight">\(X\)</span>s. Recall that <strong>treatment randomization</strong> can be done via two fundamental <strong>designs</strong>:</p>
+<ul class="simple">
+<li><p><strong>Straightforward randomization.</strong> We directly randomize our <strong>experimental units</strong> to either one of the <strong>treatments</strong> of interest. This design does not take into account any additional factors when randomizing.</p></li>
+</ul>
+<ul class="simple">
+<li><p><strong>Blocking.</strong> We group our <strong>experimental units</strong> by common characteristics (i.e., <strong>homogeneous blocks</strong>) before randomizing. This will ensure we obtain accurate and precise <strong>estimated treatment effects</strong>. The golden rule in this design strategy is the following: <strong>“block what you can, randomize what you cannot.”</strong></p></li>
+</ul>
+<p>In <strong>observational studies</strong>, treatment randomization is infeasible. Therefore, we must use other statistical strategies to infer causality between a given <span class="math notranslate nohighlight">\(X\)</span> and an outcome <span class="math notranslate nohighlight">\(Y\)</span>. Analogous to blocking in experimental designs, we use <strong>stratification</strong> via our identified <strong>confounders</strong>.</p>
+<p>Note we need to <strong>temper our causal statements</strong> in this class of studies since we need to fulfil many different modelling assumptions (some more challenging than others). Moreover, assessing these assumptions implies careful model selection and multiple testing corrections.</p>
+<p>There is more than one <strong>sampling scheme</strong> to execute an <strong>observational study</strong>. Using a <strong>proxy ground truth</strong> in different simulation studies, we checked the accuracy and precision of these schemes:</p>
+<ul class="simple">
+<li><p><strong>Cross-sectional (CS, a contemporaneuous scheme).</strong></p></li>
+<li><p><strong>Case-control (CC, a restrospective scheme).</strong> This scheme can be <strong>unmatched</strong> or <strong>matched</strong>.</p></li>
+<li><p><strong>Cohort (CO, a prospective scheme).</strong></p></li>
+</ul>
+<p>More specifically, in <strong>matched CC</strong>, we explored the importance of adapting our statistical analysis to how we collect our data.</p>
+</section>
+<section id="causal-interpretations-it-is-all-about-making-proper-comparisons">
+<h3>3.2. Causal Interpretations: It is all about making “proper” comparisons<a class="headerlink" href="#causal-interpretations-it-is-all-about-making-proper-comparisons" title="Permalink to this heading">#</a></h3>
+<p><strong>This applies to both experimental and observational studies.</strong> It should be proper to compare an <span class="math notranslate nohighlight">\(X = 0\)</span> group of people to an <span class="math notranslate nohighlight">\(X = 1\)</span> group of people in terms of <span class="math notranslate nohighlight">\(Y\)</span>. As previously stated, there has to be <strong>homogeneity</strong> - everyone in both groups is very similar to each other (confounders <span class="math notranslate nohighlight">\(C_j\)</span>).</p>
+</section>
+<section id="strength-of-story">
+<h3>3.3. Strength of Story<a class="headerlink" href="#strength-of-story" title="Permalink to this heading">#</a></h3>
+<p><strong>Randomization</strong> in <strong>experimental studies</strong> can lead to an airtight case that <span class="math notranslate nohighlight">\(X\)</span> has a causal influence on <span class="math notranslate nohighlight">\(Y\)</span>. On the other hand with <strong>observational studies</strong>, <strong>we can try our best to identify/collect/use confounding variables</strong>. There is always a potential caveat!</p>
+</section>
+<section id="statistical-thinking-in-design-of-studies">
+<h3>3.4. Statistical Thinking in Design of Studies<a class="headerlink" href="#statistical-thinking-in-design-of-studies" title="Permalink to this heading">#</a></h3>
+<p>Recall that study design is critical. Hence, we need to make the following decisions depending on the class of study:</p>
+<ol class="arabic simple">
+<li><p><strong>Experimental studies</strong></p>
+<ul class="simple">
+<li><p>Deciding on <strong>blocking</strong> versus <strong>non-blocking</strong> our <strong>experimental units</strong> is critical. To take advantage of <strong>blocking</strong>, our blocks need to be well-defined (low within-block variation and high between-block variation). Otherwise, we might estimate biased effects along with a small power.</p></li>
+<li><p>We need to take <strong>Power Analysis</strong> into account. This is an a priori choice of how much data we need, so we can be convinced that <span class="math notranslate nohighlight">\(X\)</span> has a causal effect on <span class="math notranslate nohighlight">\(Y\)</span> (if, in fact, the magnitude of this effect is <strong>weak</strong> or <strong>stronger</strong>).</p></li>
+<li><p><strong>Early stopping</strong> is another point to consider. We can consider it, but we need to be cautious and use <strong>principled peeking</strong> to avoid inflating type I error and decreasing power.</p></li>
+</ul>
+</li>
+<li><p><strong>Observational studies</strong></p>
+<ul class="simple">
+<li><p>Note there is more than one way to collect a sample from a population. Furthermore, the sampling schemes are in function on different temporalities.</p></li>
+<li><p>A CS scheme is basically a <strong>simple random sample</strong>.</p></li>
+<li><p>A CC scheme can be <strong>matched</strong> or <strong>non-matched</strong>. Recall that oversampling cases is beneficial for the precision of our estimates.</p></li>
+<li><p>A CO scheme implies a careful follow-up.</p></li>
+</ul>
+</li>
+</ol>
+<p>In data analysis, methods of analysis must reflect the structure of data collection:</p>
+<ul class="simple">
+<li><p>If our study is making <strong>multiple comparisons</strong> and we are concerned about <strong>family-wise error rate</strong>, then our analysis needs to reflect this.</p></li>
+<li><p>In <strong>randomized A/B testing</strong>, if we are going to intermittently <strong>peek</strong> at the incoming data and perhaps stop the experiment <strong>early</strong>, then our analysis needs to reflect this.</p></li>
+<li><p>In the <strong>matched case-control analysis</strong>, the appropriate analysis looks <strong>nothing</strong> like the appropriate analysis of <strong>unmatched case-control data</strong>.</p></li>
+</ul>
+</section>
+<section id="a-final-statistical-reflection">
+<h3>3.5. A Final Statistical Reflection<a class="headerlink" href="#a-final-statistical-reflection" title="Permalink to this heading">#</a></h3>
+<p>We need to think <strong>holistically</strong> when dealing with <strong>statistical studies in Data Science</strong>. The following data pipeline is clearly in play:</p>
+<ul class="simple">
+<li><p>How data are collected.</p></li>
+<li><p>How data are analyzed.</p></li>
+<li><p>How conclusions are drawn.</p></li>
+<li><p>The strength of the resulting story (i.e., how robust the data story-telling is).</p></li>
+</ul>
+<p>This process relies on <strong>solid expertise from a diverse team (not just Data Scientists)</strong>. You will provide your statistical expertise via tools from the following courses:</p>
+<ul class="simple">
+<li><p><strong>DSCI 551:</strong> Fundamentals of probability.</p></li>
+<li><p><strong>DSCI 552:</strong> Fundamentals of frequentist statistical inference.</p></li>
+<li><p><strong>DSCI 561:</strong> Fundamentals of OLS regression.</p></li>
+<li><p><strong>DSCI 562:</strong> Advanced frequentist regression techniques.</p></li>
+<li><p><strong>DSCI 554:</strong> How we applied the previous learning within a frequentist causal inference framework.</p></li>
+</ul>
+<p>If we want to switch to Bayesian statistics, <strong>DSCI 553</strong> is the way to go.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./notes"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="lecture7_obs_sampling_schemes.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Lecture 7 - Observational Data: Different Sampling Schemes</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="appendix_blocking_and_stratification.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Blocking and Stratification</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-learning-objectives">Today’s Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-r-packages">Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#previously">Previously…</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matched-case-control-studies">1. Matched Case-Control Studies</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-alternative-data-collection">1.1. An Alternative Data Collection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-different-data-analysis">1.2. A Different Data Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-simulation-studies-using-the-two-case-control-sampling-schemes">1.3. Running Simulation Studies Using the Two Case-Control Sampling Schemes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordinal-regressors">2. Ordinal Regressors</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-online-store-dataset">2.1. The Online Store Dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main-statistical-inquiry">2.2. Main Statistical Inquiry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploratory-data-analysis">2.3. Exploratory Data Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-model-and-polynomial-contrasts">2.4. Regression Model and Polynomial Contrasts</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-model-and-succesive-differences-contrasts">2.5. Regression Model and Succesive Differences Contrasts</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-wrap-up">3. Final Wrap-Up</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#experimental-versus-observational-studies">3.1. Experimental Versus Observational Studies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#causal-interpretations-it-is-all-about-making-proper-comparisons">3.2. Causal Interpretations: It is all about making “proper” comparisons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#strength-of-story">3.3. Strength of Story</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-thinking-in-design-of-studies">3.4. Statistical Thinking in Design of Studies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-final-statistical-reflection">3.5. A Final Statistical Reflection</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By G. Alexi Rodríguez-Arelis
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

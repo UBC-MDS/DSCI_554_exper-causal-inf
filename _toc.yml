@@ -1,0 +1,24 @@
+format: jb-book
+root: README
+parts:
+  - caption: Lectures
+    chapters:
+    - file: lecture-learning-objectives
+    - file: notes/lecture1_multiple_comparisons
+    - file: notes/lecture2_simpson_confounding
+    - file: notes/lecture3_randomization_and_blocking
+    - file: notes/lecture4_more_blocking_and_power
+    - file: notes/lecture5_more_power_early_stopping
+    - file: notes/lecture6_obs_stratifying_modelling
+    - file: notes/lecture7_obs_sampling_schemes
+    - file: notes/lecture8_match_constrasts_wrapup
+
+  - caption: Appendices
+    chapters:
+    - file: notes/appendix_blocking_and_stratification
+    - file: notes/appendix-causality-exp-cheatsheet
+    - file: notes/appendix-prob-cheatsheet
+    - file: notes/appendix-reg-mindmap
+    - file: notes/appendix-reg-cheatsheet
+    - file: notes/appendix-dist-cheatsheet
+    - file: notes/appendix-greek-alphabet

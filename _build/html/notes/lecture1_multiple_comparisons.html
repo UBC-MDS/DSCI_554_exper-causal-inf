@@ -1,0 +1,1688 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Lecture 1 - Multiple Comparisons &#8212; DSCI 554 - Experimentation and Causal Inference</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/exercise.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.5ea377869091fd0449014c60fc090103.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notes/lecture1_multiple_comparisons';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lecture 2 - Confounding and Randomized versus Non-randomized Studies" href="lecture2_simpson_confounding.html" />
+    <link rel="prev" title="Lecture Learning Objectives" href="../lecture-learning-objectives.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/UBC_MDS_logo.png" class="logo__image only-light" alt="DSCI 554 - Experimentation and Causal Inference - Home"/>
+    <script>document.write(`<img src="../_static/UBC_MDS_logo.png" class="logo__image only-dark" alt="DSCI 554 - Experimentation and Causal Inference - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    Welcome to DSCI 554: Experimentation and Causal Inference
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Lectures</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lecture-learning-objectives.html">Lecture Learning Objectives</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Lecture 1 - Multiple Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture2_simpson_confounding.html">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture3_randomization_and_blocking.html">Lecture 3 - Randomization and Blocking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture4_more_blocking_and_power.html">Lecture 4 - More Blocking and Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture5_more_power_early_stopping.html">Lecture 5 - More Power and Early Stopping in A/B Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture6_obs_stratifying_modelling.html">Lecture 6 - Observational Data: Stratifying and Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture7_obs_sampling_schemes.html">Lecture 7 - Observational Data: Different Sampling Schemes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture8_match_constrasts_wrapup.html">Lecture 8 - Matched Case-Control Scheme, Ordinal Regressors, and Final Wrap-Up</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendices</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="appendix_blocking_and_stratification.html">Blocking and Stratification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-causality-exp-cheatsheet.html">Causality and Experimentation Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-prob-cheatsheet.html">Probability Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-reg-mindmap.html">Regression Mind Map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-reg-cheatsheet.html">Regression Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-dist-cheatsheet.html">Distribution Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix-greek-alphabet.html">Greek Alphabet</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.ubc.ca/MDS-2023-24/DSCI_554_exper-causal-inf_students" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.ubc.ca/MDS-2023-24/DSCI_554_exper-causal-inf_students/issues/new?title=Issue%20on%20page%20%2Fnotes/lecture1_multiple_comparisons.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notes/lecture1_multiple_comparisons.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Lecture 1 - Multiple Comparisons</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-goals-of-this-course">High-Level Goals of this Course</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#firstly-let-us-make-a-block-overview">Firstly, let us make a block overview!</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-relevance-of-this-course-to-data-science">What is the Relevance of this Course to Data Science?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indirect-relevance">Indirect Relevance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#direct-relevance">Direct Relevance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-learning-objectives">Today’s Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-r-packages">Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hypothesis-testing-review">1. Hypothesis Testing Review</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#p-value">1.1. <span class="math notranslate nohighlight">\(p\)</span>-value</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graphical-overview-of-the-hypothesis-testing">1.2. Graphical Overview of the Hypothesis Testing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-procedure-in-a-nutshell">1.3. Testing Procedure in a Nutshell</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hypothesis-testing-in-science">2. Hypothesis Testing in Science</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-does-that-happen">2.1. Why does that happen?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-p-text-value-0-05">2.2. When <span class="math notranslate nohighlight">\(p\text{-value} &gt; 0.05\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-journal-example-on-statistical-significant-results">2.3. An Journal Example on Statistical Significant Results</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-inconvenient-truth">3. An Inconvenient Truth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#our-first-simulation">3.1. Our First Simulation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-setting-our-400-random-alternative-hypotheses">Step 1: Setting our 400 random alternative hypotheses</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-generating-our-simulated-dataset">Step 2: Generating our Simulated Dataset</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-running-the-400-regression-models">Step 3: Running the 400 Regression Models</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checking-our-simulation-results">3.2. Checking our Simulation Results</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-going-on-in-our-previous-simulation">3.3. What is going on in our previous simulation?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bonferroni-correction">4. The Bonferroni Correction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bonferroni-guarantee">4.1. The Bonferroni Guarantee</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#is-there-a-price-to-pay">4.2. Is there a price to pay?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-false-discovery-rate">5. The False Discovery Rate</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-thought-experiment">5.1. A Simple Thought Experiment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#benjamini-hochberg">5.2. Benjamini-Hochberg</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-up">6. Wrapping Up</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="lecture-1-multiple-comparisons">
+<h1>Lecture 1 - Multiple Comparisons<a class="headerlink" href="#lecture-1-multiple-comparisons" title="Permalink to this heading">#</a></h1>
+<section id="high-level-goals-of-this-course">
+<h2>High-Level Goals of this Course<a class="headerlink" href="#high-level-goals-of-this-course" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Distinguish between <strong>experimentally-generated data</strong> and <strong>observational data</strong>, with particular reference to the strength of ensuing statistical conclusions regarding <strong>causality</strong>.</p></li>
+<li><p>Fit and interpret regression models for observational data, with particular reference to adjustment for potential <strong>confounding variables</strong>.</p></li>
+<li><p>Apply the principle of “<em>block what you can, randomize what you cannot</em>” in designing an <strong>A/B testing experiments</strong>.</p></li>
+</ul>
+</section>
+<section id="firstly-let-us-make-a-block-overview">
+<h2>Firstly, let us make a block overview!<a class="headerlink" href="#firstly-let-us-make-a-block-overview" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Lecture 1:</strong> Multiple comparisons and false discovery (<em>“Can I believe in science?”</em>).</p></li>
+<li><p><strong>Lecture 2:</strong> Confounding, randomized versus non-randomized studies (<em>“Okay, it’s not so bad…”</em>).</p></li>
+<li><p><strong>Lectures 3-5:</strong> Randomized study issues (<em>“Okay, it’s even better than I thought…”</em>).</p></li>
+<li><p><strong>Lectures 6-8:</strong> Non-randomized study issues (<em>“It’s hopeless!”</em>).</p></li>
+</ul>
+<p>In this course, there will be few new statistical tools to pick up. But we will need (and perhaps hone) our regression skills!</p>
+<p>Again, this course is entirely taught in <code class="docutils literal notranslate"><span class="pre">R</span></code> with a reasonable mathematical and statistical basis. There will be eight lectures and four labs. We strongly recommend reviewing the following <strong>frequentist</strong> courses:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/UBC-MDS/DSCI_551_stat-prob-dsci"><strong>DSCI 551: Descriptive Statistics and Probability for Data Science</strong></a> for basic statistical and probabilistic concepts, and familiarity with the mathematical notation</p></li>
+<li><p><a class="reference external" href="https://github.com/UBC-MDS/DSCI_552_stat-inf-1"><strong>DSCI 552 - Statistical Inference and Computation I</strong></a> for statistical inference concepts with a frequentist approach.</p></li>
+<li><p><a class="reference external" href="https://github.com/UBC-MDS/DSCI_561_regr-1"><strong>DSCI 561 - Regression I</strong></a> for ordinary least-squares (OLS)</p></li>
+<li><p><a class="reference external" href="https://ubc-mds.github.io/DSCI_562_regr-2/README.html"><strong>DSCI 562 - Regression II</strong></a> for more advanced regression models.</p></li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Keep in mind the following: this is a <strong>concepts block</strong>.</p>
+</div>
+</section>
+<section id="what-is-the-relevance-of-this-course-to-data-science">
+<h2>What is the Relevance of this Course to Data Science?<a class="headerlink" href="#what-is-the-relevance-of-this-course-to-data-science" title="Permalink to this heading">#</a></h2>
+<section id="indirect-relevance">
+<h3>Indirect Relevance<a class="headerlink" href="#indirect-relevance" title="Permalink to this heading">#</a></h3>
+<p>This course is an inherent part of your statistical training <strong>given your current statistical maturity</strong>. You already learned a comprehensive set of statistical tools in the previous courses.</p>
+<p>Moreover, we will stress the concept of “<strong>joined-up thinking</strong>” on the entire data pipeline:</p>
+<ul class="simple">
+<li><p>How data are <strong>collected</strong>.</p></li>
+<li><p>How data are <strong>analyzed</strong>.</p></li>
+<li><p>How conclusions are <strong>drawn</strong>.</p></li>
+<li><p>The strength of the <strong>resulting story</strong> (i.e., how robust the data story-telling is).</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This “<strong>joined-up thinking</strong>” is related to the <a class="reference external" href="https://ubc-mds.github.io/DSCI_562_regr-2/notes/lecture1-glm-link-functions-and-count-regression.html#data-science-workflow"><strong>Data Science Workflow</strong></a> from <strong>DSCI 562 - Regression II</strong>.</p>
+</div>
+</section>
+<section id="direct-relevance">
+<h3>Direct Relevance<a class="headerlink" href="#direct-relevance" title="Permalink to this heading">#</a></h3>
+<p>Throughout the block, we will review the following two major classes of statistical studies to adress <strong>causality</strong>:</p>
+<ul class="simple">
+<li><p><strong>Randomized studies:</strong> In this class of studies, the researcher can <strong>randomly</strong> allocate the subjects to one of the experimental treatments. An <strong>experimental treatment</strong> is a given testing strategy (e.g., in pharmaceutical trials, a <strong>placebo</strong> is a <strong>control treatment</strong> whereas the <strong>experimental drug</strong> is the <strong>treatment of interest</strong>). Specifically, in Data Science, we could encounter the example below.</p></li>
+</ul>
+<div class="hint admonition">
+<p class="admonition-title">Example</p>
+<p>A/B testing for website optimization:</p>
+<ul class="simple">
+<li><p><em>Does a tweak to a website improve user experience and/or generate more sales?</em> (i.e., control <strong>website A</strong> versus experimental <strong>website B</strong>).</p></li>
+<li><p><em>Can we end a test early?</em> This is called <strong>early-stopping</strong> in statistical jargon.</p></li>
+</ul>
+</div>
+<ul class="simple">
+<li><p><strong>Non-randomized studies:</strong> In many different case studies, treatment randomization is impossible. Hence, we need to apply certain statistical concepts and tools to address our specific inquiries.</p></li>
+</ul>
+<div class="hint admonition">
+<p class="admonition-title">Example</p>
+<p>Pharmaco-epidemiology problems and electronic health records:</p>
+<ul class="simple">
+<li><p>We might encounter different data pipelines for massive healthcare utilization databases to obtain knowledge about drug efficacy and safety.</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="today-s-learning-objectives">
+<h2>Today’s Learning Objectives<a class="headerlink" href="#today-s-learning-objectives" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Review frequentist hypothesis testing.</p></li>
+<li><p>Examine the misuse of <span class="math notranslate nohighlight">\(p\)</span>-values in scientific literature.</p></li>
+<li><p>Demonstrate the misuse of <span class="math notranslate nohighlight">\(p\)</span>-values via a simulation.</p></li>
+<li><p>Explain the macro-properties of carrying out many hypothesis tests in the context of a single dataset.</p></li>
+<li><p>Use Bonferroni and False Discovery Rate correction to alter the macro-properties when conducting many hypothesis tests.</p></li>
+<li><p>Contrast the Bonferroni correction with the False Discovery Rate.</p></li>
+</ol>
+</section>
+<section id="loading-r-packages">
+<h2>Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages<a class="headerlink" href="#loading-r-packages" title="Permalink to this heading">#</a></h2>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">repr.matrix.max.cols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">mvtnorm</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">reshape2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="hypothesis-testing-review">
+<h2>1. Hypothesis Testing Review<a class="headerlink" href="#hypothesis-testing-review" title="Permalink to this heading">#</a></h2>
+<p>In statistical inference, we have <strong>two hypotheses</strong>: the <strong>null</strong> <span class="math notranslate nohighlight">\(H_0\)</span> and the <strong>alternative</strong> <span class="math notranslate nohighlight">\(H_a\)</span>.</p>
+<p><span class="math notranslate nohighlight">\(H_0\)</span> represents the status quo in our case study, whereas <span class="math notranslate nohighlight">\(H_a\)</span> represents our hypothesis of interest. Furthermore, recall there are two types of errors shown in the table below.</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-center head"><p></p></th>
+<th class="text-center head"><p><strong><span class="math notranslate nohighlight">\(H_0\)</span> is true</strong></p></th>
+<th class="text-center head"><p><strong><span class="math notranslate nohighlight">\(H_0\)</span> is not true</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p><strong>Fail to reject <span class="math notranslate nohighlight">\(H_0\)</span></strong></p></td>
+<td class="text-center"><p>Correct (<strong>TRUE NEGATIVE</strong>)</p></td>
+<td class="text-center"><p>Type II Error (<strong>FALSE NEGATIVE</strong>)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p><strong>Reject <span class="math notranslate nohighlight">\(H_0\)</span></strong></p></td>
+<td class="text-center"><p>Type I Error (<strong>FALSE POSITIVE</strong>)</p></td>
+<td class="text-center"><p>Correct (<strong>TRUE POSITIVE</strong>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These errors are I (<strong>false positive</strong>) and II (<strong>false negative</strong>). Their setup is targeted towards rejecting or not rejecting <span class="math notranslate nohighlight">\(H_0\)</span>, given that <span class="math notranslate nohighlight">\(H_0\)</span> is true or not. Moreover, these errors are measured in <strong>probabilities</strong>.</p>
+<p>The <strong>frequentist hypothesis testing process</strong> is the following:</p>
+<ol class="arabic simple">
+<li><p>We need to set up a pre-specified significance level (usually <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>). The significance level <span class="math notranslate nohighlight">\(\alpha\)</span> will be our tolerance to type I error: <strong>rejecting the null hypothesis when in fact is true</strong>.</p></li>
+<li><p>Compute a <strong>test statistic</strong> from our sampled data. This test statistic will have a <strong>sampling distribution</strong> under <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
+<li><p>Compare the test statistic against <strong>a certain quantile threshold under <span class="math notranslate nohighlight">\(H_0\)</span></strong>, then:</p>
+<ul class="simple">
+<li><p>Reject <span class="math notranslate nohighlight">\(H_0\)</span> in favour of <span class="math notranslate nohighlight">\(H_a\)</span> if the test statistic <strong>exceeds</strong> this quantile threshold under <span class="math notranslate nohighlight">\(H_0\)</span>.</p></li>
+<li><p>Do not reject <span class="math notranslate nohighlight">\(H_0\)</span> otherwise.</p></li>
+</ul>
+</li>
+</ol>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The quantile threshold is chosen such that</p>
+<div class="math notranslate nohighlight">
+\[P(\text{reject null} \mid \text{null is true}) = \alpha.\]</div>
+</div>
+<section id="p-value">
+<h3>1.1. <span class="math notranslate nohighlight">\(p\)</span>-value<a class="headerlink" href="#p-value" title="Permalink to this heading">#</a></h3>
+<p>An <strong>alternative way</strong> of performing <strong>Step 3</strong> is computing the <span class="math notranslate nohighlight">\(p\)</span>-value associated to the test statistic under <span class="math notranslate nohighlight">\(H_0\)</span>.</p>
+<p>Let us start with some mathematical notation. For this <strong>Step 3</strong>, <strong>in general</strong> let the test statistic be <span class="math notranslate nohighlight">\(T\)</span> (<strong>note the random variable notation as an uppercase!</strong>) and the quantile threshold <span class="math notranslate nohighlight">\(c_\alpha\)</span>. Thus, we would reject <span class="math notranslate nohighlight">\(H_0\)</span> if</p>
+<div class="math notranslate nohighlight">
+\[T \geq c_\alpha.\]</div>
+<p>Now, for our <strong>observed</strong> data, the test statistic will be <span class="math notranslate nohighlight">\(t_{\text{obs}}\)</span> (<strong>note the lowercase notation!</strong>). In probability notation, the <span class="math notranslate nohighlight">\(p\)</span>-value can be represented as:</p>
+<div class="math notranslate nohighlight">
+\[p\text{-value} = P\left(T \geq t_{obs} \mid \mbox{null is true}\right).\]</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The <span class="math notranslate nohighlight">\(p\)</span>-value is the chance of getting a test statistic as or more extreme than what you actually got as <strong>observed data</strong>, presuming <span class="math notranslate nohighlight">\(H_0\)</span> is true. <strong>We will reject <span class="math notranslate nohighlight">\(H_0\)</span> if</strong></p>
+<div class="math notranslate nohighlight">
+\[p\text{-value} &lt; \alpha.\]</div>
+</div>
+</section>
+<section id="graphical-overview-of-the-hypothesis-testing">
+<h3>1.2. Graphical Overview of the Hypothesis Testing<a class="headerlink" href="#graphical-overview-of-the-hypothesis-testing" title="Permalink to this heading">#</a></h3>
+<p>All the previous process can also be put as in the diagram below.</p>
+<figure class="align-default" id="classical-hypothesis-b">
+<a class="reference internal image-reference" href="../_images/classical-test-framework.png"><img alt="../_images/classical-test-framework.png" src="../_images/classical-test-framework.png" style="height: 300px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Workflow of a theory-based hypothesis testing.</span><a class="headerlink" href="#classical-hypothesis-b" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="testing-procedure-in-a-nutshell">
+<h3>1.3. Testing Procedure in a Nutshell<a class="headerlink" href="#testing-procedure-in-a-nutshell" title="Permalink to this heading">#</a></h3>
+<p>Let us start with some coding. The significance level <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span> testing procedure can be cast as:</p>
+<ul class="simple">
+<li><p>Reject <span class="math notranslate nohighlight">\(H_0\)</span> if <span class="math notranslate nohighlight">\(p\text{-value} &lt; \alpha = 0.05\)</span>.</p></li>
+<li><p>Do not reject <span class="math notranslate nohighlight">\(H_0\)</span> otherwise.</p></li>
+</ul>
+<p>This process can be coded as in the function below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">hypothesis.test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.05</span><span class="p">,</span><span class="w"> </span><span class="n">p_value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">reject</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="n">p_value</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span>
+<span class="w">  </span><span class="nf">return</span><span class="p">(</span><span class="n">reject</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="hypothesis-testing-in-science">
+<h2>2. Hypothesis Testing in Science<a class="headerlink" href="#hypothesis-testing-in-science" title="Permalink to this heading">#</a></h2>
+<p>It is well known that it is easier to publish your work in a better journal if you have one (or more!) <strong>statistically significant findings</strong> at the (conventional) <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span> level.</p>
+<section id="why-does-that-happen">
+<h3>2.1. Why does that happen?<a class="headerlink" href="#why-does-that-happen" title="Permalink to this heading">#</a></h3>
+<p>This is in the function of what the scientific community considers as <strong>“interesting results”</strong>:</p>
+<ul class="simple">
+<li><p>By construction, the <strong>null hypothesis</strong> is “conservative”/”boring”/”status quo.”</p></li>
+<li><p>The <strong>alternative hypothesis</strong> is usually more interesting than the null hypothesis, e.g., eating chocolate and living longer <em>are</em> associated.  <strong>So a <span class="math notranslate nohighlight">\(p\text{-value} &lt; 0.05\)</span> is exciting!</strong></p></li>
+</ul>
+</section>
+<section id="when-p-text-value-0-05">
+<h3>2.2. When <span class="math notranslate nohighlight">\(p\text{-value} &gt; 0.05\)</span><a class="headerlink" href="#when-p-text-value-0-05" title="Permalink to this heading">#</a></h3>
+<p>We have to make a controversial statement: <strong>obtaining <span class="math notranslate nohighlight">\(p\text{-value} &gt; 0.05\)</span> is ambiguous!</strong></p>
+<p><strong>Why are we stating that?</strong> Here are some reasons:</p>
+<ul class="simple">
+<li><p>Data did not provide strong evidence <strong>against</strong> the null hypothesis.</p></li>
+<li><p>Maybe our test has <strong>low power</strong>.</p></li>
+</ul>
+<p>Therefore, the New York Times (for instance) is <strong>not</strong> putting that in the Science section. For instance, <strong>THESE HEADLINES WILL NEVER HAPPEN</strong>:</p>
+<ul class="simple">
+<li><p>“<em>Scientists conclude that they do not have enough data.</em>”</p></li>
+<li><p>“<em>Null hypothesis not rejected.</em>”</p></li>
+</ul>
+</section>
+<section id="an-journal-example-on-statistical-significant-results">
+<h3>2.3. An Journal Example on Statistical Significant Results<a class="headerlink" href="#an-journal-example-on-statistical-significant-results" title="Permalink to this heading">#</a></h3>
+<p>We often see reports of small <span class="math notranslate nohighlight">\(p\)</span>-values in abstracts of scientific papers. This is an example:</p>
+<figure class="align-default" id="screencapture-nejm2">
+<a class="reference internal image-reference" href="../_images/screencapture-nejm2.png"><img alt="../_images/screencapture-nejm2.png" src="../_images/screencapture-nejm2.png" style="height: 300px;" /></a>
+</figure>
+<figure class="align-default" id="screencapture-nejm1">
+<a class="reference internal image-reference" href="../_images/screencapture-nejm1.png"><img alt="../_images/screencapture-nejm1.png" src="../_images/screencapture-nejm1.png" style="height: 300px;" /></a>
+</figure>
+</section>
+</section>
+<section id="an-inconvenient-truth">
+<h2>3. An Inconvenient Truth<a class="headerlink" href="#an-inconvenient-truth" title="Permalink to this heading">#</a></h2>
+<p>It seems that this <strong>standard scientific practice</strong> of rejecting the null hypothesis <span class="math notranslate nohighlight">\(H_0\)</span> when the <span class="math notranslate nohighlight">\(p\text{-value} &lt; 0.05\)</span> is a good one. Nevertheless, <strong>carrying out many comparisons (tests)</strong> in a single dataset but then only mentioning those that produce <span class="math notranslate nohighlight">\(p\text{-value} &lt; 0.05\)</span> is cheating!</p>
+<p>We discussed this matter in <strong>DSCI 552</strong> and is called <span class="math notranslate nohighlight">\(p\)</span>-hacking:</p>
+<blockquote>
+<div><p><em>We have to avoid a practice known as <span class="math notranslate nohighlight">\(p\)</span>-hacking in which we perform many different tests on our data to obtain any significant result to publish. By doing this, multiple testing occurs, which inflates our type I error if we do not control it with some available correction (e.g., Bonferroni correction).</em></p>
+</div></blockquote>
+<p>Keep in mind one important concept here: <strong>Bonferroni correction</strong>. It will be critical in this lecture.</p>
+<section id="our-first-simulation">
+<h3>3.1. Our First Simulation<a class="headerlink" href="#our-first-simulation" title="Permalink to this heading">#</a></h3>
+<p>Throughout the course, we will run different simulations to make key <strong>proofs of concept</strong>. We will start with the <strong>inflation of the type I error</strong>. Hence, let us run a <strong>simulation</strong> in three steps.</p>
+<section id="step-1-setting-our-400-random-alternative-hypotheses">
+<h4>Step 1: Setting our 400 random alternative hypotheses<a class="headerlink" href="#step-1-setting-our-400-random-alternative-hypotheses" title="Permalink to this heading">#</a></h4>
+<p>Suppose I want to test <span class="math notranslate nohighlight">\(20 \times 20\)</span> food-health associations (i.e., 400 hypothesis testings based on 400 regression models <strong>on a single dataset</strong>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 20 food and health variables</span>
+<span class="n">nvars</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">20</span>
+<span class="c1"># Food and human body parts</span>
+<span class="n">foods</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span>
+<span class="w">  </span><span class="s">&quot;Peanuts&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dark Chocolate&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wine&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Grass&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Cinnamon&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;Ice Cream&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Potatoes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Doritos&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Salsa&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bugs&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;Soap&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Yogurt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Gatorade&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Milk Chocolate&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Raisins&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;Cured Meat&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Raw Fish&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dirt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Toothpaste&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Apples&quot;</span>
+<span class="p">)</span>
+<span class="n">health</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span>
+<span class="w">  </span><span class="s">&quot;heart&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;lung&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;gut&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cognitive&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foot&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;arm&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;eye&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hair&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;dental&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ear&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;knee&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hip&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fingernail&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;joint&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;shoulder&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;muscle&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;eyelash&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;kidney&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;skin&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mental&quot;</span>
+<span class="p">)</span>
+<span class="c1"># Class of association</span>
+<span class="n">outcome</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;good&quot;</span><span class="p">,</span><span class="s">&quot;bad&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Once we have our possible variables and outcomes, let us build our 400 alternative hypotheses. We will do this randomly for <code class="docutils literal notranslate"><span class="pre">outcome</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">554</span><span class="p">)</span>
+<span class="c1"># Grid of all possible pairs</span>
+<span class="n">experiments</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">expand.grid</span><span class="p">(</span><span class="n">foods</span><span class="p">,</span><span class="w"> </span><span class="n">health</span><span class="p">)</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">experiments</span><span class="p">)[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;food&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;health&quot;</span><span class="p">)</span>
+<span class="c1"># The random outcomes associated to our 400 alternative hypothesis!</span>
+<span class="n">experiments</span><span class="o">$</span><span class="n">outcome</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">outcome</span><span class="p">[</span><span class="nf">sample.int</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">nvars</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">nvars</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)]</span>
+<span class="n">experiments</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 400 × 3</caption>
+<thead>
+	<tr><th scope=col>food</th><th scope=col>health</th><th scope=col>outcome</th></tr>
+	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Peanuts       </td><td>heart</td><td>good</td></tr>
+	<tr><td>Dark Chocolate</td><td>heart</td><td>bad </td></tr>
+	<tr><td>Wine          </td><td>heart</td><td>bad </td></tr>
+	<tr><td>Grass         </td><td>heart</td><td>bad </td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>Raw Fish  </td><td>mental</td><td>bad </td></tr>
+	<tr><td>Dirt      </td><td>mental</td><td>good</td></tr>
+	<tr><td>Toothpaste</td><td>mental</td><td>bad </td></tr>
+	<tr><td>Apples    </td><td>mental</td><td>bad </td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Then, we build our 400 alternative hypotheses.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">alternative_hypotheses</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Eating &quot;</span><span class="p">,</span><span class="w"> </span><span class="nf">tolower</span><span class="p">(</span><span class="n">experiments</span><span class="o">$</span><span class="n">food</span><span class="p">),</span>
+<span class="w">  </span><span class="s">&quot; is &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">experiments</span><span class="o">$</span><span class="n">outcome</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot; for &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">experiments</span><span class="o">$</span><span class="n">health</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; health.&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="p">)</span>
+<span class="nf">as.data.frame</span><span class="p">(</span><span class="n">alternative_hypotheses</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 400 × 1</caption>
+<thead>
+	<tr><th scope=col>alternative_hypotheses</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Eating peanuts is good for heart health.      </td></tr>
+	<tr><td>Eating dark chocolate is bad for heart health.</td></tr>
+	<tr><td>Eating wine is bad for heart health.          </td></tr>
+	<tr><td>Eating grass is bad for heart health.         </td></tr>
+	<tr><td>⋮</td></tr>
+	<tr><td>Eating raw fish is bad for mental health.  </td></tr>
+	<tr><td>Eating dirt is good for mental health.     </td></tr>
+	<tr><td>Eating toothpaste is bad for mental health.</td></tr>
+	<tr><td>Eating apples is bad for mental health.    </td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="step-2-generating-our-simulated-dataset">
+<h4>Step 2: Generating our Simulated Dataset<a class="headerlink" href="#step-2-generating-our-simulated-dataset" title="Permalink to this heading">#</a></h4>
+<p>It is time to generate <strong>our simulated dataset</strong> to test our 400 alternative hypotheses. This dataset will be comprised of 20 <strong>continuous</strong> <span class="math notranslate nohighlight">\(X\)</span> variables (<strong>regressors</strong>) and 20 <span class="math notranslate nohighlight">\(Y\)</span> <strong>continuous</strong> variables (<strong>responses</strong>) measured on each of <span class="math notranslate nohighlight">\(n = 500\)</span> people. Therefore:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(X\)</span> variables are a person’s intake of different foods.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Y\)</span> variables are different measures of a person’s health.</p></li>
+</ul>
+<p>We will need to use a made-up function <code class="docutils literal notranslate"><span class="pre">simulate_p()</span></code> to run our simulation. This simulation will include 400 simple regression models and record their corresponding <span class="math notranslate nohighlight">\(p\)</span>-values to assess the statistical association between each <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>. Note, we will generate our random data so that <strong>none of the <span class="math notranslate nohighlight">\(X\)</span> variables are associated with any of the <span class="math notranslate nohighlight">\(Y\)</span> variables (i.e., <span class="math notranslate nohighlight">\(H_0\)</span> is in fact true!)</strong>. Each one of the 400 generic null hypotheses is set up as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0 \text{: } X \text{ and } Y \text{are not linearly associated.} \\
+H_a \text{: } \text{otherwise.}
+\end{gather*}\end{split}\]</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Below is the <code class="docutils literal notranslate"><span class="pre">R</span></code> code to generate the random numbers in function <code class="docutils literal notranslate"><span class="pre">simulate_p()</span></code>. Reviewing this code is out of the scope of this lecture since it involves <strong>Multivariate Normal concepts</strong>. <strong>As optional practice</strong>, feel free to go through this code (you will find some useful comments on the way).</p>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">simulate_p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">nvars</span><span class="p">,</span><span class="w"> </span><span class="n">nobs</span><span class="p">,</span><span class="w"> </span><span class="n">rho</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">sigmas_sq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">rho</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">diag</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span><span class="w"> </span><span class="c1"># We assign the same variance to all nvars </span>
+<span class="w">    </span><span class="c1"># (main diagonal in an nvar times nvar variance-covariance matrix)</span>
+<span class="w">  </span><span class="nf">if </span><span class="p">(</span><span class="n">nvars</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1"># Now, we assign the same pairwise covariances in </span>
+<span class="w">      </span><span class="c1"># the nvar times nvar variance-covariance matrix </span>
+<span class="w">      </span><span class="c1"># (SO ANY VARIABLE WILL NOT STAND OUT AS STATISTICALLY SIGNIFICANT!)</span>
+<span class="w">    </span><span class="n">sigmas_sq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sigmas_sq</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">rho</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">nvars</span><span class="p">,</span><span class="w"> </span><span class="n">nvars</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span>
+<span class="w">  </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rmvnorm</span><span class="p">(</span><span class="w"> </span><span class="c1"># We generate nobs times nvar multivariate normal random numbers (regressors) </span>
+<span class="w">      </span><span class="c1"># with vector mean of zeros and variance-covariance matrix sigmas_sq</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nobs</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">nvars</span><span class="p">),</span>
+<span class="w">    </span><span class="n">sigma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sigmas_sq</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rmvnorm</span><span class="p">(</span><span class="w"> </span><span class="c1"># We generate nobs times nvar multivariate normal random numbers (responses) </span>
+<span class="w">      </span><span class="c1"># with vector mean of zeros and variance-covariance matrix sigmas_sq</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nobs</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">nvars</span><span class="p">),</span>
+<span class="w">    </span><span class="n">sigma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sigmas_sq</span>
+<span class="w">  </span><span class="p">)</span>
+
+<span class="w">  </span><span class="c1"># Finallly, we run nvar times nvar simple linear regressions of each X versus each Y</span>
+<span class="w">  </span><span class="c1"># Then, we record the p-value from our lm() summaries</span>
+<span class="w">  </span><span class="n">pmat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="n">nvars</span><span class="p">,</span><span class="w"> </span><span class="n">nvars</span><span class="p">)</span>
+<span class="w">  </span><span class="nf">for </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">nvars</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nf">for </span><span class="p">(</span><span class="n">j</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">nvars</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">pmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">anova</span><span class="p">(</span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="p">[,</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">[,</span><span class="w"> </span><span class="n">j</span><span class="p">]))</span><span class="o">$</span><span class="n">Pr</span><span class="p">[</span><span class="m">1</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="nf">return</span><span class="p">(</span><span class="n">pmat</span><span class="p">)</span><span class="w"> </span><span class="c1"># pmat is the nvar x nvar matrix of p-values</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+<section id="step-3-running-the-400-regression-models">
+<h4>Step 3: Running the 400 Regression Models<a class="headerlink" href="#step-3-running-the-400-regression-models" title="Permalink to this heading">#</a></h4>
+<p>Then, we run all 400 regressions of one of the <span class="math notranslate nohighlight">\(Y\)</span>’s on one of the <span class="math notranslate nohighlight">\(X\)</span>’s.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sig_alpha</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0.05</span><span class="w"> </span><span class="c1"># alpha threshold</span>
+<span class="n">nvars</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">20</span>
+<span class="n">nobs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">500</span>
+<span class="n">rho</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0.75</span><span class="w"> </span><span class="c1"># Variance-covariance matrix parameter denoting the same pairwise covariance for all the nvars, i.e.,</span>
+<span class="c1"># the same status quo</span>
+
+<span class="nf">set.seed</span><span class="p">(</span><span class="m">12345</span><span class="p">)</span><span class="w"> </span><span class="c1"># Global reproducibility</span>
+<span class="n">pval</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">simulate_p</span><span class="p">(</span><span class="n">nvars</span><span class="p">,</span><span class="w"> </span><span class="n">nobs</span><span class="p">,</span><span class="w"> </span><span class="n">rho</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="checking-our-simulation-results">
+<h3>3.2. Checking our Simulation Results<a class="headerlink" href="#checking-our-simulation-results" title="Permalink to this heading">#</a></h3>
+<p>We will check how many <span class="math notranslate nohighlight">\(p\)</span>-values are below <code class="docutils literal notranslate"><span class="pre">sig_alpha</span></code> in <code class="docutils literal notranslate"><span class="pre">pval</span></code> (i.e., <strong>how many times we committed type I error</strong>).</p>
+<p><strong>162 pairwise comparisons, out of 400 (i.e., 40.5%), are rejecting <span class="math notranslate nohighlight">\(H_0\)</span> when in fact is true!</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">sum</span><span class="p">(</span><span class="n">pval</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">sig_alpha</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">162</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">repr.plot.width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">14</span><span class="p">)</span>
+
+<span class="n">p.val.hist</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pval</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">melt</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.025</span><span class="p">,</span><span class="w"> </span><span class="nf">aes</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">after_stat</span><span class="p">(</span><span class="n">count</span><span class="p">)),</span><span class="w"> </span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;black&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;gray&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_vline</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">xintercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sig_alpha</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">linetype</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dashed&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">linewidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;p-values&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">18</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">18</span><span class="p">),</span>
+<span class="w">    </span><span class="n">legend.position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Histogram of Relative Frequencies of p-values Coming from 400 Simple Regression Models&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">p.val.hist</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/7fd1d1fe196ee7865557e5d6355a0bf169472a36bb784e770497db9ce9627ec5.png"><img alt="../_images/7fd1d1fe196ee7865557e5d6355a0bf169472a36bb784e770497db9ce9627ec5.png" src="../_images/7fd1d1fe196ee7865557e5d6355a0bf169472a36bb784e770497db9ce9627ec5.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>The histogram above plots the <span class="math notranslate nohighlight">\(p\)</span>-values on the <span class="math notranslate nohighlight">\(x\)</span>-axis as counts on the <span class="math notranslate nohighlight">\(y\)</span> axis. The vertical dashed blue line indicates the <span class="math notranslate nohighlight">\(\alpha\)</span> threshold.</p>
+<p>Imagine the <span class="math notranslate nohighlight">\(p\)</span>-values in the matrix <code class="docutils literal notranslate"><span class="pre">pval</span></code> correspond to the alternative hypotheses we constructed in <code class="docutils literal notranslate"><span class="pre">alternative_hypotheses</span></code>. Therefore, we can publish 162 papers, each generating a headline:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">melt_p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">melt</span><span class="p">(</span><span class="n">pval</span><span class="p">)</span><span class="w"> </span><span class="c1"># Melting matrix pval before filtering those spurious significant results</span>
+<span class="n">melt_p</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 400 × 3</caption>
+<thead>
+	<tr><th scope=col>Var1</th><th scope=col>Var2</th><th scope=col>value</th></tr>
+	<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>1</td><td>1</td><td>0.01144746</td></tr>
+	<tr><td>2</td><td>1</td><td>0.02435357</td></tr>
+	<tr><td>3</td><td>1</td><td>0.03857421</td></tr>
+	<tr><td>4</td><td>1</td><td>0.54722977</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>17</td><td>20</td><td>0.08290290</td></tr>
+	<tr><td>18</td><td>20</td><td>0.16151143</td></tr>
+	<tr><td>19</td><td>20</td><td>0.07920598</td></tr>
+	<tr><td>20</td><td>20</td><td>0.40985565</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now, we filter those spurious significant results and their corresponding alternative hypotheses</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">alternative_hypotheses</span><span class="p">[</span><span class="n">melt_p</span><span class="o">$</span><span class="n">value</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">sig_alpha</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  [1] &quot;Eating peanuts is good for heart health.&quot;           
+  [2] &quot;Eating dark chocolate is bad for heart health.&quot;     
+  [3] &quot;Eating wine is bad for heart health.&quot;               
+  [4] &quot;Eating bugs is good for heart health.&quot;              
+  [5] &quot;Eating peanuts is good for lung health.&quot;            
+  [6] &quot;Eating dark chocolate is good for lung health.&quot;     
+  [7] &quot;Eating wine is good for lung health.&quot;               
+  [8] &quot;Eating bugs is good for lung health.&quot;               
+  [9] &quot;Eating dark chocolate is bad for gut health.&quot;       
+ [10] &quot;Eating wine is good for gut health.&quot;                
+ [11] &quot;Eating bugs is good for gut health.&quot;                
+ [12] &quot;Eating toothpaste is bad for gut health.&quot;           
+ [13] &quot;Eating wine is good for cognitive health.&quot;          
+ [14] &quot;Eating peanuts is good for foot health.&quot;            
+ [15] &quot;Eating dark chocolate is bad for foot health.&quot;      
+ [16] &quot;Eating wine is bad for foot health.&quot;                
+ [17] &quot;Eating cinnamon is bad for foot health.&quot;            
+ [18] &quot;Eating ice cream is good for foot health.&quot;          
+ [19] &quot;Eating potatoes is good for foot health.&quot;           
+ [20] &quot;Eating doritos is bad for foot health.&quot;             
+ [21] &quot;Eating salsa is good for foot health.&quot;              
+ [22] &quot;Eating bugs is bad for foot health.&quot;                
+ [23] &quot;Eating soap is bad for foot health.&quot;                
+ [24] &quot;Eating yogurt is bad for foot health.&quot;              
+ [25] &quot;Eating gatorade is good for foot health.&quot;           
+ [26] &quot;Eating milk chocolate is good for foot health.&quot;     
+ [27] &quot;Eating raisins is good for foot health.&quot;            
+ [28] &quot;Eating cured meat is bad for foot health.&quot;          
+ [29] &quot;Eating raw fish is good for foot health.&quot;           
+ [30] &quot;Eating dirt is good for foot health.&quot;               
+ [31] &quot;Eating toothpaste is good for foot health.&quot;         
+ [32] &quot;Eating apples is good for foot health.&quot;             
+ [33] &quot;Eating peanuts is bad for arm health.&quot;              
+ [34] &quot;Eating dark chocolate is good for arm health.&quot;      
+ [35] &quot;Eating wine is bad for arm health.&quot;                 
+ [36] &quot;Eating grass is bad for arm health.&quot;                
+ [37] &quot;Eating cinnamon is good for arm health.&quot;            
+ [38] &quot;Eating ice cream is bad for arm health.&quot;            
+ [39] &quot;Eating potatoes is good for arm health.&quot;            
+ [40] &quot;Eating doritos is bad for arm health.&quot;              
+ [41] &quot;Eating salsa is good for arm health.&quot;               
+ [42] &quot;Eating bugs is bad for arm health.&quot;                 
+ [43] &quot;Eating soap is good for arm health.&quot;                
+ [44] &quot;Eating yogurt is bad for arm health.&quot;               
+ [45] &quot;Eating milk chocolate is good for arm health.&quot;      
+ [46] &quot;Eating raisins is bad for arm health.&quot;              
+ [47] &quot;Eating cured meat is good for arm health.&quot;          
+ [48] &quot;Eating raw fish is good for arm health.&quot;            
+ [49] &quot;Eating dirt is good for arm health.&quot;                
+ [50] &quot;Eating toothpaste is good for arm health.&quot;          
+ [51] &quot;Eating apples is good for arm health.&quot;              
+ [52] &quot;Eating dark chocolate is bad for eye health.&quot;       
+ [53] &quot;Eating wine is good for eye health.&quot;                
+ [54] &quot;Eating bugs is good for eye health.&quot;                
+ [55] &quot;Eating soap is good for eye health.&quot;                
+ [56] &quot;Eating yogurt is bad for eye health.&quot;               
+ [57] &quot;Eating toothpaste is good for eye health.&quot;          
+ [58] &quot;Eating dark chocolate is bad for hair health.&quot;      
+ [59] &quot;Eating wine is good for hair health.&quot;               
+ [60] &quot;Eating peanuts is bad for dental health.&quot;           
+ [61] &quot;Eating dark chocolate is good for dental health.&quot;   
+ [62] &quot;Eating wine is good for dental health.&quot;             
+ [63] &quot;Eating ice cream is bad for dental health.&quot;         
+ [64] &quot;Eating potatoes is good for dental health.&quot;         
+ [65] &quot;Eating doritos is good for dental health.&quot;          
+ [66] &quot;Eating salsa is good for dental health.&quot;            
+ [67] &quot;Eating bugs is good for dental health.&quot;             
+ [68] &quot;Eating soap is bad for dental health.&quot;              
+ [69] &quot;Eating yogurt is bad for dental health.&quot;            
+ [70] &quot;Eating dirt is good for dental health.&quot;             
+ [71] &quot;Eating toothpaste is bad for dental health.&quot;        
+ [72] &quot;Eating peanuts is good for ear health.&quot;             
+ [73] &quot;Eating dark chocolate is good for ear health.&quot;      
+ [74] &quot;Eating wine is good for ear health.&quot;                
+ [75] &quot;Eating doritos is bad for ear health.&quot;              
+ [76] &quot;Eating salsa is bad for ear health.&quot;                
+ [77] &quot;Eating bugs is bad for ear health.&quot;                 
+ [78] &quot;Eating soap is good for ear health.&quot;                
+ [79] &quot;Eating peanuts is bad for knee health.&quot;             
+ [80] &quot;Eating dark chocolate is good for knee health.&quot;     
+ [81] &quot;Eating wine is good for knee health.&quot;               
+ [82] &quot;Eating potatoes is good for knee health.&quot;           
+ [83] &quot;Eating salsa is good for knee health.&quot;              
+ [84] &quot;Eating bugs is good for knee health.&quot;               
+ [85] &quot;Eating soap is good for knee health.&quot;               
+ [86] &quot;Eating raisins is good for knee health.&quot;            
+ [87] &quot;Eating raw fish is bad for knee health.&quot;            
+ [88] &quot;Eating dirt is bad for knee health.&quot;                
+ [89] &quot;Eating toothpaste is bad for knee health.&quot;          
+ [90] &quot;Eating peanuts is good for fingernail health.&quot;      
+ [91] &quot;Eating dark chocolate is bad for fingernail health.&quot;
+ [92] &quot;Eating wine is bad for fingernail health.&quot;          
+ [93] &quot;Eating ice cream is bad for fingernail health.&quot;     
+ [94] &quot;Eating salsa is bad for fingernail health.&quot;         
+ [95] &quot;Eating bugs is good for fingernail health.&quot;         
+ [96] &quot;Eating toothpaste is bad for fingernail health.&quot;    
+ [97] &quot;Eating peanuts is good for joint health.&quot;           
+ [98] &quot;Eating dark chocolate is bad for joint health.&quot;     
+ [99] &quot;Eating wine is good for joint health.&quot;              
+[100] &quot;Eating cinnamon is good for joint health.&quot;          
+[101] &quot;Eating ice cream is good for joint health.&quot;         
+[102] &quot;Eating potatoes is good for joint health.&quot;          
+[103] &quot;Eating doritos is good for joint health.&quot;           
+[104] &quot;Eating salsa is bad for joint health.&quot;              
+[105] &quot;Eating bugs is good for joint health.&quot;              
+[106] &quot;Eating soap is bad for joint health.&quot;               
+[107] &quot;Eating yogurt is good for joint health.&quot;            
+[108] &quot;Eating gatorade is good for joint health.&quot;          
+[109] &quot;Eating milk chocolate is bad for joint health.&quot;     
+[110] &quot;Eating raisins is good for joint health.&quot;           
+[111] &quot;Eating cured meat is bad for joint health.&quot;         
+[112] &quot;Eating raw fish is bad for joint health.&quot;           
+[113] &quot;Eating dirt is bad for joint health.&quot;               
+[114] &quot;Eating toothpaste is good for joint health.&quot;        
+[115] &quot;Eating apples is bad for joint health.&quot;             
+[116] &quot;Eating peanuts is good for shoulder health.&quot;        
+[117] &quot;Eating dark chocolate is good for shoulder health.&quot; 
+[118] &quot;Eating wine is good for shoulder health.&quot;           
+[119] &quot;Eating cinnamon is bad for shoulder health.&quot;        
+[120] &quot;Eating ice cream is bad for shoulder health.&quot;       
+[121] &quot;Eating potatoes is bad for shoulder health.&quot;        
+[122] &quot;Eating doritos is good for shoulder health.&quot;        
+[123] &quot;Eating salsa is good for shoulder health.&quot;          
+[124] &quot;Eating bugs is bad for shoulder health.&quot;            
+[125] &quot;Eating soap is bad for shoulder health.&quot;            
+[126] &quot;Eating yogurt is good for shoulder health.&quot;         
+[127] &quot;Eating raisins is bad for shoulder health.&quot;         
+[128] &quot;Eating raw fish is good for shoulder health.&quot;       
+[129] &quot;Eating toothpaste is bad for shoulder health.&quot;      
+[130] &quot;Eating peanuts is good for muscle health.&quot;          
+[131] &quot;Eating dark chocolate is bad for muscle health.&quot;    
+[132] &quot;Eating wine is bad for muscle health.&quot;              
+[133] &quot;Eating ice cream is good for muscle health.&quot;        
+[134] &quot;Eating potatoes is good for muscle health.&quot;         
+[135] &quot;Eating salsa is good for muscle health.&quot;            
+[136] &quot;Eating bugs is bad for muscle health.&quot;              
+[137] &quot;Eating soap is good for muscle health.&quot;             
+[138] &quot;Eating yogurt is bad for muscle health.&quot;            
+[139] &quot;Eating raisins is bad for muscle health.&quot;           
+[140] &quot;Eating raw fish is bad for muscle health.&quot;          
+[141] &quot;Eating dirt is bad for muscle health.&quot;              
+[142] &quot;Eating toothpaste is bad for muscle health.&quot;        
+[143] &quot;Eating dark chocolate is good for eyelash health.&quot;  
+[144] &quot;Eating wine is good for eyelash health.&quot;            
+[145] &quot;Eating toothpaste is good for eyelash health.&quot;      
+[146] &quot;Eating peanuts is bad for kidney health.&quot;           
+[147] &quot;Eating dark chocolate is bad for kidney health.&quot;    
+[148] &quot;Eating wine is good for kidney health.&quot;             
+[149] &quot;Eating peanuts is bad for skin health.&quot;             
+[150] &quot;Eating dark chocolate is bad for skin health.&quot;      
+[151] &quot;Eating wine is bad for skin health.&quot;                
+[152] &quot;Eating ice cream is bad for skin health.&quot;           
+[153] &quot;Eating potatoes is bad for skin health.&quot;            
+[154] &quot;Eating doritos is bad for skin health.&quot;             
+[155] &quot;Eating salsa is bad for skin health.&quot;               
+[156] &quot;Eating bugs is bad for skin health.&quot;                
+[157] &quot;Eating yogurt is good for skin health.&quot;             
+[158] &quot;Eating raisins is bad for skin health.&quot;             
+[159] &quot;Eating cured meat is good for skin health.&quot;         
+[160] &quot;Eating toothpaste is good for skin health.&quot;         
+[161] &quot;Eating dark chocolate is bad for mental health.&quot;    
+[162] &quot;Eating bugs is good for mental health.&quot;             
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>But this does not make any sense! We would be publishing misleading and non-sense results!</strong></p>
+<div class="exercise admonition" id="lecture1-q1">
+
+<p class="admonition-title"><span class="caption-number">Exercise 1 </span></p>
+<section id="exercise-content">
+<p>Why are we seeing so many spurious statistically significant comparisons here?</p>
+<p><strong>A.</strong> We are inflating our Type I error.</p>
+<p><strong>B.</strong> We are inflating our Type II error.</p>
+<p><strong>C.</strong> We are inflating both Types of error: I and II.</p>
+</section>
+</div>
+<div class="exercise admonition" id="lecture1-q2">
+
+<p class="admonition-title"><span class="caption-number">Exercise 2 </span></p>
+<section id="exercise-content">
+<p>How might we address this problem of so many spurious statistically significant comparisons?</p>
+<p><strong>A.</strong> Let us increase our power <span class="math notranslate nohighlight">\(1 - \beta\)</span>.</p>
+<p><strong>B.</strong> Let us decrease our significance level <span class="math notranslate nohighlight">\(\alpha\)</span>.</p>
+<p><strong>C.</strong> Let us decrease our significance level <span class="math notranslate nohighlight">\(\alpha\)</span> and increase our power <span class="math notranslate nohighlight">\(1 - \beta\)</span>.</p>
+</section>
+</div>
+</section>
+<section id="what-is-going-on-in-our-previous-simulation">
+<h3>3.3. What is going on in our previous simulation?<a class="headerlink" href="#what-is-going-on-in-our-previous-simulation" title="Permalink to this heading">#</a></h3>
+<p>Suppose we run <span class="math notranslate nohighlight">\(m\)</span> <strong>independent</strong> tests on the same dataset. Each <span class="math notranslate nohighlight">\(i\)</span>th test <span class="math notranslate nohighlight">\((i = 1, \dots m)\)</span> has the following probability of committing <strong>Type I error</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+E_ i = \text{Committing Type I error in the } i \text{th test} \\
+P(E_ i) = \alpha.
+\end{gather*}\end{split}\]</div>
+<p>The probability of <strong>NOT committing Type I error</strong> in the <span class="math notranslate nohighlight">\(i\)</span>th test is the following:</p>
+<div class="math notranslate nohighlight">
+\[P\left(E_ i^c\right) = 1 - \alpha.\]</div>
+<p>The <strong>probability of NOT committing Type I error in ALL the <span class="math notranslate nohighlight">\(m\)</span> tests</strong> is an <strong>intersection</strong> of complements:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+P\left(E_{1}^c \cap E_{2}^c \cap \dots \cap E_{m}^c \right) &amp;=  P\left(E_{1}^c\right) \times P\left(E_{2}^c\right) \times \dots \times P\left(E_{m}^c\right)\\
+&amp; = (1 - \alpha)^m \qquad \qquad \text{by indepedence.}
+\end{align*}\end{split}\]</div>
+<p>Finally, the <strong>probability of committing AT LEAST one Type I error in the <span class="math notranslate nohighlight">\(m\)</span> tests</strong> is the complement of the previous intersection:</p>
+<div class="math notranslate nohighlight">
+\[P\left[ \left( E_{1}^c \cap E_{2}^c \cap \dots \cap E_{m}^c \right)^c \right] = 1 - (1 - \alpha)^m.\]</div>
+<p>The inflated probability corresponds to committing AT LEAST one Type I error in the <span class="math notranslate nohighlight">\(m\)</span> tests. We can plot this <strong>theoretical behaviour</strong> by varying <span class="math notranslate nohighlight">\(m\)</span> on the <span class="math notranslate nohighlight">\(x\)</span>-axis as follows:</p>
+<div class="cell tag_hide-input tag_hide-output docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">400</span>
+<span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">alpha</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0.05</span>
+
+<span class="n">inflated_error_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlim</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">400</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_function</span><span class="p">(</span><span class="n">fun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span><span class="o">^</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">22</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="nf">expression</span><span class="p">(</span><span class="s">&quot;Probability of Committing at LEAST one Type I error in the m tests with&quot;</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;= 0.05&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;m tests&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Probability&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"> </span><span class="m">25</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">scale_y_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0.1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</details>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Scale for <span class=" -Color -Color-Green">x</span> is already present.
+Adding another scale for <span class=" -Color -Color-Green">x</span>, which will replace the existing scale.
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">inflated_error_plot</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/0bfe8582194200b72ec42bebce5303b3333cd8c5582bad8b2051c5644a0e0a1c.png"><img alt="../_images/0bfe8582194200b72ec42bebce5303b3333cd8c5582bad8b2051c5644a0e0a1c.png" src="../_images/0bfe8582194200b72ec42bebce5303b3333cd8c5582bad8b2051c5644a0e0a1c.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+</section>
+</section>
+<section id="the-bonferroni-correction">
+<h2>4. The Bonferroni Correction<a class="headerlink" href="#the-bonferroni-correction" title="Permalink to this heading">#</a></h2>
+<p>The Bonferroni correction <strong>conservatively</strong> guards against <span class="math notranslate nohighlight">\(p\)</span>-hacking! The idea is simple:</p>
+<blockquote>
+<div><p>If <span class="math notranslate nohighlight">\(m\)</span> comparisons (hypothesis tests) are to be carried out, use significance level <span class="math notranslate nohighlight">\(\alpha/m\)</span> for each.</p>
+</div></blockquote>
+<p>Let us go back to our simulation with <span class="math notranslate nohighlight">\(m = 20 \times 20 = 400\)</span> comparisons.</p>
+<p>Because we make <span class="math notranslate nohighlight">\(400\)</span> comparisons, to declare a <em>single</em> comparison to be statistically significant at the <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span> significance level, we need</p>
+<div class="math notranslate nohighlight">
+\[p\text{-value} &lt; \frac{0.05}{400} = 0.000125.\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">bonf.rejects</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">pval</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">sig_alpha</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">nvars</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">nvars</span><span class="p">)))</span>
+<span class="n">bonf.rejects</span><span class="w"> </span><span class="c1"># Number of rejected H_0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">3</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">min.p.val</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">min</span><span class="p">(</span><span class="n">pval</span><span class="p">)</span>
+<span class="nf">round</span><span class="p">(</span><span class="n">min.p.val</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="c1"># Minumum p-value</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">8e-05</div></div>
+</div>
+<p>The <strong>number of rejected null hypotheses</strong> is 3! Great! All 400 <span class="math notranslate nohighlight">\(H_0\)</span> were in fact true, and we rejected 3 of them (<strong>which is still within our assumed significance level <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span></strong>).</p>
+<p>We can obtain the <strong>Bonferroni adjusted <span class="math notranslate nohighlight">\(p\)</span>-values</strong> (i.e. <span class="math notranslate nohighlight">\(p\text{-value} \times m\)</span>) via <code class="docutils literal notranslate"><span class="pre">p.adjust()</span></code> as we can see below. Note that <span class="math notranslate nohighlight">\(m = 400\)</span> in this case, so the adjusted <span class="math notranslate nohighlight">\(p\)</span>-values will be capped at <span class="math notranslate nohighlight">\(1\)</span> since they are probabilities.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pval</span>
+<span class="n">adj_pval</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">p.adjust</span><span class="p">(</span><span class="n">pval</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bonferroni&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">nrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">)</span>
+<span class="n">adj_pval</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 20 × 20 of type dbl</caption>
+<tbody>
+	<tr><td>0.01144746</td><td>0.04062299</td><td>0.068572102</td><td>0.18283969</td><td>⋯</td><td>0.03819124</td><td>0.035909419</td><td>0.11728813</td></tr>
+	<tr><td>0.02435357</td><td>0.01800186</td><td>0.023801979</td><td>0.06042632</td><td>⋯</td><td>0.02417662</td><td>0.005939915</td><td>0.01561573</td></tr>
+	<tr><td>0.03857421</td><td>0.01709200</td><td>0.007735247</td><td>0.03813906</td><td>⋯</td><td>0.04284685</td><td>0.005236519</td><td>0.09405474</td></tr>
+	<tr><td>0.54722977</td><td>0.39182757</td><td>0.543324689</td><td>0.55328639</td><td>⋯</td><td>0.72251775</td><td>0.189308852</td><td>0.72442001</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋱</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>0.07671896</td><td>0.2604434</td><td>0.06339420</td><td>0.4333956</td><td>⋯</td><td>0.16821945</td><td>0.05888009</td><td>0.08290290</td></tr>
+	<tr><td>0.21280872</td><td>0.2413163</td><td>0.08431028</td><td>0.2207787</td><td>⋯</td><td>0.23618300</td><td>0.09135312</td><td>0.16151143</td></tr>
+	<tr><td>0.06196765</td><td>0.1055479</td><td>0.03433712</td><td>0.1368739</td><td>⋯</td><td>0.08222919</td><td>0.04120800</td><td>0.07920598</td></tr>
+	<tr><td>0.29941071</td><td>0.2579010</td><td>0.12429283</td><td>0.6269098</td><td>⋯</td><td>0.22031177</td><td>0.14925889</td><td>0.40985565</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A matrix: 20 × 20 of type dbl</caption>
+<tbody>
+	<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>⋯</td><td>1</td><td>1</td><td>1</td></tr>
+	<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>⋯</td><td>1</td><td>1</td><td>1</td></tr>
+	<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>⋯</td><td>1</td><td>1</td><td>1</td></tr>
+	<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>⋯</td><td>1</td><td>1</td><td>1</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋱</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>⋯</td><td>1</td><td>1</td><td>1</td></tr>
+	<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>⋯</td><td>1</td><td>1</td><td>1</td></tr>
+	<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>⋯</td><td>1</td><td>1</td><td>1</td></tr>
+	<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>⋯</td><td>1</td><td>1</td><td>1</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<section id="the-bonferroni-guarantee">
+<h3>4.1. The Bonferroni Guarantee<a class="headerlink" href="#the-bonferroni-guarantee" title="Permalink to this heading">#</a></h3>
+<p>The Bonferroni correction comes from a well-known result in probability theory known as the <a class="reference external" href="https://mathworld.wolfram.com/BonferroniInequalities.html"><strong>Bonferroni inequality</strong></a>. Suppose you have <span class="math notranslate nohighlight">\(m\)</span> hypothesis testings and in reality, for some, <span class="math notranslate nohighlight">\(H_0\)</span> is true; and for others, <span class="math notranslate nohighlight">\(H_0\)</span> is false. Let <span class="math notranslate nohighlight">\(R_i\)</span> be event of rejecting the <span class="math notranslate nohighlight">\(i\)</span>th <span class="math notranslate nohighlight">\(H_0\)</span> when in fact is true (for <span class="math notranslate nohighlight">\(i = 1, \dots, m\)</span>). The inequality is the following:</p>
+<div class="math notranslate nohighlight">
+\[
+P(R_1 \; \cup \; R_2 \; \cup \; \dotsc \; \cup \; R_m) \leq P(R_1) + P(R_2) + \dotsb + P(R_m).
+\]</div>
+<p>Now, this inequality will pave the way to the <strong>family-wise error rate (FWER)</strong>. The FWER is <strong>the chance that one or more of the true null hypotheses are rejected</strong>. If each comparison is made at significance level <span class="math notranslate nohighlight">\(\alpha/m\)</span>, then the FWER is guaranteed to be <span class="math notranslate nohighlight">\(\alpha\)</span> or less.</p>
+<div class="math notranslate nohighlight">
+\[
+\text{FWER} \leq \sum_{k = 1}^m \frac{\alpha}{m} = \alpha.
+\]</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Note the following <strong>punchline</strong> from the mathematical expression above: the Bonferroni correction (i.e., <span class="math notranslate nohighlight">\(\alpha / m\)</span>) lets us guarantee that we <strong>wrongly</strong> reject a null hypothesis with probability less than <span class="math notranslate nohighlight">\(\alpha\)</span>.</p>
+</div>
+</section>
+<section id="is-there-a-price-to-pay">
+<h3>4.2. Is there a price to pay?<a class="headerlink" href="#is-there-a-price-to-pay" title="Permalink to this heading">#</a></h3>
+<p>Let <span class="math notranslate nohighlight">\(R_j\)</span> be event of rejecting the <span class="math notranslate nohighlight">\(j\)</span>th <span class="math notranslate nohighlight">\(H_0\)</span> when in fact is true (for <span class="math notranslate nohighlight">\(j = 1, 2\)</span>). Hence, the Bonferroni inequality, when we only have two comparisons yielding two events <span class="math notranslate nohighlight">\(R_1\)</span> and <span class="math notranslate nohighlight">\(R_2\)</span>, is</p>
+<div class="math notranslate nohighlight">
+\[
+P(R_1 \; \cup \; R_2) \leq P(R_1) + P(R_2).
+\]</div>
+<p>The above <strong>inequality</strong> will be <strong>equal to <span class="math notranslate nohighlight">\(\alpha\)</span></strong> only when <span class="math notranslate nohighlight">\(R_1\)</span> and <span class="math notranslate nohighlight">\(R_2\)</span> are <strong>mutually exclusive</strong>! Recall that two events are mutually exclusive when:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+P(R_1  \; \cup \; R_2) &amp;= P(R_1) + P(R_2) - \overbrace{P(R_1  \; \cap \; R_2)}^{0} \\
+&amp;= P(R_1) + P(R_2).
+\end{align*}\end{split}\]</div>
+<p>The expression above indicates that the events <span class="math notranslate nohighlight">\(R_1\)</span> and <span class="math notranslate nohighlight">\(R_2\)</span> cannot happen at the same time since their intersection is equal to zero.</p>
+<p>However, <strong>what are implications on the Bonferroni correction when <span class="math notranslate nohighlight">\(R_1\)</span> and <span class="math notranslate nohighlight">\(R_2\)</span> could happen at the same time, i.e., <span class="math notranslate nohighlight">\(P(R_1  \; \cap \; R_2) &gt; 0\)</span>?</strong> We will revisit the inequality:</p>
+<div class="math notranslate nohighlight">
+\[
+P(R_1 \; \cup \; R_2) \leq P(R_1) + P(R_2),
+\]</div>
+<p>and the corresponding</p>
+<div class="math notranslate nohighlight">
+\[
+\text{FWER} \leq \frac{\alpha}{2} + \frac{\alpha}{2}  = \alpha.
+\]</div>
+<p>Since</p>
+<div class="math notranslate nohighlight">
+\[P(R_1  \; \cup \; R_2) = P(R_1) + P(R_2) - P(R_1  \; \cap \; R_2) \qquad \text{with} \qquad P(R_1  \; \cap \; R_2) &gt; 0,\]</div>
+<p>we would be penalizing the standalone probabilities <span class="math notranslate nohighlight">\(P(R_1)\)</span> and <span class="math notranslate nohighlight">\(P(R_2)\)</span> too much with the correction <span class="math notranslate nohighlight">\(\alpha / 2\)</span>. <strong>This issue makes the Bonferroni correction too conservative.</strong></p>
+<p>Suppose we generalize this matter to <span class="math notranslate nohighlight">\(m\)</span> hypothesis testings, <strong>where some of them could happen simultaneously</strong>. In that case, this becomes a more conservative issue yielding adjusted <span class="math notranslate nohighlight">\(p\)</span>-values that are too penalized.</p>
+<p>We might need to use an alternative tool then! Let us explore the <strong>false discovery rate</strong>.</p>
+<div class="exercise admonition" id="lecture1-q3">
+
+<p class="admonition-title"><span class="caption-number">Exercise 3 </span></p>
+<section id="exercise-content">
+<p>Using the hypothesis testing fundamentals, what are the implications of using a too-conservative correction such as <span class="math notranslate nohighlight">\(\alpha/m\)</span> when we have <span class="math notranslate nohighlight">\(m\)</span> multiple tests?</p>
+<p><strong>A.</strong> We are less prone to commit Type II error.</p>
+<p><strong>B.</strong> We are more prone to commit Type II error.</p>
+</section>
+</div>
+</section>
+</section>
+<section id="the-false-discovery-rate">
+<h2>5. The False Discovery Rate<a class="headerlink" href="#the-false-discovery-rate" title="Permalink to this heading">#</a></h2>
+<p>Suppose someone tells you they did a given hypothesis test using some data and got a <span class="math notranslate nohighlight">\(p\text{-value} = 0.023\)</span>. <strong>In isolation, you do not know whether to be impressed or not!</strong> You need some information about how much “hunting” was done to find this result.</p>
+<p>Moreover, there is a trade-off between types of error: <strong>false discoveries</strong> (i.e. false positives!) and <strong>missing real effects</strong> (i.e. false negatives!). Depending on the situation/goals, one might be preferable to the other.</p>
+<section id="a-simple-thought-experiment">
+<h3>5.1. A Simple Thought Experiment<a class="headerlink" href="#a-simple-thought-experiment" title="Permalink to this heading">#</a></h3>
+<p>To shake your faith in science, let us consider a simple thought experiment:</p>
+<ul class="simple">
+<li><p>Assume there is an ensemble of research studies on different scientific questions.</p></li>
+<li><p>Moreover, suppose that every study in the ensemble did a good job of type I (false positive) error control.</p></li>
+<li><p>Finally, there was only one comparison per study such that:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[P(\text{reject null} \mid \text{null is true}) = 0.05\]</div>
+<p>There is an available method to control the <strong>expected proportion of false positives</strong> (i.e., type I error) from all this ensemble of research studies. This is what we call the <strong>false discovery rate (FDR)</strong>.</p>
+<p>Unlike FWER, <strong>FDR is less strict</strong> because it controls for this expected proportion of false positives instead of the probability of producing <em>at least</em> one false positive.</p>
+</section>
+<section id="benjamini-hochberg">
+<h3>5.2. Benjamini-Hochberg<a class="headerlink" href="#benjamini-hochberg" title="Permalink to this heading">#</a></h3>
+<p>To start with the core FDR idea, we will use a Genome-wide analysis-like study (GWAS) found in the library <code class="docutils literal notranslate"><span class="pre">qqman</span></code>. This study ran 16,470 different hypothesis tests. The below plot ranks the corresponding <span class="math notranslate nohighlight">\(p\)</span>-values (whose values are depicted in the <span class="math notranslate nohighlight">\(y\)</span>-axis) from smallest to largest on the <span class="math notranslate nohighlight">\(x\)</span>-axis.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">qqman</span><span class="p">)</span>
+
+<span class="n">sorted_p_values</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">p_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gwasResults</span><span class="o">$</span><span class="n">P</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">arrange</span><span class="p">(</span><span class="n">p_value</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">add_column</span><span class="p">(</span><span class="n">rank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">gwasResults</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rank</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p_value</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_point</span><span class="p">(</span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;darkgreen&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.01</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;GWAS p-values&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Rank by Increasing Order&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;p-value&quot;</span><span class="p">)</span>
+
+<span class="n">sorted_p_values</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>For example usage please run: vignette(&#39;qqman&#39;)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Citation appreciated but not required:
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Turner, (2018). qqman: an R package for visualizing GWAS results using Q-Q and manhattan plots. Journal of Open Source Software, 3(25), 731, https://doi.org/10.21105/joss.00731.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/1dfc8f6fddf7884e36eb992df019053a26c1b6958d2427349054387fb27a040a.png"><img alt="../_images/1dfc8f6fddf7884e36eb992df019053a26c1b6958d2427349054387fb27a040a.png" src="../_images/1dfc8f6fddf7884e36eb992df019053a26c1b6958d2427349054387fb27a040a.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>Given the plot above, we might wonder: from this set of <span class="math notranslate nohighlight">\(p\)</span>-values, can we find a cutoff to label <strong>significant</strong> versus <strong>non-significant</strong> findings? The FDR will automate finding the “bend in the curve”.</p>
+<p>One method to control the FDR is <strong>Benjamini-Hochberg</strong> (BH). Suppose you have <span class="math notranslate nohighlight">\(m\)</span> hypothesis testings. The method has four steps:</p>
+<ol class="arabic simple">
+<li><p>Specify a <strong>maximum tolerable FDR</strong>, <span class="math notranslate nohighlight">\(\delta\)</span>.</p></li>
+<li><p>Sort the <span class="math notranslate nohighlight">\(m\)</span> p-values from lowest to highest (most significant to least):</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[p_{(1)} \leq p_{(2)} \leq p_{(3)} \leq \dots \leq p_{(m)}\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Let <span class="math notranslate nohighlight">\(k^*\)</span> be the biggest <span class="math notranslate nohighlight">\(k\)</span> for which <span class="math notranslate nohighlight">\(p_{(k)} &lt; (\delta / m) k\)</span></p></li>
+<li><p>Take <span class="math notranslate nohighlight">\(p_{(1)}, \dots, p_{(k^*)}\)</span> as your <strong>significant</strong> findings.</p></li>
+</ol>
+<p>Let us illustrate this procedure with the following raw <span class="math notranslate nohighlight">\(p\)</span>-values:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">raw_pvalues</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span>
+<span class="w">  </span><span class="m">0.0010</span><span class="p">,</span><span class="w"> </span><span class="m">0.0070</span><span class="p">,</span><span class="w"> </span><span class="m">0.0110</span><span class="p">,</span><span class="w"> </span><span class="m">0.0307</span><span class="p">,</span><span class="w"> </span><span class="m">0.1096</span><span class="p">,</span>
+<span class="w">  </span><span class="m">0.2612</span><span class="p">,</span><span class="w"> </span><span class="m">0.4018</span><span class="p">,</span><span class="w"> </span><span class="m">0.5828</span><span class="p">,</span><span class="w"> </span><span class="m">0.7161</span><span class="p">,</span><span class="w"> </span><span class="m">0.9628</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The previous four steps are shown in the table below. Using BH, with <span class="math notranslate nohighlight">\(\delta = 0.05\)</span>, we label <span class="math notranslate nohighlight">\(0.0010\)</span>, <span class="math notranslate nohighlight">\(0.0070\)</span>, and <span class="math notranslate nohighlight">\(0.0110\)</span> as statistically significant via <span class="math notranslate nohighlight">\(k^* = 3\)</span>.</p>
+<figure class="align-default" id="table1-fdr">
+<a class="reference internal image-reference" href="../_images/table1_FDR.png"><img alt="../_images/table1_FDR.png" src="../_images/table1_FDR.png" style="height: 350px;" /></a>
+</figure>
+<p>We graphically show the previous BH example below, where each point represents an ordered <span class="math notranslate nohighlight">\(p\)</span>-value. Note the cutoff value is at <span class="math notranslate nohighlight">\(k^* = 3\)</span> (vertical dashed blue line) while the red line corresponds to <span class="math notranslate nohighlight">\((\delta / m) k\)</span> with <span class="math notranslate nohighlight">\(\delta = 0.05\)</span> and <span class="math notranslate nohighlight">\(m = 10\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pvalues</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">raw_pvalues</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">seq_along</span><span class="p">(</span><span class="n">raw_pvalues</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">bh_line</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.05</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">nrow</span><span class="p">(</span><span class="n">.</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">k</span><span class="p">)</span>
+
+<span class="n">FDR_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ggplot</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span><span class="w"> </span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">raw_pvalues</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_point</span><span class="p">()</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_line</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bh_line</span><span class="p">),</span><span class="w"> </span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;k&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;p(k)&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">24</span><span class="p">,</span><span class="w"> </span><span class="n">face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bold&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">legend.position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_vline</span><span class="p">(</span><span class="n">xintercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">colour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;darkblue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">linetype</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dashed&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;BH Example&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">FDR_plot</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/63f06f60db9c2bdd1830eb4905179049877e2fa5e999fe7a17bf989670e3abb9.png"><img alt="../_images/63f06f60db9c2bdd1830eb4905179049877e2fa5e999fe7a17bf989670e3abb9.png" src="../_images/63f06f60db9c2bdd1830eb4905179049877e2fa5e999fe7a17bf989670e3abb9.png" style="width: 840px; height: 480px;" /></a>
+</div>
+</div>
+<p>As in the case of the Bonferroni correction, we can obtain <strong>BH adjusted <span class="math notranslate nohighlight">\(p\)</span>-values</strong> as</p>
+<div class="math notranslate nohighlight">
+\[\text{BH adjusted } p\text{-value}_i = \min \Big\{ \frac{p\text{-value}_i \times m}{i}, \text{BH adjusted } p\text{-value}_{i + 1} \Big\},\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i\)</span> is the rank of the raw <span class="math notranslate nohighlight">\(p\)</span>-value.</p></li>
+<li><p><span class="math notranslate nohighlight">\(m\)</span> is the number of tests.</p></li>
+</ul>
+<figure class="align-default" id="table2-fdr">
+<a class="reference internal image-reference" href="../_images/table2_FDR.png"><img alt="../_images/table2_FDR.png" src="../_images/table2_FDR.png" style="height: 350px;" /></a>
+</figure>
+<p>We can obtain the BH adjusted <span class="math notranslate nohighlight">\(p\)</span>-values via <code class="docutils literal notranslate"><span class="pre">p.adjust()</span></code> as we can see below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">p.adjust</span><span class="p">(</span><span class="n">raw_pvalues</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;fdr&quot;</span><span class="p">),</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>0.01</li><li>0.035</li><li>0.0367</li><li>0.0768</li><li>0.2192</li><li>0.4353</li><li>0.574</li><li>0.7285</li><li>0.7957</li><li>0.9628</li></ol>
+</div></div>
+</div>
+<p>By checking these adjusted <span class="math notranslate nohighlight">\(p\)</span>-values, using a <strong>maximum tolerable FDR</strong> <span class="math notranslate nohighlight">\(\delta = 0.05\)</span>, we would label the first three values (from left to right) as statistically significant.</p>
+<p>If we want to be even less conservative, i.e. increasing <span class="math notranslate nohighlight">\(\delta\)</span> to 0.10, we would label the first four values as statistically significant.</p>
+<p>The table below shows different BH critical values by <span class="math notranslate nohighlight">\(\delta = 0.05, 0.10, 0.20\)</span>.</p>
+<figure class="align-default" id="table3-fdr">
+<a class="reference internal image-reference" href="../_images/table3_FDR.png"><img alt="../_images/table3_FDR.png" src="../_images/table3_FDR.png" style="height: 350px;" /></a>
+</figure>
+</section>
+</section>
+<section id="wrapping-up">
+<h2>6. Wrapping Up<a class="headerlink" href="#wrapping-up" title="Permalink to this heading">#</a></h2>
+<p>So, <strong>where do we stand?</strong></p>
+<ul class="simple">
+<li><p>If we must make many hypothesis testings without using some <span class="math notranslate nohighlight">\(p\)</span>-value adjustment method, then some spurious findings are expected, just by chance.</p></li>
+<li><p>There are more than two adjustment methods. However, from these two methods we saw, we should use them as follows:</p>
+<ul>
+<li><p><strong>Bonferroni correction.</strong> This method is helpful when there is high confidence all scientific findings correspond to <strong>true positives</strong> (i.e., we prefer to be very conservative and have <strong>false negatives</strong>).</p></li>
+<li><p><strong>FDR.</strong> This method is more appropriate if there is a certain proportion of <strong>false positives</strong> in our scientific findings, and we want to set up a certain level of tolerance (i.e., we prefer to be less conservative and have <strong>false positives</strong>).</p></li>
+</ul>
+</li>
+</ul>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-center head"><p></p></th>
+<th class="text-center head"><p><strong><span class="math notranslate nohighlight">\(H_0\)</span> is true</strong></p></th>
+<th class="text-center head"><p><strong><span class="math notranslate nohighlight">\(H_0\)</span> is not true</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p><strong>Fail to reject <span class="math notranslate nohighlight">\(H_0\)</span></strong></p></td>
+<td class="text-center"><p>Correct (<strong>TRUE NEGATIVE</strong>)</p></td>
+<td class="text-center"><p>Type II Error (<strong>FALSE NEGATIVE</strong>)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p><strong>Reject <span class="math notranslate nohighlight">\(H_0\)</span></strong></p></td>
+<td class="text-center"><p>Type I Error (<strong>FALSE POSITIVE</strong>)</p></td>
+<td class="text-center"><p>Correct (<strong>TRUE POSITIVE</strong>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./notes"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../lecture-learning-objectives.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Lecture Learning Objectives</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="lecture2_simpson_confounding.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Lecture 2 - Confounding and Randomized versus Non-randomized Studies</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-goals-of-this-course">High-Level Goals of this Course</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#firstly-let-us-make-a-block-overview">Firstly, let us make a block overview!</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-relevance-of-this-course-to-data-science">What is the Relevance of this Course to Data Science?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indirect-relevance">Indirect Relevance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#direct-relevance">Direct Relevance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-learning-objectives">Today’s Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-r-packages">Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hypothesis-testing-review">1. Hypothesis Testing Review</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#p-value">1.1. <span class="math notranslate nohighlight">\(p\)</span>-value</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graphical-overview-of-the-hypothesis-testing">1.2. Graphical Overview of the Hypothesis Testing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-procedure-in-a-nutshell">1.3. Testing Procedure in a Nutshell</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hypothesis-testing-in-science">2. Hypothesis Testing in Science</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-does-that-happen">2.1. Why does that happen?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-p-text-value-0-05">2.2. When <span class="math notranslate nohighlight">\(p\text{-value} &gt; 0.05\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-journal-example-on-statistical-significant-results">2.3. An Journal Example on Statistical Significant Results</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-inconvenient-truth">3. An Inconvenient Truth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#our-first-simulation">3.1. Our First Simulation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-setting-our-400-random-alternative-hypotheses">Step 1: Setting our 400 random alternative hypotheses</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-generating-our-simulated-dataset">Step 2: Generating our Simulated Dataset</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-running-the-400-regression-models">Step 3: Running the 400 Regression Models</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checking-our-simulation-results">3.2. Checking our Simulation Results</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-going-on-in-our-previous-simulation">3.3. What is going on in our previous simulation?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bonferroni-correction">4. The Bonferroni Correction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bonferroni-guarantee">4.1. The Bonferroni Guarantee</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#is-there-a-price-to-pay">4.2. Is there a price to pay?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-false-discovery-rate">5. The False Discovery Rate</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-thought-experiment">5.1. A Simple Thought Experiment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#benjamini-hochberg">5.2. Benjamini-Hochberg</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-up">6. Wrapping Up</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By G. Alexi Rodríguez-Arelis
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
