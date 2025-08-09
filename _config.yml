@@ -1,13 +1,13 @@
 # Book settings
 title: DSCI 554 - Experimentation and Causal Inference
-author: G. Alexi Rodríguez-Arelis
+author: G. Alexi Rodríguez-Arelis, Daniel Chen, Benjamin Bloem-Redd, Tiffany Timbers, and Vincenzo Coia
 copyright: "2024"  # Copyright year to be placed in the footer
 logo: img/UBC_MDS_logo.png
 exclude_patterns: ["archive/*", "source/*", "release/*", "lectures/teacher*"]
 only_build_toc_files: true
 
 repository:
- url: https://github.ubc.ca/MDS-2023-24/DSCI_554_exper-causal-inf_students
+ url: https://github.com/UBC-MDS/DSCI_554_exper-causal-inf
 
 latex:
   latex_documents:
